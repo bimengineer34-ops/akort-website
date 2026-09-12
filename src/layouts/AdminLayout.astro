@@ -1,0 +1,109 @@
+---
+import { eq, count } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { messages } from '~/db/schema';
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+const user = Astro.locals.user;
+
+const unreadCount = db.select({ c: count() }).from(messages).where(eq(messages.status, 'yeni')).get()?.c ?? 0;
+
+const navItems = [
+  { href: '/admin', label: 'Dashboard', icon: 'tabler:layout-dashboard' },
+  { href: '/admin/mesajlar', label: 'Mesajlar', icon: 'tabler:mail', badge: unreadCount },
+  { href: '/admin/blog', label: 'Blog Yönetimi', icon: 'tabler:article' },
+  { href: '/admin/projeler', label: 'Projeler', icon: 'tabler:briefcase' },
+  { href: '/admin/galeri', label: 'Galeri', icon: 'tabler:photo' },
+  { href: '/admin/sayfalar', label: 'Sayfalar', icon: 'tabler:file-text' },
+  { href: '/admin/menu', label: 'Menü Yönetimi', icon: 'tabler:list' },
+  { href: '/admin/ayarlar', label: 'Site Ayarları', icon: 'tabler:settings' },
+  { href: '/admin/kullanicilar', label: 'Kullanıcılar', icon: 'tabler:users' },
+];
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => (href === '/admin' ? currentPath === '/admin' : currentPath.startsWith(href));
+---
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{title} — AKORT Yönetim Paneli</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css" />
+    <style>
+      body {
+        background: var(--tblr-body-bg, #f4f6fa);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#admin-sidebar-menu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <h1 class="navbar-brand navbar-brand-autodark">
+            <a href="/admin" class="d-flex align-items-center gap-2 text-decoration-none text-white">
+              <Icon name="tabler:hexagon" class="w-6 h-6" />
+              <span>AKORT Panel</span>
+            </a>
+          </h1>
+          <div class="collapse navbar-collapse" id="admin-sidebar-menu">
+            <ul class="navbar-nav pt-lg-3">
+              {
+                navItems.map((item) => (
+                  <li class:list={['nav-item', { active: isActive(item.href) }]}>
+                    <a class="nav-link" href={item.href}>
+                      <span class="nav-link-icon d-md-none d-lg-inline-block">
+                        <Icon name={item.icon} class="w-5 h-5" />
+                      </span>
+                      <span class="nav-link-title">{item.label}</span>
+                      {item.badge ? <span class="badge bg-red text-white ms-auto">{item.badge}</span> : null}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <header class="navbar navbar-expand-md d-print-none">
+        <div class="container-xl">
+          <div class="navbar-nav flex-row order-md-last ms-auto align-items-center gap-3">
+            <a href="/bilgi-merkezi" target="_blank" class="text-muted small text-decoration-none">Siteyi Görüntüle ↗</a
+            >
+            <span class="text-muted small">{user?.username}</span>
+            <form method="POST" action="/admin/logout">
+              <button type="submit" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-1">
+                <Icon name="tabler:logout" class="w-4 h-4" /> Çıkış
+              </button>
+            </form>
+          </div>
+        </div>
+      </header>
+
+      <div class="page-wrapper">
+        <div class="page-header d-print-none">
+          <div class="container-xl">
+            <h2 class="page-title">{title}</h2>
+          </div>
+        </div>
+        <div class="page-body">
+          <div class="container-xl">
+            <slot />
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/js/tabler.min.js"></script>
+  </body>
+</html>

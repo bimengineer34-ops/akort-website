@@ -1,0 +1,80 @@
+---
+import { desc, eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { projects } from '~/db/schema';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+export const prerender = false;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const id = Number(form.get('id'));
+  if (String(form.get('_action')) === 'delete') {
+    db.delete(projects).where(eq(projects.id, id)).run();
+  }
+  return Astro.redirect('/admin/projeler');
+}
+
+const rows = db.select().from(projects).orderBy(desc(projects.year)).all();
+---
+
+<AdminLayout title="Projeler">
+  <div class="mb-3 d-flex justify-content-end">
+    <a href="/admin/projeler/yeni" class="btn btn-primary">+ Yeni Proje</a>
+  </div>
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table card-table table-vcenter">
+        <thead>
+          <tr>
+            <th>Proje Adı</th>
+            <th>Kategoriler</th>
+            <th>Yıl</th>
+            <th>Durum</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.length === 0 ? (
+              <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                  Henüz proje yok.
+                </td>
+              </tr>
+            ) : (
+              rows.map((p) => (
+                <tr>
+                  <td>{p.title}</td>
+                  <td>{(p.tags ?? []).join(', ')}</td>
+                  <td>{p.year}</td>
+                  <td>
+                    <span class:list={['badge', p.draft ? 'bg-secondary-lt' : 'bg-green-lt']}>
+                      {p.draft ? 'Taslak' : 'Yayında'}
+                    </span>
+                  </td>
+                  <td class="d-flex gap-1">
+                    <a href={`/projeler/${p.slug}`} target="_blank" class="btn btn-sm btn-icon btn-outline-secondary">
+                      <Icon name="tabler:external-link" class="w-4 h-4" />
+                    </a>
+                    <a href={`/admin/projeler/${p.id}`} class="btn btn-sm btn-icon btn-outline-primary">
+                      <Icon name="tabler:pencil" class="w-4 h-4" />
+                    </a>
+                    <form method="POST" onsubmit="return confirm('Bu projeyi silmek istediğinize emin misiniz?')">
+                      <input type="hidden" name="id" value={p.id} />
+                      <input type="hidden" name="_action" value="delete" />
+                      <button type="submit" class="btn btn-sm btn-icon btn-outline-danger">
+                        <Icon name="tabler:trash" class="w-4 h-4" />
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              ))
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

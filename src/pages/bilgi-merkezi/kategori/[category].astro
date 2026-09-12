@@ -1,0 +1,47 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { posts } from '~/db/schema';
+import { toPost } from '~/lib/toPost';
+import { cleanSlug, getPermalink } from '~/utils/permalinks';
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+
+export const prerender = false;
+
+const categorySlug = Astro.params.category ?? '';
+const rows = db
+  .select()
+  .from(posts)
+  .where(eq(posts.draft, false))
+  .all()
+  .filter((r) => r.category && cleanSlug(r.category) === categorySlug);
+
+if (rows.length === 0) {
+  return Astro.redirect('/404');
+}
+
+const categoryTitle = rows[0].category as string;
+const postList = rows.map(toPost).sort((a, b) => b.publishDate.getTime() - a.publishDate.getTime());
+
+const breadcrumbs = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  { text: 'Bilgi Merkezi', href: '/bilgi-merkezi' },
+  { text: categoryTitle },
+];
+
+const metadata = {
+  title: `${categoryTitle} Yazıları`,
+  description: `AKORT Mühendislik Bilgi Merkezi'nde ${categoryTitle} kategorisindeki yazılar.`,
+};
+---
+
+<Layout metadata={metadata}>
+  <Breadcrumbs bar items={breadcrumbs} />
+  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline>{categoryTitle}</Headline>
+    <BlogList posts={postList} />
+  </section>
+</Layout>

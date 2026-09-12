@@ -1,0 +1,139 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { users } from '~/db/schema';
+import { hashPassword } from '~/lib/auth';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+export const prerender = false;
+
+let error = '';
+let success = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const action = String(form.get('_action'));
+
+  if (action === 'create') {
+    const username = String(form.get('username') ?? '').trim();
+    const password = String(form.get('password') ?? '');
+    const existing = db.select().from(users).where(eq(users.username, username)).get();
+    if (!username || password.length < 8) {
+      error = 'Kullanıcı adı gerekli ve şifre en az 8 karakter olmalı.';
+    } else if (existing) {
+      error = 'Bu kullanıcı adı zaten kullanılıyor.';
+    } else {
+      db.insert(users)
+        .values({ username, passwordHash: await hashPassword(password), createdAt: new Date() })
+        .run();
+      success = 'Kullanıcı eklendi.';
+    }
+  }
+
+  if (action === 'password') {
+    const id = Number(form.get('id'));
+    const password = String(form.get('password') ?? '');
+    if (password.length < 8) {
+      error = 'Şifre en az 8 karakter olmalı.';
+    } else {
+      db.update(users)
+        .set({ passwordHash: await hashPassword(password) })
+        .where(eq(users.id, id))
+        .run();
+      success = 'Şifre güncellendi.';
+    }
+  }
+
+  if (action === 'delete') {
+    const id = Number(form.get('id'));
+    if (id === Astro.locals.user?.id) {
+      error = 'Kendi hesabınızı silemezsiniz.';
+    } else {
+      db.delete(users).where(eq(users.id, id)).run();
+      success = 'Kullanıcı silindi.';
+    }
+  }
+}
+
+const allUsers = db.select().from(users).all();
+---
+
+<AdminLayout title="Kullanıcılar">
+  {error && <div class="alert alert-danger">{error}</div>}
+  {success && <div class="alert alert-success">{success}</div>}
+
+  <div class="row">
+    <div class="col-lg-7">
+      <div class="card mb-3">
+        <div class="card-header"><h3 class="card-title">Kullanıcılar</h3></div>
+        <div class="table-responsive">
+          <table class="table card-table table-vcenter">
+            <thead>
+              <tr>
+                <th>Kullanıcı Adı</th>
+                <th>Oluşturulma</th>
+                <th>Yeni Şifre</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                allUsers.map((u) => (
+                  <tr>
+                    <td>{u.username}</td>
+                    <td>{new Date(u.createdAt).toLocaleDateString('tr-TR')}</td>
+                    <td>
+                      <form method="POST" class="d-flex gap-1">
+                        <input type="hidden" name="id" value={u.id} />
+                        <input type="hidden" name="_action" value="password" />
+                        <input
+                          type="password"
+                          name="password"
+                          class="form-control form-control-sm"
+                          placeholder="en az 8 karakter"
+                          minlength={8}
+                        />
+                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                          Değiştir
+                        </button>
+                      </form>
+                    </td>
+                    <td>
+                      <form method="POST" onsubmit="return confirm('Bu kullanıcıyı silmek istediğinize emin misiniz?')">
+                        <input type="hidden" name="id" value={u.id} />
+                        <input type="hidden" name="_action" value="delete" />
+                        <button type="submit" class="btn btn-sm btn-icon btn-outline-danger">
+                          <Icon name="tabler:trash" class="w-4 h-4" />
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Yeni Kullanıcı Ekle</h3></div>
+        <div class="card-body">
+          <form method="POST">
+            <input type="hidden" name="_action" value="create" />
+            <div class="mb-3">
+              <label class="form-label">Kullanıcı Adı</label>
+              <input type="text" name="username" class="form-control" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Şifre</label>
+              <input type="password" name="password" class="form-control" minlength={8} required />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Ekle</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

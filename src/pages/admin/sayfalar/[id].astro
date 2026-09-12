@@ -1,0 +1,224 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { pages, type PageFeatureItem, type PageApproachItem } from '~/db/schema';
+import { resolveImage } from '~/lib/upload';
+import { cleanSlug } from '~/utils/permalinks';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+const idParam = Astro.params.id ?? '';
+const isNew = idParam === 'yeni';
+const id = isNew ? null : Number(idParam);
+
+let error = '';
+const existing = !isNew ? db.select().from(pages).where(eq(pages.id, id!)).get() : null;
+if (!isNew && !existing) return Astro.redirect('/admin/sayfalar');
+
+const FEATURE_ROWS = 8;
+const APPROACH_ROWS = 4;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const title = String(form.get('title') ?? '').trim();
+  const slugInput = String(form.get('slug') ?? '').trim();
+
+  if (!title) {
+    error = 'Başlık zorunludur.';
+  } else {
+    const slug = cleanSlug(slugInput || title);
+    const image = await resolveImage(form, 'imageFile', 'image', existing?.image);
+
+    const featureIcons = form.getAll('feature_icon') as string[];
+    const featureTitles = form.getAll('feature_title') as string[];
+    const featureDescs = form.getAll('feature_description') as string[];
+    const features: PageFeatureItem[] = featureTitles
+      .map((t, i) => ({
+        icon: featureIcons[i] || undefined,
+        title: t.trim(),
+        description: (featureDescs[i] ?? '').trim(),
+      }))
+      .filter((f) => f.title);
+
+    const approachTitles = form.getAll('approach_title') as string[];
+    const approachDescs = form.getAll('approach_description') as string[];
+    const approachItems: PageApproachItem[] = approachTitles
+      .map((t, i) => ({ title: t.trim(), description: (approachDescs[i] ?? '').trim() }))
+      .filter((a) => a.title);
+
+    const values = {
+      slug,
+      group: String(form.get('group') ?? 'kurumsal'),
+      title,
+      seoDescription: String(form.get('seoDescription') ?? '') || null,
+      tagline: String(form.get('tagline') ?? '') || null,
+      heroTitle: String(form.get('heroTitle') ?? '') || null,
+      heroSubtitle: String(form.get('heroSubtitle') ?? '') || null,
+      features,
+      approachTagline: String(form.get('approachTagline') ?? '') || null,
+      approachTitle: String(form.get('approachTitle') ?? '') || null,
+      approachItems,
+      image,
+      imageAlt: String(form.get('imageAlt') ?? '') || null,
+      ctaTitle: String(form.get('ctaTitle') ?? '') || 'Bir projeniz mi var?',
+      ctaSubtitle:
+        String(form.get('ctaSubtitle') ?? '') ||
+        'İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.',
+      updatedAt: new Date(),
+    };
+
+    if (isNew) {
+      const inserted = db.insert(pages).values(values).returning({ id: pages.id }).get();
+      return Astro.redirect(`/admin/sayfalar/${inserted.id}`);
+    } else {
+      db.update(pages).set(values).where(eq(pages.id, id!)).run();
+      return Astro.redirect(`/admin/sayfalar/${id}`);
+    }
+  }
+}
+
+const page = !isNew ? db.select().from(pages).where(eq(pages.id, id!)).get() : null;
+const featureRows = Array.from(
+  { length: FEATURE_ROWS },
+  (_, i) => page?.features?.[i] ?? { icon: '', title: '', description: '' }
+);
+const approachRows = Array.from(
+  { length: APPROACH_ROWS },
+  (_, i) => page?.approachItems?.[i] ?? { title: '', description: '' }
+);
+---
+
+<AdminLayout title={isNew ? 'Yeni Sayfa' : `Düzenle: ${page?.title}`}>
+  {error && <div class="alert alert-danger">{error}</div>}
+  <div class="card">
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        <div class="row">
+          <div class="col-md-8 mb-3">
+            <label class="form-label">Başlık</label>
+            <input type="text" name="title" class="form-control" value={page?.title} required />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Grup</label>
+            <select name="group" class="form-select">
+              <option value="kurumsal" selected={page?.group === 'kurumsal'}>Kurumsal</option>
+              <option value="hizmet" selected={page?.group === 'hizmet'}>Hizmet</option>
+              <option value="diger" selected={page?.group === 'diger'}>Diğer</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Adres (slug) — boş bırakılırsa başlıktan oluşturulur</label>
+          <div class="input-group">
+            <span class="input-group-text">/</span>
+            <input type="text" name="slug" class="form-control" value={page?.slug} />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">SEO Açıklaması</label>
+          <textarea name="seoDescription" class="form-control" rows="2">{page?.seoDescription}</textarea>
+        </div>
+
+        <hr />
+        <h4>Hero</h4>
+        <div class="mb-3">
+          <label class="form-label">Üst Etiket</label>
+          <input type="text" name="tagline" class="form-control" value={page?.tagline} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Başlık</label>
+          <input type="text" name="heroTitle" class="form-control" value={page?.heroTitle} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Alt Başlık</label>
+          <textarea name="heroSubtitle" class="form-control" rows="2">{page?.heroSubtitle}</textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Görsel URL</label>
+            <input type="text" name="image" class="form-control" value={page?.image} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+
+        <hr />
+        <h4>Hizmet Kapsamı / Özellikler</h4>
+        <p class="text-muted small">
+          Boş bıraktığınız satırlar kaydedilmez. İkon adı için <a href="https://tabler.io/icons" target="_blank"
+            >tabler.io/icons</a
+          > kullanın (örn. tabler:wind).
+        </p>
+        <div class="row g-2 mb-1 fw-bold text-muted small">
+          <div class="col-2">İkon</div>
+          <div class="col-3">Başlık</div>
+          <div class="col-7">Açıklama</div>
+        </div>
+        {
+          featureRows.map((f) => (
+            <div class="row g-2 mb-2">
+              <div class="col-2">
+                <input type="text" name="feature_icon" class="form-control" value={f.icon} placeholder="tabler:wind" />
+              </div>
+              <div class="col-3">
+                <input type="text" name="feature_title" class="form-control" value={f.title} />
+              </div>
+              <div class="col-7">
+                <input type="text" name="feature_description" class="form-control" value={f.description} />
+              </div>
+            </div>
+          ))
+        }
+
+        <hr />
+        <h4>Yaklaşımımız Bölümü</h4>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Üst Etiket</label>
+            <input type="text" name="approachTagline" class="form-control" value={page?.approachTagline} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Başlık</label>
+            <input type="text" name="approachTitle" class="form-control" value={page?.approachTitle} />
+          </div>
+        </div>
+        <p class="text-muted small">Boş bıraktığınız satırlar kaydedilmez.</p>
+        <div class="row g-2 mb-1 fw-bold text-muted small">
+          <div class="col-4">Başlık</div>
+          <div class="col-8">Açıklama</div>
+        </div>
+        {
+          approachRows.map((a) => (
+            <div class="row g-2 mb-2">
+              <div class="col-4">
+                <input type="text" name="approach_title" class="form-control" value={a.title} />
+              </div>
+              <div class="col-8">
+                <input type="text" name="approach_description" class="form-control" value={a.description} />
+              </div>
+            </div>
+          ))
+        }
+
+        <hr />
+        <h4>Kapanış (CTA)</h4>
+        <div class="mb-3">
+          <label class="form-label">Başlık</label>
+          <input type="text" name="ctaTitle" class="form-control" value={page?.ctaTitle} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Alt Metin</label>
+          <textarea name="ctaSubtitle" class="form-control" rows="2">{page?.ctaSubtitle}</textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+          <a href="/admin/sayfalar" class="btn btn-outline-secondary">İptal</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</AdminLayout>

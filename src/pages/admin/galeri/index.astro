@@ -1,0 +1,106 @@
+---
+import { asc, eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { galleryItems } from '~/db/schema';
+import { resolveImage } from '~/lib/upload';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+export const prerender = false;
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const action = String(form.get('_action'));
+
+  if (action === 'delete') {
+    db.delete(galleryItems)
+      .where(eq(galleryItems.id, Number(form.get('id'))))
+      .run();
+  }
+
+  if (action === 'create') {
+    const image = await resolveImage(form, 'imageFile', 'image', null);
+    if (!image) {
+      error = 'Bir görsel URL girin veya bir dosya yükleyin.';
+    } else {
+      db.insert(galleryItems)
+        .values({
+          image,
+          caption: String(form.get('caption') ?? '') || null,
+          sortOrder: Number(form.get('sortOrder') ?? 0) || 0,
+          createdAt: new Date(),
+        })
+        .run();
+    }
+  }
+}
+
+const items = db.select().from(galleryItems).orderBy(asc(galleryItems.sortOrder)).all();
+---
+
+<AdminLayout title="Galeri">
+  {error && <div class="alert alert-danger">{error}</div>}
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-header"><h3 class="card-title">Yeni Görsel Ekle</h3></div>
+        <div class="card-body">
+          <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="_action" value="create" />
+            <div class="mb-3">
+              <label class="form-label">Görsel URL</label>
+              <input type="text" name="image" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">veya Görsel Yükle</label>
+              <input type="file" name="imageFile" class="form-control" accept="image/*" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Açıklama</label>
+              <input type="text" name="caption" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Sıra</label>
+              <input type="number" name="sortOrder" class="form-control" value="0" />
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Ekle</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="row row-cards">
+        {
+          items.length === 0 ? (
+            <div class="col-12 text-muted">Henüz görsel eklenmedi.</div>
+          ) : (
+            items.map((item) => (
+              <div class="col-md-4">
+                <div class="card">
+                  <img
+                    src={item.image}
+                    class="card-img-top"
+                    style="height:140px;object-fit:cover"
+                    alt={item.caption ?? ''}
+                  />
+                  <div class="card-body p-2">
+                    <p class="small text-muted mb-2">{item.caption}</p>
+                    <form method="POST" onsubmit="return confirm('Bu görseli silmek istediğinize emin misiniz?')">
+                      <input type="hidden" name="id" value={item.id} />
+                      <input type="hidden" name="_action" value="delete" />
+                      <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                        <Icon name="tabler:trash" class="w-4 h-4" /> Sil
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            ))
+          )
+        }
+      </div>
+    </div>
+  </div>
+</AdminLayout>

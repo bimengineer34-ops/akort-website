@@ -1,0 +1,59 @@
+---
+import { desc, eq, count } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { posts } from '~/db/schema';
+import { toPost } from '~/lib/toPost';
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import Pagination from '~/components/blog/Pagination.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getPermalink } from '~/utils/permalinks';
+
+export const prerender = false;
+
+const PAGE_SIZE = 9;
+const currentPage = Math.max(1, Number(Astro.url.searchParams.get('page') ?? '1') || 1);
+
+const total = db.select({ c: count() }).from(posts).where(eq(posts.draft, false)).get()?.c ?? 0;
+const rows = db
+  .select()
+  .from(posts)
+  .where(eq(posts.draft, false))
+  .orderBy(desc(posts.publishDate))
+  .limit(PAGE_SIZE)
+  .offset((currentPage - 1) * PAGE_SIZE)
+  .all();
+
+const postList = rows.map(toPost);
+const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+const breadcrumbs = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  ...(currentPage > 1
+    ? [{ text: 'Bilgi Merkezi', href: '/bilgi-merkezi' }, { text: `Sayfa ${currentPage}` }]
+    : [{ text: 'Bilgi Merkezi' }]),
+];
+
+const metadata = {
+  title: `Bilgi Merkezi${currentPage > 1 ? ` — Sayfa ${currentPage}` : ''}`,
+  description:
+    'AKORT Mühendislik Bilgi Merkezi: mekanik, elektrik, BIM, enerji, GES ve yapı mühendisliği üzerine teknik makaleler ve mühendislik notları.',
+};
+---
+
+<Layout metadata={metadata}>
+  <Breadcrumbs bar items={breadcrumbs} />
+  <section class="px-6 sm:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline
+      subtitle="Mekanik, elektrik, BIM, enerji, GES ve yapı mühendisliği üzerine teknik makaleler ve mühendislik notları."
+    >
+      Bilgi Merkezi
+    </Headline>
+    <BlogList posts={postList} />
+    <Pagination
+      prevUrl={currentPage > 1 ? `/bilgi-merkezi?page=${currentPage - 1}` : undefined}
+      nextUrl={currentPage < totalPages ? `/bilgi-merkezi?page=${currentPage + 1}` : undefined}
+    />
+  </section>
+</Layout>

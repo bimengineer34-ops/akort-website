@@ -1,38 +1,70 @@
-import yaml from 'js-yaml';
-// `?raw` inlines the file's text content at build time (Vite), so this works
-// the same in `astro dev` and in a bundled `astro build` — unlike reading the
-// file from disk via `fs` relative to the compiled module's own location.
-import navRaw from './navigation.data.yaml?raw';
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { settings } from '~/db/schema';
 
-// Menu, footer and contact details live in `navigation.data.yaml` so they can
-// be edited from the admin panel (Decap CMS, `/admin`) without touching code.
-const nav = yaml.load(navRaw) as {
-  header: { links: Array<Record<string, unknown>>; actions: Array<Record<string, unknown>> };
+// Menus, footer and contact details are stored in the database (editable at
+// /admin/menu and /admin/ayarlar). These are functions, not static exports —
+// each call re-reads the DB, so edits made in the admin panel show up on the
+// very next page request without restarting the server. (A plain top-level
+// `export const` here would be computed once at server start and cached for
+// the process's lifetime, which is wrong for content that changes at runtime.)
+// `src/navigation.data.yaml` is the original seed source only; it isn't read
+// here anymore.
+
+interface NavLink {
+  text: string;
+  href?: string;
+  links?: NavLink[];
+}
+
+interface NavData {
+  header: { links: NavLink[]; actions: Array<{ text: string; href: string }> };
   footer: {
     links: Array<{ title: string; links: Array<{ text: string; href: string }> }>;
     secondaryLinks: Array<{ text: string; href: string }>;
     socialLinks: Array<{ ariaLabel: string; icon: string; href: string }>;
     footNote: string;
   };
-  contact: { phone: string; email: string; address: string; linkedin: string; instagram: string };
+}
+
+export interface ContactData {
+  phone: string;
+  email: string;
+  address: string;
+  linkedin: string;
+  instagram: string;
+}
+
+const EMPTY_NAV: NavData = {
+  header: { links: [], actions: [] },
+  footer: { links: [], secondaryLinks: [], socialLinks: [], footNote: '' },
 };
+const EMPTY_CONTACT: ContactData = { phone: '', email: '', address: '', linkedin: '', instagram: '' };
 
-export const contactData = nav.contact;
+const readNav = (): NavData =>
+  (db.select().from(settings).where(eq(settings.key, 'navigation')).get()?.value as NavData) ?? EMPTY_NAV;
 
-export const headerData = nav.header;
+export const getContactData = (): ContactData =>
+  (db.select().from(settings).where(eq(settings.key, 'contact')).get()?.value as ContactData) ?? EMPTY_CONTACT;
 
-export const footerData = {
-  ...nav.footer,
-  links: [
-    ...nav.footer.links,
-    {
-      title: 'İletişim',
-      links: [
-        { text: `Telefon: ${nav.contact.phone}`, href: `tel:${nav.contact.phone.replace(/[^+\d]/g, '')}` },
-        { text: `E-posta: ${nav.contact.email}`, href: `mailto:${nav.contact.email}` },
-        { text: `Adres: ${nav.contact.address}`, href: '/iletisim' },
-      ],
-    },
-  ],
-  footNote: nav.footer.footNote.replace('{year}', String(new Date().getFullYear())),
+export const getHeaderData = () => readNav().header;
+
+export const getFooterData = () => {
+  const nav = readNav();
+  const contact = getContactData();
+  return {
+    ...nav.footer,
+    links: [
+      ...nav.footer.links,
+      {
+        title: 'İletişim',
+        links: [
+          { text: `Telefon: ${contact.phone}`, href: `tel:${contact.phone.replace(/[^+\d]/g, '')}` },
+          { text: `E-posta: ${contact.email}`, href: `mailto:${contact.email}` },
+          { text: `Adres: ${contact.address}`, href: '/iletisim' },
+        ],
+      },
+    ],
+    footNote: nav.footer.footNote.replace('{year}', String(new Date().getFullYear())),
+  };
 };

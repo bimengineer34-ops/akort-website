@@ -7,6 +7,7 @@ import type { SEOProps } from 'astro-seo';
 import { SITE, METADATA, I18N } from 'astrowind:config';
 import type { MetaData, MetaDataOpenGraph } from '~/types';
 import { getCanonical } from '~/utils/permalinks';
+import { getSiteSettings } from '~/lib/siteSettings';
 
 import { adaptOpenGraphImages } from '~/utils/images';
 
@@ -24,10 +25,17 @@ const {
   twitter = {},
 } = Astro.props;
 
+// Site Ayarları panelinden düzenlenen alanlar varsa config.yaml varsayılanlarının önüne geçer.
+const siteSettings = getSiteSettings();
+const siteName = siteSettings?.name || SITE?.name;
+const defaultTitle = siteSettings?.seoTitleDefault || METADATA?.title?.default || '';
+const titleTemplate = siteSettings?.seoTitleTemplate || METADATA?.title?.template || '%s';
+const defaultDescription = siteSettings?.seoDescription || METADATA?.description;
+
 const mergedOg: MetaDataOpenGraph = merge(
   {
     url: canonical,
-    siteName: SITE?.name,
+    siteName,
     images: [],
     locale: I18N?.language || 'en',
     type: 'website',
@@ -48,13 +56,13 @@ function buildOpenGraph(og: MetaDataOpenGraph): SEOProps['openGraph'] | undefine
 
   return {
     basic: {
-      title: title || METADATA?.title?.default || '',
+      title: title || defaultTitle,
       type: og.type || 'website',
       image: imageUrl,
       url: og.url,
     },
     optional: {
-      description: description || METADATA?.description,
+      description: description || defaultDescription,
       locale: og.locale,
       siteName: og.siteName,
     },
@@ -62,7 +70,7 @@ function buildOpenGraph(og: MetaDataOpenGraph): SEOProps['openGraph'] | undefine
       url: imageUrl,
       width: firstImage?.width,
       height: firstImage?.height,
-      alt: title || METADATA?.title?.default || '',
+      alt: title || defaultTitle,
     },
     ...(og.type === 'article' && og.article ? { article: og.article } : {}),
   };
@@ -89,8 +97,8 @@ const mergedTwitter = merge(
 );
 
 const seoProps: SEOProps = {
-  title: title || METADATA?.title?.default || '',
-  titleTemplate: ignoreTitleTemplate ? '%s' : METADATA?.title?.template || '%s',
+  title: title || defaultTitle,
+  titleTemplate: ignoreTitleTemplate ? '%s' : titleTemplate,
   canonical: canonical,
   noindex:
     typeof robots?.index !== 'undefined'
@@ -104,7 +112,7 @@ const seoProps: SEOProps = {
       : typeof METADATA?.robots?.follow !== 'undefined'
         ? !METADATA.robots.follow
         : true,
-  description: description || METADATA?.description,
+  description: description || defaultDescription,
   openGraph: buildOpenGraph(adaptedOg),
   twitter: mergedTwitter,
   surpressWarnings: true,

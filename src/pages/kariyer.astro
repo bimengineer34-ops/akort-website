@@ -10,8 +10,9 @@ const metadata = {
     'AKORT Mühendislik yetenek havuzuna katılın; mekanik, elektrik, BIM ve yapı disiplinlerinde açık pozisyonlar için başvurunuzu iletin.',
 };
 
-const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
-const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+export const prerender = false;
+
+const sent = Astro.url.searchParams.get('sent') === '1';
 ---
 
 <Layout metadata={metadata}>
@@ -42,15 +43,22 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     ]}
   />
 
+  {
+    sent && (
+      <div class="mx-auto mb-10 max-w-xl rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-200">
+        Başvurunuz alındı, teşekkür ederiz.
+      </div>
+    )
+  }
+
   <ContactUs
     id="basvuru"
     tagline="Başvuru"
     title="Özgeçmişinizi Gönderin"
     subtitle="Bilgilerinizi ve özgeçmişinizi paylaşın; uygun bir pozisyon açıldığında sizinle iletişime geçelim."
-    action={WEB3FORMS_ENDPOINT}
+    action="/api/mesaj"
     inputs={[
-      { type: 'hidden', name: 'access_key', value: WEB3FORMS_ACCESS_KEY },
-      { type: 'hidden', name: 'subject', value: 'AKORT Mühendislik — Kariyer Başvurusu' },
+      { type: 'hidden', name: 'type', value: 'career' },
       { type: 'text', name: 'name', label: 'Ad Soyad', required: true },
       { type: 'email', name: 'email', label: 'E-posta', required: true },
       { type: 'tel', name: 'phone', label: 'Telefon' },

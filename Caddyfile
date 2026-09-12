@@ -1,10 +1,5 @@
 www.akortmuhendislik.com {
-	handle /oauth/* {
-		reverse_proxy oauth:8081
-	}
-	handle {
-		reverse_proxy astrowind:8080
-	}
+	reverse_proxy astrowind:4321
 }
 
 akortmuhendislik.com {

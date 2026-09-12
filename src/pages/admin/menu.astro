@@ -1,0 +1,58 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { settings } from '~/db/schema';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+let error = '';
+let success = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const raw = String(form.get('json') ?? '');
+  try {
+    const parsed = JSON.parse(raw);
+    db.update(settings).set({ value: parsed }).where(eq(settings.key, 'navigation')).run();
+    success = 'Menü güncellendi.';
+  } catch {
+    error = 'Geçersiz JSON — lütfen sözdizimini kontrol edin (eksik virgül, tırnak vb.).';
+  }
+}
+
+const row = db.select().from(settings).where(eq(settings.key, 'navigation')).get();
+const json = JSON.stringify(row?.value ?? {}, null, 2);
+---
+
+<AdminLayout title="Menü Yönetimi">
+  {error && <div class="alert alert-danger">{error}</div>}
+  {success && <div class="alert alert-success">{success}</div>}
+
+  <div class="card">
+    <div class="card-header">
+      <h3 class="card-title">Üst Menü, Footer ve Sosyal Medya</h3>
+    </div>
+    <div class="card-body">
+      <p class="text-muted">
+        Bu alan üst menüyü (<code>header.links</code>), sağ üstteki butonu (<code>header.actions</code>), footer
+        sütunlarını (<code>footer.links</code>), alt yasal bağlantıları (<code>footer.secondaryLinks</code>) ve sosyal
+        medya ikonlarını (<code>footer.socialLinks</code>) JSON olarak düzenlemenizi sağlar. Her öğede <code>text</code>
+        (görünen metin) ve <code>href</code> (adres) alanları bulunur; bir menü öğesinin alt menüsü varsa <code
+          >href</code
+        >
+        yerine bir <code>links</code> listesi kullanılır.
+      </p>
+      <form method="POST">
+        <textarea
+          name="json"
+          class="form-control font-monospace"
+          rows="28"
+          style="font-size: 0.85rem"
+          spellcheck="false">{json}</textarea
+        >
+        <button type="submit" class="btn btn-primary mt-3">Kaydet</button>
+      </form>
+    </div>
+  </div>
+</AdminLayout>

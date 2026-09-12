@@ -2,7 +2,7 @@
 // Slim utility bar above the header: quick contact details instead of a
 // marketing banner. Everything is a prop so it can be overridden per page.
 import { Icon } from 'astro-icon/components';
-import { contactData } from '~/navigation';
+import { getContactData } from '~/navigation';
 
 export interface Props {
   phone?: string;
@@ -11,6 +11,7 @@ export interface Props {
   instagram?: string;
 }
 
+const contactData = getContactData();
 const {
   phone = contactData.phone,
   email = contactData.email,

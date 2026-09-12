@@ -1,49 +1,29 @@
 import { getRssString } from '@astrojs/rss';
+import { desc, eq } from 'drizzle-orm';
 
-import { SITE, METADATA, APP_BLOG, I18N } from 'astrowind:config';
-import { fetchPosts } from '~/utils/blog';
-import { getPermalink } from '~/utils/permalinks';
+import { SITE, METADATA } from 'astrowind:config';
+import { db } from '~/db/client';
+import { posts } from '~/db/schema';
 
-// The feed is generated from the build-time content collection, so keep it
-// prerendered even if the project opts into on-demand rendering.
-export const prerender = true;
+export const prerender = false;
 
 export const GET = async () => {
-  if (!APP_BLOG.isEnabled) {
-    return new Response(null, {
-      status: 404,
-      statusText: 'Not found',
-    });
-  }
-
-  const posts = await fetchPosts();
+  const rows = db.select().from(posts).where(eq(posts.draft, false)).orderBy(desc(posts.publishDate)).all();
 
   const rss = await getRssString({
-    title: `${SITE.name}’s Blog`,
+    title: `${SITE.name}’in Bilgi Merkezi`,
     description: METADATA?.description || '',
     site: import.meta.env.SITE,
-
-    items: posts.map((post) => ({
-      link: getPermalink(post.permalink, 'post'),
+    items: rows.map((post) => ({
+      link: `/bilgi-merkezi/${post.slug}`,
       title: post.title,
-      description: post.excerpt,
+      description: post.excerpt ?? '',
       pubDate: post.publishDate,
       ...(post.author ? { author: post.author } : {}),
-      categories: [...(post.category ? [post.category.title] : []), ...(post.tags ?? []).map((tag) => tag.title)],
+      categories: [...(post.category ? [post.category] : []), ...(post.tags ?? [])],
     })),
-
     trailingSlash: SITE.trailingSlash,
-    xmlns: { atom: 'http://www.w3.org/2005/Atom' },
-    customData: [
-      `<language>${I18N?.language || 'en'}</language>`,
-      `<lastBuildDate>${new Date().toUTCString()}</lastBuildDate>`,
-      `<atom:link href="${new URL(getPermalink('rss.xml', 'asset'), import.meta.env.SITE)}" rel="self" type="application/rss+xml" />`,
-    ].join(''),
   });
 
-  return new Response(rss, {
-    headers: {
-      'Content-Type': 'application/xml',
-    },
-  });
+  return new Response(rss, { headers: { 'Content-Type': 'application/xml' } });
 };

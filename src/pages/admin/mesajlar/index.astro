@@ -1,0 +1,98 @@
+---
+import { desc, eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { messages } from '~/db/schema';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+export const prerender = false;
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const id = Number(form.get('id'));
+  const action = String(form.get('_action'));
+  if (action === 'delete') {
+    db.delete(messages).where(eq(messages.id, id)).run();
+  }
+  return Astro.redirect('/admin/mesajlar');
+}
+
+const filterType = Astro.url.searchParams.get('type') ?? '';
+const rows = db
+  .select()
+  .from(messages)
+  .orderBy(desc(messages.createdAt))
+  .all()
+  .filter((m) => !filterType || m.type === filterType);
+
+const typeLabel: Record<string, string> = { contact: 'İletişim', quote: 'Teklif', career: 'Kariyer' };
+---
+
+<AdminLayout title="İletişim Mesajları">
+  <div class="mb-3 d-flex gap-2">
+    {
+      ['', 'contact', 'quote', 'career'].map((t) => (
+        <a
+          href={t ? `/admin/mesajlar?type=${t}` : '/admin/mesajlar'}
+          class:list={['btn btn-sm', filterType === t ? 'btn-primary' : 'btn-outline-secondary']}
+        >
+          {t ? typeLabel[t] : 'Tümü'}
+        </a>
+      ))
+    }
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table card-table table-vcenter">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Ad Soyad</th>
+            <th>E-posta</th>
+            <th>Tür</th>
+            <th>Durum</th>
+            <th>Tarih</th>
+            <th>İşlemler</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.length === 0 ? (
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">
+                  Kayıt bulunamadı.
+                </td>
+              </tr>
+            ) : (
+              rows.map((m) => (
+                <tr class={m.status === 'yeni' ? 'table-warning' : ''}>
+                  <td>{m.id}</td>
+                  <td>{m.name}</td>
+                  <td>{m.email}</td>
+                  <td>{typeLabel[m.type] ?? m.type}</td>
+                  <td>
+                    <span class:list={['badge', m.status === 'yeni' ? 'bg-yellow-lt' : 'bg-green-lt']}>{m.status}</span>
+                  </td>
+                  <td>{new Date(m.createdAt).toLocaleString('tr-TR')}</td>
+                  <td class="d-flex gap-1">
+                    <a href={`/admin/mesajlar/${m.id}`} class="btn btn-sm btn-icon btn-outline-primary">
+                      <Icon name="tabler:eye" class="w-4 h-4" />
+                    </a>
+                    <form method="POST" onsubmit="return confirm('Bu mesajı silmek istediğinize emin misiniz?')">
+                      <input type="hidden" name="id" value={m.id} />
+                      <input type="hidden" name="_action" value="delete" />
+                      <button type="submit" class="btn btn-sm btn-icon btn-outline-danger">
+                        <Icon name="tabler:trash" class="w-4 h-4" />
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+              ))
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

@@ -1,0 +1,111 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { messages } from '~/db/schema';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+const id = Number(Astro.params.id);
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const priority = String(form.get('priority') ?? 'orta');
+  db.update(messages).set({ priority }).where(eq(messages.id, id)).run();
+}
+
+// Mark as read on view.
+db.update(messages).set({ status: 'okundu' }).where(eq(messages.id, id)).run();
+
+const m = db.select().from(messages).where(eq(messages.id, id)).get();
+if (!m) return Astro.redirect('/admin/mesajlar');
+
+const typeLabel: Record<string, string> = { contact: 'İletişim', quote: 'Teklif', career: 'Kariyer' };
+const fieldLabel: Record<string, string> = {
+  project_location: 'Proje Lokasyonu',
+  project_type: 'Proje Türü',
+  project_area: 'Yaklaşık Proje Alanı',
+  requested_service: 'Talep Edilen Hizmet',
+  project_stage: 'Proje Aşaması',
+  position_interest: 'İlgi Duyduğu Alan',
+  attachment: 'Dosya',
+  cv: 'Özgeçmiş',
+};
+---
+
+<AdminLayout title={`Mesaj #${m.id}`}>
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">{m.name} — {typeLabel[m.type] ?? m.type}</h3>
+        </div>
+        <div class="card-body">
+          <dl class="row">
+            <dt class="col-3">E-posta</dt>
+            <dd class="col-9"><a href={`mailto:${m.email}`}>{m.email}</a></dd>
+            {
+              m.phone && (
+                <>
+                  <dt class="col-3">Telefon</dt>
+                  <dd class="col-9">
+                    <a href={`tel:${m.phone}`}>{m.phone}</a>
+                  </dd>
+                </>
+              )
+            }
+            {
+              m.company && (
+                <>
+                  <dt class="col-3">Firma</dt>
+                  <dd class="col-9">{m.company}</dd>
+                </>
+              )
+            }
+            {
+              Object.entries(m.meta ?? {}).map(([key, value]) => (
+                <>
+                  <dt class="col-3">{fieldLabel[key] ?? key}</dt>
+                  <dd class="col-9">
+                    {key === 'attachment' || key === 'cv' ? (
+                      <a href={value} target="_blank">
+                        Dosyayı Aç
+                      </a>
+                    ) : (
+                      value
+                    )}
+                  </dd>
+                </>
+              ))
+            }
+            <dt class="col-3">Tarih</dt>
+            <dd class="col-9">{new Date(m.createdAt).toLocaleString('tr-TR')}</dd>
+          </dl>
+          {
+            m.message && (
+              <>
+                <hr />
+                <p class="white-space-pre-wrap">{m.message}</p>
+              </>
+            )
+          }
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <form method="POST">
+            <label class="form-label">Öncelik</label>
+            <select name="priority" class="form-select mb-3" onchange="this.form.submit()">
+              <option value="dusuk" selected={m.priority === 'dusuk'}>Düşük</option>
+              <option value="orta" selected={m.priority === 'orta'}>Orta</option>
+              <option value="yuksek" selected={m.priority === 'yuksek'}>Yüksek</option>
+            </select>
+          </form>
+          <a href="/admin/mesajlar" class="btn btn-outline-secondary w-100">← Mesaj Listesine Dön</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>

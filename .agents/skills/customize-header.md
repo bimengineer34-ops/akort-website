@@ -15,7 +15,7 @@ Files: `src/components/widgets/Header.astro` (markup + `aw-header` web component
 | `showRssFeed`     | `false`    | RSS icon (`/rss.xml`)                              |
 | `position`        | `'center'` | `'left'`, `'center'` (3-column grid) or `'right'`  |
 
-`PageLayout.astro` renders `<Header {...headerData} isSticky showRssFeed showToggleTheme />`; `LandingLayout.astro` shows how to pass a reduced menu.
+`PageLayout.astro` renders `<Header {...getHeaderData()} isSticky showRssFeed showToggleTheme />` — `getHeaderData()` reads the menu from the database (`settings` row `key='navigation'`, editable at `/admin/menu`), not a static export. See `.agents/skills/admin-panel.md`.
 
 ## Breakpoints
 

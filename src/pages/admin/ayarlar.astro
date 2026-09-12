@@ -1,0 +1,239 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { settings } from '~/db/schema';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+let success = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const section = String(form.get('_section'));
+
+  if (section === 'site') {
+    db.update(settings)
+      .set({
+        value: {
+          name: String(form.get('name') ?? ''),
+          url: String(form.get('url') ?? ''),
+          googleSiteVerificationId: String(form.get('googleSiteVerificationId') ?? ''),
+          seoTitleDefault: String(form.get('seoTitleDefault') ?? ''),
+          seoTitleTemplate: String(form.get('seoTitleTemplate') ?? ''),
+          seoDescription: String(form.get('seoDescription') ?? ''),
+          googleAnalyticsId: String(form.get('googleAnalyticsId') ?? ''),
+        },
+      })
+      .where(eq(settings.key, 'site'))
+      .run();
+  }
+
+  if (section === 'contact') {
+    db.update(settings)
+      .set({
+        value: {
+          phone: String(form.get('phone') ?? ''),
+          email: String(form.get('email') ?? ''),
+          address: String(form.get('address') ?? ''),
+          linkedin: String(form.get('linkedin') ?? ''),
+          instagram: String(form.get('instagram') ?? ''),
+        },
+      })
+      .where(eq(settings.key, 'contact'))
+      .run();
+  }
+
+  if (section === 'homepage') {
+    const proofValues = form.getAll('proof_value') as string[];
+    const proofLabels = form.getAll('proof_label') as string[];
+    const proofIcons = form.getAll('proof_icon') as string[];
+    const countTitles = form.getAll('count_title') as string[];
+    const countAmounts = form.getAll('count_amount') as string[];
+
+    db.update(settings)
+      .set({
+        value: {
+          heroTagline: String(form.get('heroTagline') ?? ''),
+          heroTitle: String(form.get('heroTitle') ?? ''),
+          heroSubtitle: String(form.get('heroSubtitle') ?? ''),
+          proofStats: proofValues.map((value, i) => ({
+            value,
+            label: proofLabels[i] ?? '',
+            icon: proofIcons[i] ?? '',
+          })),
+          countStats: countTitles.map((title, i) => ({ title, amount: countAmounts[i] ?? '' })),
+        },
+      })
+      .where(eq(settings.key, 'homepage'))
+      .run();
+  }
+
+  success = 'Ayarlar kaydedildi.';
+}
+
+const site = db.select().from(settings).where(eq(settings.key, 'site')).get()?.value as Record<string, string>;
+const contact = db.select().from(settings).where(eq(settings.key, 'contact')).get()?.value as Record<string, string>;
+const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).get()?.value as {
+  heroTagline: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  proofStats: Array<{ value: string; label: string; icon: string }>;
+  countStats: Array<{ title: string; amount: string }>;
+};
+---
+
+<AdminLayout title="Site Ayarları">
+  {success && <div class="alert alert-success">{success}</div>}
+
+  <div class="card mb-3">
+    <div class="card-header"><h3 class="card-title">Site & SEO</h3></div>
+    <div class="card-body">
+      <form method="POST">
+        <input type="hidden" name="_section" value="site" />
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Site Adı</label>
+            <input type="text" name="name" class="form-control" value={site?.name} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Site Adresi (URL)</label>
+            <input type="text" name="url" class="form-control" value={site?.url} />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Varsayılan SEO Başlığı</label>
+          <input type="text" name="seoTitleDefault" class="form-control" value={site?.seoTitleDefault} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">SEO Başlık Şablonu</label>
+          <input type="text" name="seoTitleTemplate" class="form-control" value={site?.seoTitleTemplate} />
+          <small class="text-muted">%s, sayfa başlığının yerine geçer.</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Varsayılan Meta Açıklama</label>
+          <textarea name="seoDescription" class="form-control" rows="3">{site?.seoDescription}</textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Google Analytics Measurement ID</label>
+            <input
+              type="text"
+              name="googleAnalyticsId"
+              class="form-control"
+              value={site?.googleAnalyticsId}
+              placeholder="G-XXXXXXXXXX"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Google Site Doğrulama Kodu</label>
+            <input
+              type="text"
+              name="googleSiteVerificationId"
+              class="form-control"
+              value={site?.googleSiteVerificationId}
+            />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header"><h3 class="card-title">İletişim Bilgileri</h3></div>
+    <div class="card-body">
+      <form method="POST">
+        <input type="hidden" name="_section" value="contact" />
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Telefon</label>
+            <input type="text" name="phone" class="form-control" value={contact?.phone} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">E-posta</label>
+            <input type="text" name="email" class="form-control" value={contact?.email} />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Adres</label>
+          <input type="text" name="address" class="form-control" value={contact?.address} />
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">LinkedIn</label>
+            <input type="text" name="linkedin" class="form-control" value={contact?.linkedin} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Instagram</label>
+            <input type="text" name="instagram" class="form-control" value={contact?.instagram} />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Ana Sayfa — Hero & İstatistikler</h3></div>
+    <div class="card-body">
+      <form method="POST">
+        <input type="hidden" name="_section" value="homepage" />
+        <div class="mb-3">
+          <label class="form-label">Üst Etiket (Hero)</label>
+          <input type="text" name="heroTagline" class="form-control" value={homepage?.heroTagline} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Hero Başlığı</label>
+          <input type="text" name="heroTitle" class="form-control" value={homepage?.heroTitle} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Hero Alt Başlığı</label>
+          <textarea name="heroSubtitle" class="form-control" rows="2">{homepage?.heroSubtitle}</textarea>
+        </div>
+
+        <h4 class="mt-4">Öne Çıkan Şerit (3 Öğe)</h4>
+        <div class="row g-2 mb-2 fw-bold text-muted small">
+          <div class="col-3">Değer</div>
+          <div class="col-6">Etiket</div>
+          <div class="col-3">İkon</div>
+        </div>
+        {
+          (homepage?.proofStats ?? [{}, {}, {}]).map((s) => (
+            <div class="row g-2 mb-2">
+              <div class="col-3">
+                <input type="text" name="proof_value" class="form-control" value={s.value} />
+              </div>
+              <div class="col-6">
+                <input type="text" name="proof_label" class="form-control" value={s.label} />
+              </div>
+              <div class="col-3">
+                <input type="text" name="proof_icon" class="form-control" value={s.icon} placeholder="tabler:..." />
+              </div>
+            </div>
+          ))
+        }
+
+        <h4 class="mt-4">Sayılarla AKORT (4 Öğe)</h4>
+        <div class="row g-2 mb-2 fw-bold text-muted small">
+          <div class="col-6">Başlık</div>
+          <div class="col-6">Değer</div>
+        </div>
+        {
+          (homepage?.countStats ?? [{}, {}, {}, {}]).map((s) => (
+            <div class="row g-2 mb-2">
+              <div class="col-6">
+                <input type="text" name="count_title" class="form-control" value={s.title} />
+              </div>
+              <div class="col-6">
+                <input type="text" name="count_amount" class="form-control" value={s.amount} />
+              </div>
+            </div>
+          ))
+        }
+
+        <button type="submit" class="btn btn-primary mt-3">Kaydet</button>
+      </form>
+    </div>
+  </div>
+</AdminLayout>

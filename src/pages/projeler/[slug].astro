@@ -1,23 +1,25 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { projects } from '~/db/schema';
+import { renderMarkdown } from '~/lib/markdown';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Image from '~/components/common/Image.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 
-export async function getStaticPaths() {
-  const projects = await getCollection('project');
-  return projects
-    .filter((p) => !p.data.draft)
-    .map((project) => ({
-      params: { slug: project.id },
-      props: { project },
-    }));
+export const prerender = false;
+
+const project = db
+  .select()
+  .from(projects)
+  .where(eq(projects.slug, Astro.params.slug ?? ''))
+  .get();
+if (!project || project.draft) {
+  return Astro.redirect('/404');
 }
 
-const { project } = Astro.props;
-const { Content } = await render(project);
 const {
   title,
   excerpt,
@@ -33,12 +35,10 @@ const {
   solution,
   systems,
   outcomes,
-} = project.data;
+  body,
+} = project;
 
-const metadata = {
-  title,
-  description: excerpt,
-};
+const metadata = { title, description: excerpt ?? undefined };
 
 const facts = [
   { label: 'İşveren', value: client },
@@ -47,10 +47,12 @@ const facts = [
   { label: 'Alan', value: area },
   { label: 'Hizmet Kapsamı', value: scope },
 ];
+
+const bodyHtml = renderMarkdown(body);
 ---
 
 <Layout metadata={metadata}>
-  <HeroText tagline={tags?.join(' · ')} title={title} subtitle={excerpt} />
+  <HeroText tagline={(tags ?? []).join(' · ')} title={title} subtitle={excerpt ?? undefined} />
 
   <WidgetWrapper containerClass="max-w-5xl mx-auto">
     {
@@ -85,9 +87,7 @@ const facts = [
       }
     </dl>
 
-    <div class="prose prose-lg dark:prose-invert max-w-none">
-      <Content />
-    </div>
+    {bodyHtml && <div class="prose prose-lg dark:prose-invert max-w-none" set:html={bodyHtml} />}
 
     <div class="mt-10 grid gap-8 md:grid-cols-2">
       {

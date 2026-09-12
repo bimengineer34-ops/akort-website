@@ -1,5 +1,7 @@
 # Add a Page
 
+For a Kurumsal or Hizmet-style page (hero + feature list + approach text), prefer adding a row to the `pages` table via `/admin/sayfalar` instead — it's rendered by the existing catch-all `src/pages/[slug].astro` and is editable without a code change. Use the steps below only for pages with bespoke layout (like `iletisim.astro`, `kariyer.astro`, the legal pages) that don't fit that generic shape.
+
 ## Steps
 
 1. Create a new `.astro` file in `src/pages/`

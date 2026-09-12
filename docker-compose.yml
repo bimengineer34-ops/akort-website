@@ -2,23 +2,16 @@ services:
   astrowind:
     build: .
     container_name: astrowind
-    expose:
-      - '8080'
-    depends_on:
-      - oauth
-
-  # GitHub OAuth provider for the Decap CMS admin panel (/admin). Requires a
-  # GitHub OAuth App — see oauth-server/server.mjs and .env.example.
-  oauth:
-    build: ./oauth-server
-    container_name: akort-oauth
     env_file:
       - .env
+    volumes:
+      - ./data:/app/data
+      - ./public/uploads:/app/public/uploads
     expose:
-      - '8081'
+      - '4321'
 
   # Public entry point: automatic HTTPS (Let's Encrypt) for the domain, then
-  # routes to the site and to the OAuth provider. See ./Caddyfile.
+  # routes everything to the app. See ./Caddyfile.
   caddy:
     image: caddy:2-alpine
     container_name: akort-caddy
@@ -31,7 +24,6 @@ services:
       - caddy_config:/config
     depends_on:
       - astrowind
-      - oauth
 
 volumes:
   caddy_data:

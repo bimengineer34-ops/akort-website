@@ -1,0 +1,63 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { users } from '~/db/schema';
+import { verifyPassword, createSession, SESSION_COOKIE, sessionCookieOptions } from '~/lib/auth';
+
+export const prerender = false;
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const username = String(form.get('username') ?? '').trim();
+  const password = String(form.get('password') ?? '');
+
+  const user = db.select().from(users).where(eq(users.username, username)).get();
+  const ok = user ? await verifyPassword(password, user.passwordHash) : false;
+
+  if (ok && user) {
+    const token = createSession(user.id);
+    Astro.cookies.set(SESSION_COOKIE, token, sessionCookieOptions);
+    return Astro.redirect('/admin');
+  }
+  error = 'Kullanıcı adı veya şifre hatalı.';
+}
+---
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Giriş — AKORT Yönetim Paneli</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta20/dist/css/tabler.min.css" />
+  </head>
+  <body class="d-flex flex-column">
+    <div class="page page-center">
+      <div class="container container-tight py-4">
+        <div class="text-center mb-4">
+          <span class="h1">AKORT Yönetim Paneli</span>
+        </div>
+        <form method="POST" class="card card-md" autocomplete="off">
+          <div class="card-body">
+            <h2 class="h2 text-center mb-4">Hesabınıza giriş yapın</h2>
+            {error && <div class="alert alert-danger">{error}</div>}
+            <div class="mb-3">
+              <label class="form-label">Kullanıcı adı</label>
+              <input type="text" name="username" class="form-control" required autofocus />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Şifre</label>
+              <input type="password" name="password" class="form-control" required />
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="btn btn-primary w-100">Giriş Yap</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

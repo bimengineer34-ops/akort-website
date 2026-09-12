@@ -1,0 +1,105 @@
+---
+import { count, eq, desc } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { messages, posts, projects, galleryItems, pages, users } from '~/db/schema';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+export const prerender = false;
+
+const c = (n: number) => n;
+const postCount = c(db.select({ n: count() }).from(posts).get()?.n ?? 0);
+const projectCount = c(db.select({ n: count() }).from(projects).get()?.n ?? 0);
+const galleryCount = c(db.select({ n: count() }).from(galleryItems).get()?.n ?? 0);
+const pageCount = c(db.select({ n: count() }).from(pages).get()?.n ?? 0);
+const userCount = c(db.select({ n: count() }).from(users).get()?.n ?? 0);
+const unreadCount = c(db.select({ n: count() }).from(messages).where(eq(messages.status, 'yeni')).get()?.n ?? 0);
+
+const recentMessages = db.select().from(messages).orderBy(desc(messages.createdAt)).limit(5).all();
+
+const cards = [
+  { label: 'İletişim Mesajları', value: unreadCount, sub: 'okunmamış', icon: 'tabler:mail', color: 'bg-red-lt' },
+  { label: 'Blog Yazısı', value: postCount, sub: 'toplam', icon: 'tabler:article', color: 'bg-blue-lt' },
+  { label: 'Proje', value: projectCount, sub: 'toplam', icon: 'tabler:briefcase', color: 'bg-green-lt' },
+  { label: 'Galeri Öğesi', value: galleryCount, sub: 'toplam', icon: 'tabler:photo', color: 'bg-yellow-lt' },
+  { label: 'Sayfa', value: pageCount, sub: 'toplam', icon: 'tabler:file-text', color: 'bg-purple-lt' },
+  { label: 'Kullanıcı', value: userCount, sub: 'toplam', icon: 'tabler:users', color: 'bg-cyan-lt' },
+];
+---
+
+<AdminLayout title="Dashboard">
+  <div class="alert alert-info" role="alert">
+    <strong>Hoş Geldiniz!</strong> Yönetim paneline hoş geldiniz. Sol menüden yapmak istediğiniz işlemi seçebilirsiniz.
+  </div>
+
+  <div class="row row-deck row-cards mb-3">
+    {
+      cards.map((card) => (
+        <div class="col-sm-6 col-lg-4">
+          <div class="card">
+            <div class="card-body d-flex align-items-center gap-3">
+              <span class={`avatar ${card.color}`}>
+                <Icon name={card.icon} class="w-6 h-6" />
+              </span>
+              <div>
+                <div class="h1 mb-0">{card.value}</div>
+                <div class="text-muted">
+                  {card.label} <span class="text-muted small">({card.sub})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h3 class="card-title">Son Mesajlar</h3>
+      <a href="/admin/mesajlar" class="btn btn-sm btn-outline-primary">Tümünü Gör</a>
+    </div>
+    <div class="table-responsive">
+      <table class="table card-table table-vcenter">
+        <thead>
+          <tr>
+            <th>Ad Soyad</th>
+            <th>E-posta</th>
+            <th>Tür</th>
+            <th>Durum</th>
+            <th>Tarih</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            recentMessages.length === 0 ? (
+              <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                  Henüz mesaj yok.
+                </td>
+              </tr>
+            ) : (
+              recentMessages.map((m) => (
+                <tr>
+                  <td>{m.name}</td>
+                  <td>{m.email}</td>
+                  <td>{m.type}</td>
+                  <td>
+                    <span class:list={['badge', m.status === 'yeni' ? 'bg-yellow-lt' : 'bg-green-lt']}>{m.status}</span>
+                  </td>
+                  <td>{new Date(m.createdAt).toLocaleString('tr-TR')}</td>
+                  <td>
+                    <a href={`/admin/mesajlar/${m.id}`} class="btn btn-sm btn-icon btn-outline-primary">
+                      <Icon name="tabler:eye" class="w-4 h-4" />
+                    </a>
+                  </td>
+                </tr>
+              ))
+            )
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>

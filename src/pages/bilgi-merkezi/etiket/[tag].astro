@@ -1,0 +1,47 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { posts } from '~/db/schema';
+import { toPost } from '~/lib/toPost';
+import { cleanSlug, getPermalink } from '~/utils/permalinks';
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+
+export const prerender = false;
+
+const tagSlug = Astro.params.tag ?? '';
+const rows = db
+  .select()
+  .from(posts)
+  .where(eq(posts.draft, false))
+  .all()
+  .filter((r) => (r.tags ?? []).some((t) => cleanSlug(t) === tagSlug));
+
+if (rows.length === 0) {
+  return Astro.redirect('/404');
+}
+
+const tagTitle = (rows[0].tags ?? []).find((t) => cleanSlug(t) === tagSlug) as string;
+const postList = rows.map(toPost).sort((a, b) => b.publishDate.getTime() - a.publishDate.getTime());
+
+const breadcrumbs = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  { text: 'Bilgi Merkezi', href: '/bilgi-merkezi' },
+  { text: `Etiket: ${tagTitle}` },
+];
+
+const metadata = {
+  title: `'${tagTitle}' Etiketli Yazılar`,
+  description: `AKORT Mühendislik Bilgi Merkezi'nde ${tagTitle} etiketli yazılar.`,
+};
+---
+
+<Layout metadata={metadata}>
+  <Breadcrumbs bar items={breadcrumbs} />
+  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline>Etiket: {tagTitle}</Headline>
+    <BlogList posts={postList} />
+  </section>
+</Layout>

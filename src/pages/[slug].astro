@@ -1,0 +1,56 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { pages } from '~/db/schema';
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+export const prerender = false;
+
+const page = db
+  .select()
+  .from(pages)
+  .where(eq(pages.slug, Astro.params.slug ?? ''))
+  .get();
+
+if (!page) {
+  return Astro.redirect('/404');
+}
+
+const metadata = { title: page.title, description: page.seoDescription ?? undefined };
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline={page.tagline ?? undefined}
+    title={page.heroTitle ?? page.title}
+    subtitle={page.heroSubtitle ?? undefined}
+  />
+
+  {
+    page.features && page.features.length > 0 && (
+      <Features tagline="Hizmet Kapsamı" title="Neleri Kapsar?" columns={2} items={page.features} />
+    )
+  }
+
+  {
+    page.approachItems && page.approachItems.length > 0 && (
+      <Content
+        tagline={page.approachTagline ?? undefined}
+        title={page.approachTitle ?? undefined}
+        items={page.approachItems}
+        image={page.image ? { src: page.image, alt: page.imageAlt ?? page.title } : undefined}
+      />
+    )
+  }
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">{page.ctaTitle}</Fragment>
+    <Fragment slot="subtitle">{page.ctaSubtitle}</Fragment>
+  </CallToAction>
+</Layout>

@@ -1,0 +1,65 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { posts } from '~/db/schema';
+import { toPost } from '~/lib/toPost';
+import { renderMarkdown } from '~/lib/markdown';
+import Layout from '~/layouts/PageLayout.astro';
+import SinglePost from '~/components/blog/SinglePost.astro';
+import ToBlogLink from '~/components/blog/ToBlogLink.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+import { getPermalink, getCanonical } from '~/utils/permalinks';
+import { truncateAtWord } from '~/utils/utils';
+import { SITE } from 'astrowind:config';
+
+export const prerender = false;
+
+const row = db
+  .select()
+  .from(posts)
+  .where(eq(posts.slug, Astro.params.slug ?? ''))
+  .get();
+if (!row || row.draft) {
+  return Astro.redirect('/404');
+}
+
+const post = toPost(row);
+const url = getCanonical(`/bilgi-merkezi/${post.slug}`);
+const bodyHtml = renderMarkdown(row.body);
+
+const metadata = {
+  title: post.title,
+  description: truncateAtWord(post.excerpt ?? '', 155),
+};
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: post.title,
+  description: post.excerpt,
+  datePublished: post.publishDate.toISOString(),
+  ...(post.author ? { author: { '@type': 'Person', name: post.author } } : {}),
+  publisher: { '@type': 'Organization', name: SITE?.name },
+  ...(post.image ? { image: post.image } : {}),
+  ...(post.category ? { articleSection: post.category.title } : {}),
+  ...(post.tags?.length ? { keywords: post.tags.map((t) => t.title).join(', ') } : {}),
+  mainEntityOfPage: String(url),
+};
+
+const breadcrumbs = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  { text: 'Bilgi Merkezi', href: '/bilgi-merkezi' },
+  ...(post.category ? [{ text: post.category.title, href: getPermalink(post.category.slug, 'category') }] : []),
+  { text: post.title },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData slot="head" schema={articleSchema} />
+  <Breadcrumbs bar hideCurrent items={breadcrumbs} />
+  <SinglePost post={post} url={url}>
+    <Fragment set:html={bodyHtml} />
+  </SinglePost>
+  <ToBlogLink />
+</Layout>

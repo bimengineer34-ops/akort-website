@@ -3,17 +3,19 @@ import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactUs from '~/components/widgets/Contact.astro';
 import Features2 from '~/components/widgets/Features2.astro';
-import { contactData } from '~/navigation';
+import { getContactData } from '~/navigation';
+
+export const prerender = false;
+
+const contactData = getContactData();
 
 const metadata = {
   title: 'İletişim',
   description: 'AKORT Mühendislik ile iletişime geçin veya projeniz için teklif formunu doldurun.',
 };
 
-// TODO: Web3Forms üzerinden alınan gerçek "access key" ile değiştirin (https://web3forms.com).
-// Access key herkese açık bir form kimliğidir, gizli bir API anahtarı değildir.
-const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
-const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+const sent = Astro.url.searchParams.get('sent') === '1';
+const error = Astro.url.searchParams.get('error') === '1';
 ---
 
 <Layout metadata={metadata}>
@@ -23,15 +25,29 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     subtitle="Sorularınız için bize kısaca yazın ya da doğrudan teklif formunu doldurun; en kısa sürede geri dönüş yapalım."
   />
 
+  {
+    sent && (
+      <div class="mx-auto mb-10 max-w-xl rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-200">
+        Mesajınız iletildi, teşekkür ederiz. En kısa sürede size dönüş yapacağız.
+      </div>
+    )
+  }
+  {
+    error && (
+      <div class="mx-auto mb-10 max-w-xl rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-red-800 dark:border-red-700 dark:bg-red-950 dark:text-red-200">
+        Mesajınız gönderilemedi. Lütfen ad, e-posta ve mesaj alanlarını kontrol edip tekrar deneyin.
+      </div>
+    )
+  }
+
   <ContactUs
     id="iletisim"
     tagline="Mesaj Gönderin"
     title="Bize Ulaşın"
     subtitle="Genel sorularınız, işbirliği talepleriniz veya kısa bilgi talepleriniz için bu formu kullanabilirsiniz."
-    action={WEB3FORMS_ENDPOINT}
+    action="/api/mesaj"
     inputs={[
-      { type: 'hidden', name: 'access_key', value: WEB3FORMS_ACCESS_KEY },
-      { type: 'hidden', name: 'subject', value: 'AKORT Mühendislik — Yeni İletişim Formu Mesajı' },
+      { type: 'hidden', name: 'type', value: 'contact' },
       { type: 'text', name: 'name', label: 'Ad Soyad', required: true },
       { type: 'email', name: 'email', label: 'E-posta', required: true },
       { type: 'tel', name: 'phone', label: 'Telefon' },
@@ -49,10 +65,9 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     tagline="Teklif Formu"
     title="Projenizi Değerlendirelim"
     subtitle="Proje bilgilerinizi paylaşın; kapsamı netleştirdikten sonra sizinle iletişime geçelim."
-    action={WEB3FORMS_ENDPOINT}
+    action="/api/mesaj"
     inputs={[
-      { type: 'hidden', name: 'access_key', value: WEB3FORMS_ACCESS_KEY },
-      { type: 'hidden', name: 'subject', value: 'AKORT Mühendislik — Yeni Teklif Talebi' },
+      { type: 'hidden', name: 'type', value: 'quote' },
       { type: 'text', name: 'name', label: 'Ad Soyad', required: true },
       { type: 'text', name: 'company', label: 'Firma' },
       { type: 'tel', name: 'phone', label: 'Telefon', required: true },
@@ -114,7 +129,7 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
       },
       { type: 'file', name: 'attachment', label: 'Dosya / Proje Yükleme', accept: '.pdf,.dwg,.jpg,.jpeg,.png,.zip' },
     ]}
-    textarea={{ label: 'Açıklama', name: 'description', rows: 5, placeholder: 'Projeniz hakkında kısaca bilgi verin' }}
+    textarea={{ label: 'Açıklama', name: 'message', rows: 5, placeholder: 'Projeniz hakkında kısaca bilgi verin' }}
     disclaimer={{
       label:
         'Bu formu göndererek, teklif değerlendirmesi amacıyla kişisel verilerinizin işlenmesini kabul edersiniz. Detaylar için KVKK Aydınlatma Metnimizi inceleyebilirsiniz.',

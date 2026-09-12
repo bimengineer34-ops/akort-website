@@ -1,0 +1,140 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { posts } from '~/db/schema';
+import { resolveImage } from '~/lib/upload';
+import { cleanSlug } from '~/utils/permalinks';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+const idParam = Astro.params.id ?? '';
+const isNew = idParam === 'yeni';
+const id = isNew ? null : Number(idParam);
+
+let error = '';
+const existing = !isNew ? db.select().from(posts).where(eq(posts.id, id!)).get() : null;
+if (!isNew && !existing) return Astro.redirect('/admin/blog');
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const title = String(form.get('title') ?? '').trim();
+  const slugInput = String(form.get('slug') ?? '').trim();
+
+  if (!title) {
+    error = 'Başlık zorunludur.';
+  } else {
+    const slug = cleanSlug(slugInput || title);
+    const image = await resolveImage(form, 'imageFile', 'image', existing?.image);
+    const values = {
+      slug,
+      title,
+      excerpt: String(form.get('excerpt') ?? '') || null,
+      image,
+      imageAlt: String(form.get('imageAlt') ?? '') || null,
+      category: String(form.get('category') ?? '') || null,
+      tags: String(form.get('tags') ?? '')
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean),
+      author: String(form.get('author') ?? '') || null,
+      publishDate: form.get('publishDate') ? new Date(String(form.get('publishDate'))) : new Date(),
+      draft: form.get('draft') === 'on',
+      body: String(form.get('body') ?? ''),
+      updatedAt: new Date(),
+    };
+
+    if (isNew) {
+      const inserted = db.insert(posts).values(values).returning({ id: posts.id }).get();
+      return Astro.redirect(`/admin/blog/${inserted.id}`);
+    } else {
+      db.update(posts).set(values).where(eq(posts.id, id!)).run();
+      return Astro.redirect(`/admin/blog/${id}`);
+    }
+  }
+}
+
+const post = !isNew ? db.select().from(posts).where(eq(posts.id, id!)).get() : null;
+const toDateInput = (d: Date) => new Date(d).toISOString().slice(0, 10);
+---
+
+<AdminLayout title={isNew ? 'Yeni Blog Yazısı' : `Düzenle: ${post?.title}`}>
+  {error && <div class="alert alert-danger">{error}</div>}
+  <div class="card">
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Başlık</label>
+          <input type="text" name="title" class="form-control" value={post?.title} required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Slug (boş bırakılırsa başlıktan oluşturulur)</label>
+          <input type="text" name="slug" class="form-control" value={post?.slug} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Özet</label>
+          <textarea name="excerpt" class="form-control" rows="2">{post?.excerpt}</textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Görsel URL</label>
+            <input type="text" name="image" class="form-control" value={post?.image} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Görsel Alt Metni</label>
+          <input type="text" name="imageAlt" class="form-control" value={post?.imageAlt} />
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Kategori</label>
+            <input
+              type="text"
+              name="category"
+              class="form-control"
+              value={post?.category}
+              placeholder="BIM, Enerji, MEP…"
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Etiketler (virgülle ayırın)</label>
+            <input type="text" name="tags" class="form-control" value={(post?.tags ?? []).join(', ')} />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Yazar</label>
+            <input type="text" name="author" class="form-control" value={post?.author} />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Yayın Tarihi</label>
+            <input
+              type="date"
+              name="publishDate"
+              class="form-control"
+              value={post ? toDateInput(post.publishDate) : toDateInput(new Date())}
+            />
+          </div>
+          <div class="col-md-6 mb-3 d-flex align-items-end">
+            <label class="form-check">
+              <input type="checkbox" name="draft" class="form-check-input" checked={post?.draft} />
+              <span class="form-check-label">Taslak (yayınlanmasın)</span>
+            </label>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">İçerik (Markdown)</label>
+          <textarea name="body" class="form-control font-monospace" rows="16">{post?.body}</textarea>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+          <a href="/admin/blog" class="btn btn-outline-secondary">İptal</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</AdminLayout>

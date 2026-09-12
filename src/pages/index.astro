@@ -14,23 +14,44 @@ import StructuredData from '~/components/common/StructuredData.astro';
 
 import { SITE, I18N } from 'astrowind:config';
 import favIconSvg from '~/assets/favicons/favicon.svg';
+import { getSiteSettings } from '~/lib/siteSettings';
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { settings as settingsTable } from '~/db/schema';
+
+export const prerender = false;
+
+interface HomepageSettings {
+  heroTagline: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  proofStats: Array<{ value: string; label: string; icon: string }>;
+  countStats: Array<{ title: string; amount: string }>;
+}
+
+const homepage = db.select().from(settingsTable).where(eq(settingsTable.key, 'homepage')).get()?.value as
+  HomepageSettings | undefined;
+const siteSettings = getSiteSettings();
 
 const metadata = {
-  title: 'AKORT Mühendislik | Uyumun Mühendisliği',
+  title: siteSettings?.name ? `${siteSettings.name} | Uyumun Mühendisliği` : 'AKORT Mühendislik | Uyumun Mühendisliği',
   description:
+    siteSettings?.seoDescription ||
     'AKORT Mühendislik; mekanik, elektrik, BIM, enerji, GES, yapı, çelik ve dijital mühendislik alanlarında proje, danışmanlık, taahhüt ve uygulama hizmetleri sunar.',
   ignoreTitleTemplate: true,
 };
 
-const organizationId = `${SITE?.site}/#organization`;
+const siteUrl = siteSettings?.url || SITE?.site;
+const siteName = siteSettings?.name || 'AKORT Mühendislik';
+const organizationId = `${siteUrl}/#organization`;
 
 const structuredData = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': `${SITE?.site}/#website`,
-    name: 'AKORT Mühendislik',
-    url: SITE?.site,
+    '@id': `${siteUrl}/#website`,
+    name: siteName,
+    url: siteUrl,
     inLanguage: I18N?.language,
     publisher: {
       '@id': organizationId,
@@ -40,9 +61,9 @@ const structuredData = [
     '@context': 'https://schema.org',
     '@type': 'Organization',
     '@id': organizationId,
-    name: 'AKORT Mühendislik',
-    url: SITE?.site,
-    logo: new URL(favIconSvg.src, SITE?.site).toString(),
+    name: siteName,
+    url: siteUrl,
+    logo: new URL(favIconSvg.src, siteUrl).toString(),
     slogan: 'Uyumun Mühendisliği',
     description:
       'Mekanik, elektrik, BIM, enerji, GES, yapı, çelik ve dijital mühendislik alanlarında bütünleşik mühendislik çözümleri.',
@@ -58,7 +79,10 @@ const structuredData = [
   <!-- ===================================================== -->
 
   <Hero
-    tagline="AKORT MÜHENDİSLİK"
+    tagline={homepage?.heroTagline ?? 'AKORT MÜHENDİSLİK'}
+    title={homepage?.heroTitle ?? 'Uyumun Mühendisliği.'}
+    subtitle={homepage?.heroSubtitle ??
+      'Mekanik, elektrik, BIM, enerji ve yapı disiplinlerini aynı hedefte buluşturuyor; tasarımdan uygulamaya kadar bütünleşik mühendislik çözümleri sunuyoruz.'}
     actions={[
       {
         variant: 'primary',
@@ -76,18 +100,7 @@ const structuredData = [
       src: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=85',
       alt: 'AKORT Mühendislik proje ve mühendislik çözümleri',
     }}
-  >
-    <Fragment slot="title">
-      Uyumun
-      <span class="text-accent dark:text-white"> Mühendisliği. </span>
-    </Fragment>
-
-    <Fragment slot="subtitle">
-      <span class="font-semibold"> Mekanik, elektrik, BIM, enerji ve yapı disiplinlerini </span>
-
-      aynı hedefte buluşturuyor; tasarımdan uygulamaya kadar bütünleşik mühendislik çözümleri sunuyoruz.
-    </Fragment>
-  </Hero>
+  />
 
   <!-- ===================================================== -->
   <!-- ÖNE ÇIKAN YAKLAŞIM -->
@@ -98,22 +111,10 @@ const structuredData = [
     classes={{
       container: '!pb-14 md:!pb-20',
     }}
-    items={[
-      {
-        value: '360°',
-        label: 'Bütünleşik mühendislik yaklaşımı',
-        icon: 'tabler:arrows-exchange',
-      },
-      {
-        value: 'BIM',
-        label: 'Koordinasyon ve dijital proje yönetimi',
-        icon: 'tabler:box',
-      },
-      {
-        value: 'MEP',
-        label: 'Mekanik ve elektrik sistem entegrasyonu',
-        icon: 'tabler:adjustments',
-      },
+    items={homepage?.proofStats ?? [
+      { value: '360°', label: 'Bütünleşik mühendislik yaklaşımı', icon: 'tabler:arrows-exchange' },
+      { value: 'BIM', label: 'Koordinasyon ve dijital proje yönetimi', icon: 'tabler:box' },
+      { value: 'MEP', label: 'Mekanik ve elektrik sistem entegrasyonu', icon: 'tabler:adjustments' },
     ]}
   />
 
@@ -414,26 +415,11 @@ const structuredData = [
   <Stats
     id="stats"
     countUp
-    stats={[
-      {
-        title: 'Mühendislik Disiplini',
-        amount: '8+',
-      },
-
-      {
-        title: 'Proje Yaklaşımı',
-        amount: '360°',
-      },
-
-      {
-        title: 'Dijital Koordinasyon',
-        amount: 'BIM',
-      },
-
-      {
-        title: 'Odak',
-        amount: 'Tek Hedef',
-      },
+    stats={homepage?.countStats ?? [
+      { title: 'Mühendislik Disiplini', amount: '8+' },
+      { title: 'Proje Yaklaşımı', amount: '360°' },
+      { title: 'Dijital Koordinasyon', amount: 'BIM' },
+      { title: 'Odak', amount: 'Tek Hedef' },
     ]}
   />
 

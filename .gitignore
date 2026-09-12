@@ -26,3 +26,10 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 
 .astro
+
+# local SQLite database (each environment has its own — never shared via git)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm

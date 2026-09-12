@@ -1,0 +1,174 @@
+---
+import { eq } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { projects } from '~/db/schema';
+import { resolveImage } from '~/lib/upload';
+import { cleanSlug } from '~/utils/permalinks';
+import AdminLayout from '~/layouts/AdminLayout.astro';
+
+export const prerender = false;
+
+const idParam = Astro.params.id ?? '';
+const isNew = idParam === 'yeni';
+const id = isNew ? null : Number(idParam);
+
+let error = '';
+const existing = !isNew ? db.select().from(projects).where(eq(projects.id, id!)).get() : null;
+if (!isNew && !existing) return Astro.redirect('/admin/projeler');
+
+const CATEGORY_OPTIONS = ['Mekanik', 'Elektrik', 'BIM', 'Enerji', 'GES', 'Yapı', 'Çelik', 'Taahhüt'];
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const title = String(form.get('title') ?? '').trim();
+  const slugInput = String(form.get('slug') ?? '').trim();
+
+  if (!title) {
+    error = 'Proje adı zorunludur.';
+  } else {
+    const slug = cleanSlug(slugInput || title);
+    const image = await resolveImage(form, 'imageFile', 'image', existing?.image);
+    const listField = (name: string) =>
+      String(form.get(name) ?? '')
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+    const values = {
+      slug,
+      title,
+      excerpt: String(form.get('excerpt') ?? '') || null,
+      image,
+      imageAlt: String(form.get('imageAlt') ?? '') || null,
+      tags: form.getAll('tags') as string[],
+      client: String(form.get('client') ?? '') || null,
+      location: String(form.get('location') ?? '') || null,
+      year: String(form.get('year') ?? '') || null,
+      area: String(form.get('area') ?? '') || null,
+      scope: String(form.get('scope') ?? '') || null,
+      need: String(form.get('need') ?? '') || null,
+      solution: String(form.get('solution') ?? '') || null,
+      systems: listField('systems'),
+      outcomes: listField('outcomes'),
+      draft: form.get('draft') === 'on',
+      body: String(form.get('body') ?? ''),
+      updatedAt: new Date(),
+    };
+
+    if (isNew) {
+      const inserted = db.insert(projects).values(values).returning({ id: projects.id }).get();
+      return Astro.redirect(`/admin/projeler/${inserted.id}`);
+    } else {
+      db.update(projects).set(values).where(eq(projects.id, id!)).run();
+      return Astro.redirect(`/admin/projeler/${id}`);
+    }
+  }
+}
+
+const project = !isNew ? db.select().from(projects).where(eq(projects.id, id!)).get() : null;
+---
+
+<AdminLayout title={isNew ? 'Yeni Proje' : `Düzenle: ${project?.title}`}>
+  {error && <div class="alert alert-danger">{error}</div>}
+  <div class="card">
+    <div class="card-body">
+      <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+          <label class="form-label">Proje Adı</label>
+          <input type="text" name="title" class="form-control" value={project?.title} required />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Slug (boş bırakılırsa başlıktan oluşturulur)</label>
+          <input type="text" name="slug" class="form-control" value={project?.slug} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Kısa Özet</label>
+          <textarea name="excerpt" class="form-control" rows="2">{project?.excerpt}</textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Görsel URL</label>
+            <input type="text" name="image" class="form-control" value={project?.image} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Kategoriler (filtre etiketleri)</label>
+          <div class="d-flex flex-wrap gap-3">
+            {
+              CATEGORY_OPTIONS.map((cat) => (
+                <label class="form-check">
+                  <input
+                    type="checkbox"
+                    name="tags"
+                    value={cat}
+                    class="form-check-input"
+                    checked={(project?.tags ?? []).includes(cat)}
+                  />
+                  <span class="form-check-label">{cat}</span>
+                </label>
+              ))
+            }
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label class="form-label">İşveren</label>
+            <input type="text" name="client" class="form-control" value={project?.client} />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Lokasyon</label>
+            <input type="text" name="location" class="form-control" value={project?.location} />
+          </div>
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Yıl</label>
+            <input type="text" name="year" class="form-control" value={project?.year} />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Alan</label>
+          <input type="text" name="area" class="form-control" value={project?.area} />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Hizmet Kapsamı</label>
+          <textarea name="scope" class="form-control" rows="2">{project?.scope}</textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Projenin İhtiyacı</label>
+          <textarea name="need" class="form-control" rows="2">{project?.need}</textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">AKORT'un Çözümü</label>
+          <textarea name="solution" class="form-control" rows="2">{project?.solution}</textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Uygulanan Sistemler (her satıra bir tane)</label>
+            <textarea name="systems" class="form-control" rows="4">{(project?.systems ?? []).join('\n')}</textarea>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Proje Çıktıları (her satıra bir tane)</label>
+            <textarea name="outcomes" class="form-control" rows="4">{(project?.outcomes ?? []).join('\n')}</textarea>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-check">
+            <input type="checkbox" name="draft" class="form-check-input" checked={project?.draft} />
+            <span class="form-check-label">Taslak (yayınlanmasın)</span>
+          </label>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Proje Anlatımı (Markdown, opsiyonel)</label>
+          <textarea name="body" class="form-control font-monospace" rows="8">{project?.body}</textarea>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">Kaydet</button>
+          <a href="/admin/projeler" class="btn btn-outline-secondary">İptal</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</AdminLayout>

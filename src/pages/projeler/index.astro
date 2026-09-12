@@ -1,10 +1,14 @@
 ---
-import { getCollection } from 'astro:content';
+import { eq, desc } from 'drizzle-orm';
+import { db } from '~/db/client';
+import { projects } from '~/db/schema';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Image from '~/components/common/Image.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+export const prerender = false;
 
 const metadata = {
   title: 'Projeler',
@@ -12,8 +16,7 @@ const metadata = {
     'AKORT Mühendislik hizmet kapsamını örnekleyen mekanik, elektrik, BIM, enerji, GES, yapı, çelik ve taahhüt projeleri.',
 };
 
-const allProjects = (await getCollection('project')).filter((p) => !p.data.draft);
-allProjects.sort((a, b) => Number(b.data.year ?? 0) - Number(a.data.year ?? 0));
+const allProjects = db.select().from(projects).where(eq(projects.draft, false)).orderBy(desc(projects.year)).all();
 
 const categories = ['Tümü', 'Mekanik', 'Elektrik', 'BIM', 'Enerji', 'GES', 'Yapı', 'Çelik', 'Taahhüt'];
 ---
@@ -49,15 +52,15 @@ const categories = ['Tümü', 'Mekanik', 'Elektrik', 'BIM', 'Enerji', 'GES', 'Ya
       {
         allProjects.map((project) => (
           <li
-            data-tags={project.data.tags.join(',')}
+            data-tags={(project.tags ?? []).join(',')}
             class="project-card group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/40"
           >
-            <a href={`/projeler/${project.id}`} class="flex h-full flex-col">
-              {project.data.image && (
+            <a href={`/projeler/${project.slug}`} class="flex h-full flex-col">
+              {project.image && (
                 <div class="overflow-hidden">
                   <Image
-                    src={project.data.image}
-                    alt={project.data.imageAlt ?? project.data.title}
+                    src={project.image}
+                    alt={project.imageAlt ?? project.title}
                     class="aspect-[16/10] w-full object-cover transition group-hover:scale-[1.03]"
                     widths={[400, 640]}
                     sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 400px"
@@ -70,16 +73,16 @@ const categories = ['Tümü', 'Mekanik', 'Elektrik', 'BIM', 'Enerji', 'GES', 'Ya
               )}
               <div class="flex flex-1 flex-col p-6">
                 <ul class="mb-3 flex flex-wrap gap-1.5 list-none">
-                  {project.data.tags.map((tag) => (
+                  {(project.tags ?? []).map((tag) => (
                     <li class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-muted dark:bg-slate-800">
                       {tag}
                     </li>
                   ))}
                 </ul>
-                <h3 class="text-xl font-bold text-heading">{project.data.title}</h3>
-                {project.data.excerpt && <p class="mt-2 text-muted text-pretty">{project.data.excerpt}</p>}
+                <h3 class="text-xl font-bold text-heading">{project.title}</h3>
+                {project.excerpt && <p class="mt-2 text-muted text-pretty">{project.excerpt}</p>}
                 <p class="mt-auto pt-4 text-sm text-muted">
-                  {project.data.location} · {project.data.year}
+                  {project.location} · {project.year}
                 </p>
               </div>
             </a>
