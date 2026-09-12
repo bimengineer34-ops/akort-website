@@ -4,3 +4,15 @@ services:
     container_name: astrowind
     ports:
       - 8080:8080
+    depends_on:
+      - oauth
+
+  # GitHub OAuth provider for the Decap CMS admin panel (/admin). Requires a
+  # GitHub OAuth App — see oauth-server/server.mjs and .env.example.
+  oauth:
+    build: ./oauth-server
+    container_name: akort-oauth
+    env_file:
+      - .env
+    expose:
+      - '8081'

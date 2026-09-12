@@ -1,0 +1,124 @@
+# Editable via the admin panel (Decap CMS) at /admin.
+# Header/footer menus and quick contact links for the AKORT Muhendislik site.
+# Hrefs are plain site-relative paths (not computed via getPermalink()) so a
+# non-technical editor can see and change the real URL directly.
+
+header:
+  links:
+    - text: Ana Sayfa
+      href: /
+    - text: Kurumsal
+      links:
+        - text: Hakkımızda
+          href: /hakkimizda
+        - text: Neden AKORT?
+          href: /neden-akort
+        - text: Çalışma Yaklaşımımız
+          href: /calisma-yaklasimimiz
+        - text: Kalite Politikamız
+          href: /kalite-politikamiz
+    - text: Hizmetler
+      links:
+        - text: Mekanik Mühendislik
+          href: /mekanik-muhendislik
+        - text: Elektrik Mühendisliği
+          href: /elektrik-muhendisligi
+        - text: BIM & Dijital Mühendislik
+          href: /bim
+        - text: Enerji & Enerji Verimliliği
+          href: /enerji-verimliligi
+        - text: GES
+          href: /ges
+        - text: Mimari
+          href: /mimari
+        - text: Yapı & İnşaat
+          href: /yapi-insaat
+        - text: Çelik Yapılar
+          href: /celik-yapilar
+        - text: Teknik Danışmanlık
+          href: /teknik-danismanlik
+        - text: Proje Kontrol
+          href: /proje-kontrol
+        - text: Taahhüt & Uygulama
+          href: /taahhut
+    - text: Projeler
+      href: /projeler
+    - text: Sektörler
+      href: /sektorler
+    - text: Bilgi Merkezi
+      links:
+        - text: Tüm Yazılar
+          href: /bilgi-merkezi
+        - text: BIM
+          href: /bilgi-merkezi/kategori/bim
+        - text: Enerji
+          href: /bilgi-merkezi/kategori/enerji
+        - text: MEP
+          href: /bilgi-merkezi/kategori/mep
+        - text: Mühendislik Notları
+          href: /bilgi-merkezi/kategori/muehendislik-notlari
+    - text: İletişim
+      href: /iletisim
+  actions:
+    - text: Teklif Al
+      href: /iletisim#teklif
+
+footer:
+  links:
+    - title: Hizmetler
+      links:
+        - text: Mekanik Mühendislik
+          href: /mekanik-muhendislik
+        - text: Elektrik Mühendisliği
+          href: /elektrik-muhendisligi
+        - text: BIM & Dijital Mühendislik
+          href: /bim
+        - text: Enerji & Enerji Verimliliği
+          href: /enerji-verimliligi
+        - text: GES
+          href: /ges
+        - text: Yapı & İnşaat
+          href: /yapi-insaat
+        - text: Çelik Yapılar
+          href: /celik-yapilar
+    - title: Kurumsal
+      links:
+        - text: Hakkımızda
+          href: /hakkimizda
+        - text: Neden AKORT?
+          href: /neden-akort
+        - text: Projeler
+          href: /projeler
+        - text: Sektörler
+          href: /sektorler
+        - text: Bilgi Merkezi
+          href: /bilgi-merkezi
+        - text: Kariyer
+          href: /kariyer
+        - text: İletişim
+          href: /iletisim
+  secondaryLinks:
+    - text: KVKK
+      href: /kvkk
+    - text: Gizlilik Politikası
+      href: /gizlilik-politikasi
+    - text: Çerez Politikası
+      href: /cerez-politikasi
+  socialLinks:
+    - ariaLabel: LinkedIn
+      icon: 'tabler:brand-linkedin'
+      href: 'https://www.linkedin.com/'
+    - ariaLabel: Instagram
+      icon: 'tabler:brand-instagram'
+      href: 'https://www.instagram.com/'
+    - ariaLabel: RSS
+      icon: 'tabler:rss'
+      href: /rss.xml
+  footNote: 'Copyright © {year} AKORT Mühendislik. Tüm hakları saklıdır.'
+
+contact:
+  phone: '+90 (2xx) xxx xx xx'
+  email: 'info@akortmuhendislik.com'
+  address: 'İstanbul, Türkiye'
+  linkedin: 'https://www.linkedin.com/'
+  instagram: 'https://www.instagram.com/'

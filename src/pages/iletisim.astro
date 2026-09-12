@@ -3,6 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactUs from '~/components/widgets/Contact.astro';
 import Features2 from '~/components/widgets/Features2.astro';
+import { contactData } from '~/navigation';
 
 const metadata = {
   title: 'İletişim',
@@ -125,9 +126,9 @@ const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
     title="İletişim Bilgilerimiz"
     columns={3}
     items={[
-      { title: 'Telefon', description: '+90 (2xx) xxx xx xx', icon: 'tabler:phone' },
-      { title: 'E-posta', description: 'info@akortmuhendislik.com', icon: 'tabler:mail' },
-      { title: 'Adres', description: 'İstanbul, Türkiye', icon: 'tabler:map-pin' },
+      { title: 'Telefon', description: contactData.phone, icon: 'tabler:phone' },
+      { title: 'E-posta', description: contactData.email, icon: 'tabler:mail' },
+      { title: 'Adres', description: contactData.address, icon: 'tabler:map-pin' },
     ]}
   />
 </Layout>
