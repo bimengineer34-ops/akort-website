@@ -2,9 +2,8 @@ backend:
   name: github
   repo: bimengineer34-ops/akort-website
   branch: main
-  # TODO: replace with the real public domain once the site is deployed
-  # (must match PUBLIC_SITE_URL in .env and the GitHub OAuth App's callback URL).
-  base_url: https://YOUR-DOMAIN.com
+  # Must match PUBLIC_SITE_URL in .env and the GitHub OAuth App's callback URL.
+  base_url: https://www.akortmuhendislik.com
   auth_endpoint: oauth/auth
 
 media_folder: 'src/assets/images'

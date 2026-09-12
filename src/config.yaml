@@ -1,6 +1,6 @@
 site:
   name: AKORT Mühendislik
-  site: 'https://akortmuhendislik.com'
+  site: 'https://www.akortmuhendislik.com'
   base: '/'
   trailingSlash: false
 

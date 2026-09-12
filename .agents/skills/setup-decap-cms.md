@@ -22,12 +22,12 @@ The admin panel lives at `/admin` (`public/admin/index.html` + `config.yml`). Th
 
 ## Collections
 
-| Collection | Edits |
-| --- | --- |
-| `post` | `src/data/post/*.md` (Bilgi Merkezi articles) |
-| `project` | `src/data/project/*.md` (Projeler case studies) |
-| `navigation` (single file) | `src/navigation.data.yaml` — header/footer menus, social links, contact details |
-| `settings` (single file) | `src/config.yaml` — **only** site name/URL, SEO title/description, Google Analytics ID. `apps.blog`, `i18n`, `ui` and the rest of `config.yaml` are intentionally left out of the schema (editing them from the panel could break the blog URL structure or i18n settings) |
+| Collection                 | Edits                                                                                                                                                                                                                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `post`                     | `src/data/post/*.md` (Bilgi Merkezi articles)                                                                                                                                                                                                                              |
+| `project`                  | `src/data/project/*.md` (Projeler case studies)                                                                                                                                                                                                                            |
+| `navigation` (single file) | `src/navigation.data.yaml` — header/footer menus, social links, contact details                                                                                                                                                                                            |
+| `settings` (single file)   | `src/config.yaml` — **only** site name/URL, SEO title/description, Google Analytics ID. `apps.blog`, `i18n`, `ui` and the rest of `config.yaml` are intentionally left out of the schema (editing them from the panel could break the blog URL structure or i18n settings) |
 
 Editing anything through the panel is a git commit to `main` — the host must be configured to rebuild/redeploy on push (or someone triggers a redeploy manually) for changes to go live.
 

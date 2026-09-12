@@ -5,7 +5,7 @@
 // Required env vars:
 //   GITHUB_CLIENT_ID      - from your GitHub OAuth App
 //   GITHUB_CLIENT_SECRET  - from your GitHub OAuth App
-//   PUBLIC_SITE_URL       - the site's public origin, e.g. https://akortmuhendislik.com
+//   PUBLIC_SITE_URL       - the site's public origin, e.g. https://www.akortmuhendislik.com
 //                           (must match the OAuth App's "Authorization callback URL"
 //                           host, and must be the same origin Decap's admin page runs on)
 // Optional:
