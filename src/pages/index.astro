@@ -1,0 +1,503 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Steps from '~/components/widgets/Steps.astro';
+import Content from '~/components/widgets/Content.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import SocialProof from '~/components/widgets/SocialProof.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
+
+import { SITE, I18N } from 'astrowind:config';
+import favIconSvg from '~/assets/favicons/favicon.svg';
+
+const metadata = {
+  title: 'AKORT Mühendislik | Uyumun Mühendisliği',
+  description:
+    'AKORT Mühendislik; mekanik, elektrik, BIM, enerji, GES, yapı, çelik ve dijital mühendislik alanlarında proje, danışmanlık, taahhüt ve uygulama hizmetleri sunar.',
+  ignoreTitleTemplate: true,
+};
+
+const organizationId = `${SITE?.site}/#organization`;
+
+const structuredData = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${SITE?.site}/#website`,
+    name: 'AKORT Mühendislik',
+    url: SITE?.site,
+    inLanguage: I18N?.language,
+    publisher: {
+      '@id': organizationId,
+    },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    '@id': organizationId,
+    name: 'AKORT Mühendislik',
+    url: SITE?.site,
+    logo: new URL(favIconSvg.src, SITE?.site).toString(),
+    slogan: 'Uyumun Mühendisliği',
+    description:
+      'Mekanik, elektrik, BIM, enerji, GES, yapı, çelik ve dijital mühendislik alanlarında bütünleşik mühendislik çözümleri.',
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <StructuredData slot="head" schema={structuredData} />
+
+  <!-- ===================================================== -->
+  <!-- HERO -->
+  <!-- ===================================================== -->
+
+  <Hero
+    tagline="AKORT MÜHENDİSLİK"
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Hizmetlerimizi Keşfedin',
+        href: '#hizmetler',
+        icon: 'tabler:arrow-right',
+      },
+      {
+        text: 'Projenizi Konuşalım',
+        href: '/iletisim',
+        icon: 'tabler:message-circle',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=85',
+      alt: 'AKORT Mühendislik proje ve mühendislik çözümleri',
+    }}
+  >
+    <Fragment slot="title">
+      Uyumun
+      <span class="text-accent dark:text-white"> Mühendisliği. </span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      <span class="font-semibold"> Mekanik, elektrik, BIM, enerji ve yapı disiplinlerini </span>
+
+      aynı hedefte buluşturuyor; tasarımdan uygulamaya kadar bütünleşik mühendislik çözümleri sunuyoruz.
+    </Fragment>
+  </Hero>
+
+  <!-- ===================================================== -->
+  <!-- ÖNE ÇIKAN YAKLAŞIM -->
+  <!-- ===================================================== -->
+
+  <SocialProof
+    id="proof"
+    classes={{
+      container: '!pb-14 md:!pb-20',
+    }}
+    items={[
+      {
+        value: '360°',
+        label: 'Bütünleşik mühendislik yaklaşımı',
+        icon: 'tabler:arrows-exchange',
+      },
+      {
+        value: 'BIM',
+        label: 'Koordinasyon ve dijital proje yönetimi',
+        icon: 'tabler:box',
+      },
+      {
+        value: 'MEP',
+        label: 'Mekanik ve elektrik sistem entegrasyonu',
+        icon: 'tabler:adjustments',
+      },
+    ]}
+  />
+
+  <!-- ===================================================== -->
+  <!-- HİZMETLER -->
+  <!-- ===================================================== -->
+
+  <Features
+    id="hizmetler"
+    tagline="Hizmetlerimiz"
+    title="Bütünleşik Mühendislik Hizmetleri"
+    subtitle="Projelerinizi yalnızca tek bir disiplin üzerinden değil; mimari, yapı, mekanik, elektrik, enerji ve dijital mühendislik bileşenlerini birlikte değerlendirerek ele alıyoruz."
+    items={[
+      {
+        title: 'Mekanik Mühendislik',
+        description:
+          'HVAC, sıhhi tesisat, yangın tesisatı, merkezi sistemler, ekipman seçimi, hidrolik hesaplar ve mekanik altyapı çözümleri.',
+        icon: 'tabler:wind',
+      },
+
+      {
+        title: 'Elektrik Mühendisliği',
+        description:
+          'Kuvvetli akım, zayıf akım, enerji dağıtımı, aydınlatma, otomasyon ve elektrik altyapı sistemlerinin projelendirilmesi.',
+        icon: 'tabler:bolt',
+      },
+
+      {
+        title: 'BIM & Dijital Mühendislik',
+        description:
+          'BIM modelleme, MEP koordinasyonu, clash detection, shop drawing, metraj, model kontrolü ve dijital proje iş akışları.',
+        icon: 'tabler:cube-3d-sphere',
+      },
+
+      {
+        title: 'Enerji & Enerji Verimliliği',
+        description:
+          'Enerji analizleri, sistem optimizasyonu, tüketim azaltımı ve yaşam döngüsü maliyetlerini dikkate alan mühendislik çözümleri.',
+        icon: 'tabler:leaf',
+      },
+
+      {
+        title: 'GES',
+        description:
+          'Güneş enerji sistemlerinde fizibilite, tasarım, mühendislik, uygulama koordinasyonu ve teknik danışmanlık hizmetleri.',
+        icon: 'tabler:sun-high',
+      },
+
+      {
+        title: 'Yapı, Çelik & Uygulama',
+        description:
+          'Yapı sistemleri, çelik konstrüksiyon, teknik proje kontrolü, saha koordinasyonu, taahhüt ve uygulama süreçleri.',
+        icon: 'tabler:building-skyscraper',
+      },
+    ]}
+  />
+
+  <!-- ===================================================== -->
+  <!-- AKORT YAKLAŞIMI -->
+  <!-- ===================================================== -->
+
+  <Content
+    isReversed
+    tagline="AKORT Yaklaşımı"
+    title="Farklı Disiplinler. Tek Hedef."
+    items={[
+      {
+        title: 'Disiplinler Arası Koordinasyon',
+        description:
+          'Mimari, mekanik, elektrik, yapı ve enerji kararlarını tek bir koordinasyon yaklaşımı altında bir araya getiriyoruz.',
+      },
+
+      {
+        title: 'Uygulanabilir Tasarım',
+        description:
+          'Projeleri yalnızca çizim olarak değil; saha koşulları, montaj kolaylığı, işletme ve bakım süreçleriyle birlikte değerlendiriyoruz.',
+      },
+
+      {
+        title: 'Teknik ve Ekonomik Optimizasyon',
+        description:
+          'İlk yatırım maliyeti, enerji tüketimi, işletme giderleri ve sürdürülebilirliği birlikte analiz ediyoruz.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85',
+      alt: 'Modern yapı ve disiplinler arası mühendislik koordinasyonu',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Mühendisliği bir bütün olarak ele alıyoruz.
+      </h3>
+
+      Bir yapının başarısı, disiplinlerin ayrı ayrı doğru çalışmasından çok, birlikte doğru çalışmasına bağlıdır.
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+
+  <!-- ===================================================== -->
+  <!-- BIM -->
+  <!-- ===================================================== -->
+
+  <Content
+    isAfterContent
+    tagline="BIM & Dijital Mühendislik"
+    title="Mühendisliği Dijitalleştiriyoruz"
+    items={[
+      {
+        title: 'BIM Modelleme',
+        description: 'Mimari, mekanik ve elektrik sistemlerinin koordineli ve veriye dayalı modellenmesi.',
+      },
+
+      {
+        title: 'Clash Detection',
+        description: 'Disiplin çakışmalarının uygulama öncesinde tespit edilmesi ve çözülmesi.',
+      },
+
+      {
+        title: 'Shop Drawing & As-Built',
+        description: 'Saha uygulamasına yönelik detaylı imalat çizimleri ve uygulama sonrası güncel modeller.',
+      },
+
+      {
+        title: 'Metraj & Proje Kontrolü',
+        description: 'Model tabanlı metraj, teknik kontrol ve proje kararlarının dijital olarak takip edilmesi.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1600&q=85',
+      alt: 'BIM ve dijital mühendislik çalışma ortamı',
+    }}
+  >
+    <Fragment slot="content"> Projeyi sahaya gelmeden önce görüyor, koordine ediyor ve optimize ediyoruz. </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-slate-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+
+  <!-- ===================================================== -->
+  <!-- ÇALIŞMA SÜRECİ -->
+  <!-- ===================================================== -->
+
+  <Steps
+    title="Tasarımdan Uygulamaya Kontrollü Mühendislik Süreci"
+    items={[
+      {
+        title: '01 — <span class="font-medium">Analiz</span>',
+        description: 'İhtiyaçları, proje kriterlerini, saha verilerini ve teknik gereklilikleri belirliyoruz.',
+        icon: 'tabler:search',
+      },
+
+      {
+        title: '02 — <span class="font-medium">Tasarım</span>',
+        description: 'Mühendislik hesaplarını ve disiplin çözümlerini geliştiriyoruz.',
+        icon: 'tabler:ruler-2',
+      },
+
+      {
+        title: '03 — <span class="font-medium">Koordinasyon</span>',
+        description: 'Disiplinleri BIM ve teknik proje kontrol süreçleriyle birbiriyle uyumlu hale getiriyoruz.',
+        icon: 'tabler:arrows-join-2',
+      },
+
+      {
+        title: '04 — <span class="font-medium">Optimizasyon</span>',
+        description: 'Maliyet, enerji, uygulanabilirlik ve işletme performansı açısından sistemi iyileştiriyoruz.',
+        icon: 'tabler:adjustments-horizontal',
+      },
+
+      {
+        title: '05 — <span class="font-medium">Uygulama</span>',
+        description: 'Saha süreçlerini teknik şartname, proje ve kalite kriterleri doğrultusunda yönetiyoruz.',
+        icon: 'tabler:tool',
+      },
+
+      {
+        title: '06 — <span class="font-medium">Teslim</span>',
+        description: 'Test, devreye alma, kontrol, as-built ve teslim süreçlerini tamamlıyoruz.',
+        icon: 'tabler:circle-check',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=85',
+      alt: 'Mühendislik proje ve saha uygulama süreci',
+    }}
+  />
+
+  <!-- ===================================================== -->
+  <!-- SEKTÖRLER -->
+  <!-- ===================================================== -->
+
+  <Features2
+    tagline="Sektörler"
+    title="Farklı Yapı Tiplerine Uyumlanan Çözümler"
+    subtitle="Her proje tipini kendi kullanım senaryosu, teknik riskleri ve işletme ihtiyaçları doğrultusunda ele alıyoruz."
+    items={[
+      {
+        title: 'Sağlık Yapıları',
+        description: 'Hastane, klinik ve sağlık yapılarında kritik MEP sistemleri ve teknik koordinasyon.',
+        icon: 'tabler:building-hospital',
+      },
+
+      {
+        title: 'Eğitim Yapıları',
+        description: 'Üniversite, okul, laboratuvar ve kampüs yapıları için mühendislik çözümleri.',
+        icon: 'tabler:school',
+      },
+
+      {
+        title: 'Konut & Karma Kullanım',
+        description: 'Konut, rezidans ve karma kullanımlı yapılarda enerji verimli MEP sistemleri.',
+        icon: 'tabler:building-community',
+      },
+
+      {
+        title: 'Ticari Yapılar',
+        description: 'Ofis, AVM ve ticari yapılarda konfor, enerji ve işletme odaklı sistem tasarımı.',
+        icon: 'tabler:building-store',
+      },
+
+      {
+        title: 'Endüstriyel Yapılar',
+        description: 'Üretim ve endüstri tesislerinde proses ihtiyaçlarına uygun teknik altyapı çözümleri.',
+        icon: 'tabler:building-factory-2',
+      },
+
+      {
+        title: 'Enerji & GES',
+        description: 'Enerji üretimi, verimlilik ve güneş enerjisi yatırımları için teknik mühendislik desteği.',
+        icon: 'tabler:solar-panel-2',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Features2>
+
+  <!-- ===================================================== -->
+  <!-- NEDEN AKORT -->
+  <!-- ===================================================== -->
+
+  <Features
+    id="neden-akort"
+    tagline="Neden AKORT?"
+    title="Teknik Kararları Uyum İçinde Yönetiyoruz"
+    subtitle="Amacımız yalnızca proje üretmek değil; doğru mühendislik kararlarının tasarım, uygulama ve işletme boyunca korunmasını sağlamaktır."
+    items={[
+      {
+        title: 'Multidisipliner Yaklaşım',
+        description: 'Mekanik, elektrik, BIM, enerji ve yapı disiplinlerini tek koordinasyon yapısında yönetiyoruz.',
+        icon: 'tabler:network',
+      },
+
+      {
+        title: 'BIM Odaklı Çalışma',
+        description:
+          'Tasarım ve uygulama kararlarını dijital model üzerinden görünür ve kontrol edilebilir hale getiriyoruz.',
+        icon: 'tabler:brand-stackshare',
+      },
+
+      {
+        title: 'Saha Gerçekliği',
+        description: 'Detayların uygulama, montaj, bakım ve işletme koşullarında çalışabilir olmasına odaklanıyoruz.',
+        icon: 'tabler:helmet',
+      },
+
+      {
+        title: 'Enerji Verimliliği',
+        description: 'Sistem seçimlerinde enerji tüketimi ve yaşam döngüsü maliyetlerini dikkate alıyoruz.',
+        icon: 'tabler:battery-eco',
+      },
+
+      {
+        title: 'Teknik Proje Kontrolü',
+        description:
+          'Projeleri şartnameler, standartlar, saha koşulları ve disiplin koordinasyonu açısından inceliyoruz.',
+        icon: 'tabler:clipboard-check',
+      },
+
+      {
+        title: 'Uygulama Desteği',
+        description: 'Tasarımdan saha uygulamasına kadar teknik kararların sürekliliğini destekliyoruz.',
+        icon: 'tabler:tools',
+      },
+    ]}
+  />
+
+  <!-- ===================================================== -->
+  <!-- SAYILARLA AKORT -->
+  <!-- ===================================================== -->
+
+  <Stats
+    id="stats"
+    countUp
+    stats={[
+      {
+        title: 'Mühendislik Disiplini',
+        amount: '8+',
+      },
+
+      {
+        title: 'Proje Yaklaşımı',
+        amount: '360°',
+      },
+
+      {
+        title: 'Dijital Koordinasyon',
+        amount: 'BIM',
+      },
+
+      {
+        title: 'Odak',
+        amount: 'Tek Hedef',
+      },
+    ]}
+  />
+
+  <!-- ===================================================== -->
+  <!-- SSS -->
+  <!-- ===================================================== -->
+
+  <FAQs
+    id="faqs"
+    title="Sık Sorulan Sorular"
+    subtitle="AKORT Mühendislik'in çalışma modeli ve hizmet kapsamı hakkında kısa bilgiler."
+    tagline="SSS"
+    schema
+    items={[
+      {
+        title: 'AKORT Mühendislik hangi alanlarda hizmet veriyor?',
+        description:
+          'Mekanik, elektrik, BIM ve dijital mühendislik, enerji verimliliği, GES, yapı, çelik, proje kontrolü, teknik danışmanlık, taahhüt ve uygulama alanlarında hizmet veriyoruz.',
+      },
+
+      {
+        title: 'Sadece proje mi hazırlıyorsunuz?',
+        description:
+          'Hayır. Projelendirme yanında teknik danışmanlık, disiplin koordinasyonu, BIM, proje kontrolü, saha uygulama desteği ve taahhüt süreçlerinde de çalışıyoruz.',
+      },
+
+      {
+        title: 'BIM hizmetiniz hangi kapsamları içeriyor?',
+        description:
+          'BIM modelleme, MEP koordinasyonu, clash detection, shop drawing, as-built modelleme, model kontrolü ve model tabanlı metraj çalışmalarını kapsayabilir.',
+      },
+
+      {
+        title: 'Mevcut bir projeyi teknik olarak inceleyebilir misiniz?',
+        description:
+          'Evet. Mevcut projeleri teknik uygunluk, uygulanabilirlik, disiplin çakışmaları, enerji performansı ve saha koşulları açısından değerlendirebiliriz.',
+      },
+
+      {
+        title: 'Teklif almak için hangi bilgileri göndermeliyiz?',
+        description:
+          'Proje lokasyonu, yapı tipi, yaklaşık alan, talep edilen hizmet, mevcut proje aşaması ve varsa çizim veya teknik dokümanlar ilk değerlendirme için yeterlidir.',
+      },
+    ]}
+  />
+
+  <!-- ===================================================== -->
+  <!-- CTA -->
+  <!-- ===================================================== -->
+
+  <CallToAction
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Projenizi Konuşalım',
+        href: '/iletisim',
+        icon: 'tabler:arrow-right',
+      },
+    ]}
+  >
+    <Fragment slot="title"> Bir projeniz mi var? </Fragment>
+
+    <Fragment slot="subtitle">
+      İhtiyacınızı birlikte değerlendirelim; teknik, uygulanabilir ve sürdürülebilir mühendislik çözümünü oluşturalım.
+    </Fragment>
+  </CallToAction>
+</Layout>

@@ -1,0 +1,59 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'KVKK Aydınlatma Metni',
+  description:
+    'AKORT Mühendislik KVKK Aydınlatma Metni: kişisel verilerin işlenme amaçları, hukuki sebepleri ve haklarınız.',
+  robots: { index: false, follow: true },
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline="Yasal" title="KVKK Aydınlatma Metni" />
+
+  <WidgetWrapper containerClass="max-w-3xl mx-auto">
+    <div class="prose dark:prose-invert max-w-none">
+      <p class="text-sm text-muted">
+        Bu metin taslak niteliğindedir; yürürlükteki mevzuata uygunluğunun sağlanması için hukuk danışmanınızca gözden
+        geçirilmesini öneririz.
+      </p>
+
+      <h2>Veri Sorumlusu</h2>
+      <p>
+        6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu, AKORT Mühendislik'tir
+        ("AKORT"). İletişim bilgilerimize <a href="/iletisim">İletişim</a> sayfasından ulaşabilirsiniz.
+      </p>
+
+      <h2>İşlenen Kişisel Veriler ve İşlenme Amaçları</h2>
+      <p>
+        İnternet sitemiz üzerindeki iletişim ve teklif formları aracılığıyla paylaştığınız ad-soyad, e-posta, telefon,
+        firma, proje bilgileri ve varsa yüklediğiniz dosyalar; talebinizin değerlendirilmesi, size dönüş yapılması ve
+        gerektiğinde teklif hazırlanması amacıyla işlenir.
+      </p>
+
+      <h2>Hukuki Sebep</h2>
+      <p>
+        Kişisel verileriniz, KVKK'nın 5. maddesinde belirtilen "ilgili kişinin açık rızasının bulunması" ve/veya "bir
+        sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olması" hukuki sebeplerine dayanılarak işlenir.
+      </p>
+
+      <h2>Kişisel Verilerin Aktarılması</h2>
+      <p>
+        Talebinizin niteliğine göre, kişisel verileriniz yalnızca ilgili proje ekibimizle ve kullanılan form/altyapı
+        hizmet sağlayıcılarımızla, hizmetin gerektirdiği ölçüde paylaşılabilir.
+      </p>
+
+      <h2>Haklarınız</h2>
+      <p>
+        KVKK'nın 11. maddesi uyarınca; kişisel verilerinizin işlenip işlenmediğini öğrenme, işlenmişse buna ilişkin
+        bilgi talep etme, işlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme, yurt içinde veya yurt
+        dışında aktarıldığı üçüncü kişileri bilme, eksik veya yanlış işlenmişse düzeltilmesini isteme, silinmesini veya
+        yok edilmesini isteme haklarına sahipsiniz. Taleplerinizi <a href="/iletisim">İletişim</a> sayfamızdaki kanallar üzerinden
+        bize iletebilirsiniz.
+      </p>
+    </div>
+  </WidgetWrapper>
+</Layout>

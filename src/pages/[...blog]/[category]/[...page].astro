@@ -1,0 +1,49 @@
+---
+import type { InferGetStaticPropsType, GetStaticPaths } from 'astro';
+import { blogCategoryRobots, getStaticPathsBlogCategory } from '~/utils/blog';
+
+import Layout from '~/layouts/PageLayout.astro';
+import BlogList from '~/components/blog/List.astro';
+import Headline from '~/components/blog/Headline.astro';
+import Pagination from '~/components/blog/Pagination.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { getPermalink, getBlogPermalink } from '~/utils/permalinks';
+
+export const prerender = true;
+
+export const getStaticPaths = (async ({ paginate }) => {
+  return await getStaticPathsBlogCategory({ paginate });
+}) satisfies GetStaticPaths;
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths> & { category: Record<string, string> };
+
+const { page, category } = Astro.props as Props;
+
+const currentPage = page.currentPage ?? 1;
+
+const breadcrumbs = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  { text: 'Bilgi Merkezi', href: getBlogPermalink() },
+  ...(currentPage > 1
+    ? [{ text: category.title, href: getPermalink(category.slug, 'category') }, { text: `Sayfa ${currentPage}` }]
+    : [{ text: category.title }]),
+];
+
+const metadata = {
+  title: `${category.title} Yazıları${currentPage > 1 ? ` — Sayfa ${currentPage}` : ''}`,
+  description: `AKORT Mühendislik Bilgi Merkezi'nde ${category.title} kategorisindeki yazılar.`,
+  robots: {
+    index: blogCategoryRobots?.index,
+    follow: blogCategoryRobots?.follow,
+  },
+};
+---
+
+<Layout metadata={metadata}>
+  <Breadcrumbs bar items={breadcrumbs} />
+  <section class="px-4 md:px-6 py-12 sm:py-16 lg:py-20 mx-auto max-w-4xl">
+    <Headline>{category.title}</Headline>
+    <BlogList posts={page.data} />
+    <Pagination prevUrl={page.url.prev} nextUrl={page.url.next} />
+  </section>
+</Layout>

@@ -1,0 +1,112 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Teknik Danışmanlık',
+  description:
+    'Proje uygunluk incelemesi, ikinci göz denetimi, fizibilite çalışmaları ve standart uyum değerlendirmesi.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hizmetler / Teknik Danışmanlık"
+    title="Teknik Danışmanlık"
+    subtitle="Mevcut veya planlanan projelerinizi; teknik uygunluk, uygulanabilirlik ve standartlara uyum açısından bağımsız bir gözle değerlendiriyoruz."
+  />
+
+  <Features
+    tagline="Hizmet Kapsamı"
+    title="Neleri Kapsar?"
+    columns={2}
+    items={[
+      {
+        title: 'Proje Uygunluk İncelemesi',
+        description: 'Mevcut projelerin teknik doğruluk ve uygulanabilirlik açısından değerlendirilmesi.',
+        icon: 'tabler:checklist',
+      },
+      {
+        title: 'İkinci Göz Denetimi (Peer Review)',
+        description: 'Bağımsız bir mühendislik gözüyle tasarım kararlarının teyit edilmesi.',
+        icon: 'tabler:eye-check',
+      },
+      {
+        title: 'Fizibilite Çalışmaları',
+        description: 'Teknik ve ekonomik açıdan proje uygulanabilirliğinin analizi.',
+        icon: 'tabler:gauge',
+      },
+      {
+        title: 'Standart & Yönetmelik Uyum Değerlendirmesi',
+        description: 'Projelerin ilgili mevzuat ve standartlarla uyumunun kontrolü.',
+        icon: 'tabler:certificate',
+      },
+      {
+        title: 'Teknik Raporlama',
+        description: 'Bulguların açık, gerekçeli ve uygulanabilir raporlar halinde sunulması.',
+        icon: 'tabler:file-description',
+      },
+      {
+        title: 'Uzman Görüşü',
+        description: 'Karmaşık teknik konularda karar destek amaçlı uzman değerlendirmesi.',
+        icon: 'tabler:bulb',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="Yaklaşımımız"
+    title="Bağımsız bakış, daha sağlam karar."
+    items={[
+      {
+        title: 'Tarafsız Değerlendirme',
+        description: 'Projeyi üreten ekipten bağımsız bir gözle, yalnızca teknik doğruluğu esas alarak inceleriz.',
+      },
+      {
+        title: 'Somut Bulgular',
+        description:
+          'Genel yorumlar yerine, hangi kararın neden gözden geçirilmesi gerektiğini net biçimde ortaya koyarız.',
+      },
+      {
+        title: 'Uygulanabilir Öneriler',
+        description: 'Her bulguyu, hayata geçirilebilir bir aksiyon önerisiyle birlikte sunarız.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
+      alt: 'Teknik danışmanlık ve proje inceleme süreci',
+    }}
+  />
+
+  <Features2
+    tagline="İlgili Hizmetler"
+    columns={2}
+    items={[
+      {
+        title: 'Proje Kontrol',
+        description: 'Danışmanlık bulgularının uygulama sürecinde takibi.',
+        icon: 'tabler:clipboard-check',
+        href: '/proje-kontrol',
+      },
+      {
+        title: 'Taahhüt & Uygulama',
+        description: 'Teknik önerilerin sahada doğru uygulanması.',
+        icon: 'tabler:tools',
+        href: '/taahhut',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Projenizi bağımsız bir gözle değerlendirelim.</Fragment>
+    <Fragment slot="subtitle">İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>

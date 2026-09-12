@@ -1,0 +1,101 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Content from '~/components/widgets/Content.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Hakkımızda',
+  description:
+    'AKORT Mühendislik; mekanik, elektrik, BIM, enerji, yapı ve çelik disiplinlerini tek çatı altında birleştiren multidisipliner bir mühendislik organizasyonudur.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hakkımızda"
+    title="Farklı disiplinleri, tek bir mühendislik anlayışında buluşturuyoruz."
+    subtitle="AKORT Mühendislik; mimari, yapı, mekanik, elektrik, enerji ve dijital mühendislik alanlarını tasarımdan uygulamaya kadar bütüncül bir bakış açısıyla yönetir. Amacımız yalnızca proje üretmek değil, doğru mühendislik kararlarının tüm süreç boyunca korunmasını sağlamaktır."
+  />
+
+  <Content
+    isReversed
+    tagline="Yaklaşımımız"
+    title="AKORT ismi, koordinasyonu ifade eder."
+    items={[
+      {
+        title: 'Multidisipliner Çalışma Modeli',
+        description:
+          'Mekanik, elektrik, BIM, enerji, mimari, yapı ve çelik disiplinlerini ayrı ayrı değil; birbiriyle koordineli tek bir mühendislik süreci olarak ele alıyoruz.',
+      },
+      {
+        title: 'Tasarımdan Uygulamaya Süreklilik',
+        description:
+          'Projelerde tasarım aşamasında alınan kararların, saha uygulamasında da aynı bütünlükle sürdürülmesini önemsiyoruz.',
+      },
+      {
+        title: 'Teknik Doğruluk',
+        description:
+          'Mühendislik hesapları, standartlar ve saha gerçekliği arasında denge kuran, uygulanabilir çözümler üretiyoruz.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85',
+      alt: 'AKORT Mühendislik ekibi proje üzerinde çalışıyor',
+    }}
+  >
+    <Fragment slot="content">
+      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">Uyumun Mühendisliği.</h3>
+      Bir yapının başarısı yalnızca doğru projelendirilmesine değil; mimari, yapı, mekanik, elektrik, enerji ve uygulama süreçlerinin
+      birbiriyle uyumlu çalışmasına bağlıdır.
+    </Fragment>
+  </Content>
+
+  <Steps2
+    tagline="Değerlerimiz"
+    title="Nasıl Çalışırız?"
+    subtitle="Her projede aynı üç ilkeyi esas alırız: teknik doğruluk, disiplinler arası koordinasyon ve sahada uygulanabilirlik."
+    items={[
+      {
+        title: 'Şeffaf Mühendislik',
+        description:
+          'Aldığımız her teknik kararın gerekçesini, hesap ve standartlara dayandırarak paydaşlarla açık biçimde paylaşırız.',
+      },
+      {
+        title: 'Koordineli Süreç',
+        description: 'Disiplinler arasındaki kararları BIM ve düzenli proje kontrol süreçleriyle senkronize tutarız.',
+      },
+      {
+        title: 'Sahada Sınanmış Çözüm',
+        description:
+          'Tasarımı yalnızca çizim olarak değil; montaj, işletme ve bakım koşullarıyla birlikte değerlendiririz.',
+      },
+    ]}
+  />
+
+  <Stats
+    countUp
+    tagline="Rakamlarla Değil, Yaklaşımla"
+    title="AKORT'u Tanımlayan Yaklaşım"
+    stats={[
+      { title: 'Mühendislik Disiplini', amount: '8+' },
+      { title: 'Proje Yaklaşımı', amount: '360°' },
+      { title: 'Dijital Koordinasyon', amount: 'BIM' },
+      { title: 'Odak', amount: 'Tek Hedef' },
+    ]}
+  />
+
+  <CallToAction
+    actions={[
+      { variant: 'primary', text: 'Projenizi Konuşalım', href: '/iletisim', icon: 'tabler:arrow-right' },
+      { text: 'Hizmetlerimizi İnceleyin', href: '/hizmetler' },
+    ]}
+  >
+    <Fragment slot="title">Bir projeniz mi var?</Fragment>
+    <Fragment slot="subtitle">
+      İhtiyacınızı birlikte değerlendirelim; teknik, uygulanabilir ve sürdürülebilir mühendislik çözümünü oluşturalım.
+    </Fragment>
+  </CallToAction>
+</Layout>

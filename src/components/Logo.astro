@@ -1,0 +1,15 @@
+---
+// Plain <img> on purpose: this is already a pre-cropped, pre-optimized PNG, so
+// it's imported as a fingerprinted static asset (no Sharp transform needed) —
+// keeps the header logo working even when the dev image-optimization endpoint
+// can't resolve Sharp (see astro/issues with native deps on some setups).
+import akortIcon from '~/assets/images/akort-icon.png';
+---
+
+<span class="flex items-center gap-2 self-center whitespace-nowrap">
+  <img src={akortIcon.src} alt="AKORT Mühendislik" width="32" height="32" class="h-8 w-8" />
+  <span class="flex items-baseline gap-1.5">
+    <span class="text-xl font-extrabold tracking-tight text-heading">AKORT</span>
+    <span class="hidden sm:inline text-[0.7rem] font-semibold tracking-[0.12em] text-muted uppercase">Mühendislik</span>
+  </span>
+</span>

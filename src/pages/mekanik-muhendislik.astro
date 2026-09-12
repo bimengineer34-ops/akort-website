@@ -1,0 +1,114 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Mekanik Mühendislik',
+  description:
+    'HVAC, sıhhi tesisat, yangın tesisatı, merkezi sistemler, ekipman seçimi ve hidrolik hesaplarla mekanik altyapı çözümleri.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hizmetler / Mekanik Mühendislik"
+    title="Mekanik Mühendislik"
+    subtitle="HVAC, sıhhi tesisat, yangın tesisatı ve merkezi sistemleri; enerji verimliliği ve işletme kolaylığını gözeten bir mühendislik yaklaşımıyla tasarlıyoruz."
+  />
+
+  <Features
+    tagline="Hizmet Kapsamı"
+    title="Neleri Kapsar?"
+    columns={2}
+    items={[
+      {
+        title: 'HVAC Sistemleri',
+        description: 'Isıtma, soğutma ve havalandırma sistemlerinin tasarımı ve ekipman seçimi.',
+        icon: 'tabler:wind',
+      },
+      {
+        title: 'Sıhhi Tesisat',
+        description: 'İçme suyu, atık su ve yağmur suyu tesisatlarının projelendirilmesi.',
+        icon: 'tabler:droplet',
+      },
+      {
+        title: 'Yangın Tesisatı',
+        description: 'Sprinkler, hidrant ve yangın söndürme sistemlerinin mühendislik çözümleri.',
+        icon: 'tabler:flame',
+      },
+      {
+        title: 'Merkezi Sistemler',
+        description: 'Bina genelinde merkezi ısıtma, soğutma ve kontrol sistemlerinin koordinasyonu.',
+        icon: 'tabler:building-warehouse',
+      },
+      {
+        title: 'Ekipman Seçimi & Hidrolik Hesaplar',
+        description: 'Debi, basınç kaybı ve kapasite hesaplarına dayalı doğru ekipman seçimi.',
+        icon: 'tabler:calculator',
+      },
+      {
+        title: 'Mekanik Altyapı Koordinasyonu',
+        description: 'Mekanik sistemlerin elektrik, mimari ve yapı disiplinleriyle uyumlu kurgulanması.',
+        icon: 'tabler:network',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="Yaklaşımımız"
+    title="Doğru Ekipman, Doğru Yerde."
+    items={[
+      {
+        title: 'Yük Hesabına Dayalı Tasarım',
+        description: 'Isıtma/soğutma yüklerini ve su ihtiyacını gerçek kullanım senaryolarına göre hesaplarız.',
+      },
+      {
+        title: 'Enerji Verimli Sistem Seçimi',
+        description:
+          'İlk yatırım ve işletme maliyetini birlikte değerlendiren ekipman ve sistem alternatifleri sunarız.',
+      },
+      {
+        title: 'BIM ile Koordinasyon',
+        description:
+          'Mekanik tesisatı, elektrik ve mimari ile aynı model üzerinde koordine ederek çakışmaları önceden gideririz.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1600&q=85',
+      alt: 'Mekanik tesisat ve HVAC sistem koordinasyonu',
+    }}
+  />
+
+  <Features2
+    tagline="İlgili Hizmetler"
+    columns={2}
+    items={[
+      {
+        title: 'Elektrik Mühendisliği',
+        description: 'Kuvvetli akım, aydınlatma ve elektrik altyapı sistemleri.',
+        icon: 'tabler:bolt',
+        href: '/elektrik-muhendisligi',
+      },
+      {
+        title: 'BIM & Dijital Mühendislik',
+        description: 'MEP koordinasyonu ve clash detection ile hatasız uygulama.',
+        icon: 'tabler:cube-3d-sphere',
+        href: '/bim',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Mekanik altyapınızı konuşalım.</Fragment>
+    <Fragment slot="subtitle"
+      >Projenizin ihtiyaçlarını birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>

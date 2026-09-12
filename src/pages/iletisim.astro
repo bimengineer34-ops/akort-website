@@ -1,0 +1,133 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+
+const metadata = {
+  title: 'İletişim',
+  description: 'AKORT Mühendislik ile iletişime geçin veya projeniz için teklif formunu doldurun.',
+};
+
+// TODO: Web3Forms üzerinden alınan gerçek "access key" ile değiştirin (https://web3forms.com).
+// Access key herkese açık bir form kimliğidir, gizli bir API anahtarı değildir.
+const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="İletişim"
+    title="Projenizi Konuşalım."
+    subtitle="Sorularınız için bize kısaca yazın ya da doğrudan teklif formunu doldurun; en kısa sürede geri dönüş yapalım."
+  />
+
+  <ContactUs
+    id="iletisim"
+    tagline="Mesaj Gönderin"
+    title="Bize Ulaşın"
+    subtitle="Genel sorularınız, işbirliği talepleriniz veya kısa bilgi talepleriniz için bu formu kullanabilirsiniz."
+    action={WEB3FORMS_ENDPOINT}
+    inputs={[
+      { type: 'hidden', name: 'access_key', value: WEB3FORMS_ACCESS_KEY },
+      { type: 'hidden', name: 'subject', value: 'AKORT Mühendislik — Yeni İletişim Formu Mesajı' },
+      { type: 'text', name: 'name', label: 'Ad Soyad', required: true },
+      { type: 'email', name: 'email', label: 'E-posta', required: true },
+      { type: 'tel', name: 'phone', label: 'Telefon' },
+    ]}
+    textarea={{ label: 'Mesajınız', name: 'message', rows: 5 }}
+    disclaimer={{
+      label:
+        'Bu formu göndererek, mesajınızın değerlendirilmesi amacıyla kişisel verilerinizin işlenmesini kabul edersiniz. Detaylar için KVKK Aydınlatma Metnimizi inceleyebilirsiniz.',
+    }}
+    button="Gönder"
+  />
+
+  <ContactUs
+    id="teklif"
+    tagline="Teklif Formu"
+    title="Projenizi Değerlendirelim"
+    subtitle="Proje bilgilerinizi paylaşın; kapsamı netleştirdikten sonra sizinle iletişime geçelim."
+    action={WEB3FORMS_ENDPOINT}
+    inputs={[
+      { type: 'hidden', name: 'access_key', value: WEB3FORMS_ACCESS_KEY },
+      { type: 'hidden', name: 'subject', value: 'AKORT Mühendislik — Yeni Teklif Talebi' },
+      { type: 'text', name: 'name', label: 'Ad Soyad', required: true },
+      { type: 'text', name: 'company', label: 'Firma' },
+      { type: 'tel', name: 'phone', label: 'Telefon', required: true },
+      { type: 'email', name: 'email', label: 'E-posta', required: true },
+      { type: 'text', name: 'project_location', label: 'Proje Lokasyonu' },
+      {
+        type: 'text',
+        name: 'project_type',
+        label: 'Proje Türü',
+        placeholder: 'Proje türü seçin',
+        options: [
+          { value: 'Sağlık', label: 'Sağlık Yapısı' },
+          { value: 'Eğitim', label: 'Eğitim Yapısı' },
+          { value: 'Konut', label: 'Konut' },
+          { value: 'Ticari', label: 'Ticari Yapı' },
+          { value: 'Ofis', label: 'Ofis' },
+          { value: 'Otel', label: 'Otel' },
+          { value: 'Endüstriyel', label: 'Endüstriyel Yapı' },
+          { value: 'Veri Merkezi', label: 'Veri Merkezi' },
+          { value: 'Enerji-GES', label: 'Enerji / GES' },
+          { value: 'Kamu', label: 'Kamu Yapısı' },
+          { value: 'Karma', label: 'Karma Kullanım' },
+          { value: 'Diğer', label: 'Diğer' },
+        ],
+      },
+      { type: 'text', name: 'project_area', label: 'Yaklaşık Proje Alanı', placeholder: 'Örn. 12.000 m²' },
+      {
+        type: 'text',
+        name: 'requested_service',
+        label: 'Talep Edilen Hizmet',
+        placeholder: 'Hizmet seçin',
+        options: [
+          { value: 'Mekanik Mühendislik', label: 'Mekanik Mühendislik' },
+          { value: 'Elektrik Mühendisliği', label: 'Elektrik Mühendisliği' },
+          { value: 'BIM & Dijital Mühendislik', label: 'BIM & Dijital Mühendislik' },
+          { value: 'Enerji & Enerji Verimliliği', label: 'Enerji & Enerji Verimliliği' },
+          { value: 'GES', label: 'GES' },
+          { value: 'Mimari', label: 'Mimari' },
+          { value: 'Yapı & İnşaat', label: 'Yapı & İnşaat' },
+          { value: 'Çelik Yapılar', label: 'Çelik Yapılar' },
+          { value: 'Teknik Danışmanlık', label: 'Teknik Danışmanlık' },
+          { value: 'Proje Kontrol', label: 'Proje Kontrol' },
+          { value: 'Taahhüt & Uygulama', label: 'Taahhüt & Uygulama' },
+          { value: 'Birden Fazla / Emin Değilim', label: 'Birden Fazla / Emin Değilim' },
+        ],
+      },
+      {
+        type: 'text',
+        name: 'project_stage',
+        label: 'Proje Aşaması',
+        placeholder: 'Aşama seçin',
+        options: [
+          { value: 'Fikir / Konsept', label: 'Fikir / Konsept' },
+          { value: 'Ön Proje', label: 'Ön Proje' },
+          { value: 'Uygulama Projesi', label: 'Uygulama Projesi' },
+          { value: 'İnşaat Aşamasında', label: 'İnşaat Aşamasında' },
+          { value: 'Tamamlanmış / İşletmede', label: 'Tamamlanmış / İşletmede' },
+        ],
+      },
+      { type: 'file', name: 'attachment', label: 'Dosya / Proje Yükleme', accept: '.pdf,.dwg,.jpg,.jpeg,.png,.zip' },
+    ]}
+    textarea={{ label: 'Açıklama', name: 'description', rows: 5, placeholder: 'Projeniz hakkında kısaca bilgi verin' }}
+    disclaimer={{
+      label:
+        'Bu formu göndererek, teklif değerlendirmesi amacıyla kişisel verilerinizin işlenmesini kabul edersiniz. Detaylar için KVKK Aydınlatma Metnimizi inceleyebilirsiniz.',
+    }}
+    button="Projenizi Değerlendirelim"
+  />
+
+  <Features2
+    title="İletişim Bilgilerimiz"
+    columns={3}
+    items={[
+      { title: 'Telefon', description: '+90 (2xx) xxx xx xx', icon: 'tabler:phone' },
+      { title: 'E-posta', description: 'info@akortmuhendislik.com', icon: 'tabler:mail' },
+      { title: 'Adres', description: 'İstanbul, Türkiye', icon: 'tabler:map-pin' },
+    ]}
+  />
+</Layout>

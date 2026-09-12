@@ -1,0 +1,152 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Image from '~/components/common/Image.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('project');
+  return projects
+    .filter((p) => !p.data.draft)
+    .map((project) => ({
+      params: { slug: project.id },
+      props: { project },
+    }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const {
+  title,
+  excerpt,
+  image,
+  imageAlt,
+  tags,
+  client,
+  location,
+  year,
+  area,
+  scope,
+  need,
+  solution,
+  systems,
+  outcomes,
+} = project.data;
+
+const metadata = {
+  title,
+  description: excerpt,
+};
+
+const facts = [
+  { label: 'İşveren', value: client },
+  { label: 'Lokasyon', value: location },
+  { label: 'Yıl', value: year },
+  { label: 'Alan', value: area },
+  { label: 'Hizmet Kapsamı', value: scope },
+];
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline={tags?.join(' · ')} title={title} subtitle={excerpt} />
+
+  <WidgetWrapper containerClass="max-w-5xl mx-auto">
+    {
+      image && (
+        <div class="mb-10 overflow-hidden rounded-2xl">
+          <Image
+            src={image}
+            alt={imageAlt ?? title ?? ''}
+            class="aspect-[16/9] w-full object-cover"
+            width={1200}
+            height={675}
+            layout="cover"
+            format="webp"
+          />
+        </div>
+      )
+    }
+
+    <dl
+      class="mb-12 grid grid-cols-2 gap-6 rounded-2xl border border-gray-200 dark:border-slate-700 p-6 sm:grid-cols-3 lg:grid-cols-5"
+    >
+      {
+        facts.map(
+          ({ label, value }) =>
+            value && (
+              <div>
+                <dt class="text-xs font-semibold uppercase tracking-wide text-muted">{label}</dt>
+                <dd class="mt-1 font-medium text-heading">{value}</dd>
+              </div>
+            )
+        )
+      }
+    </dl>
+
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+      <Content />
+    </div>
+
+    <div class="mt-10 grid gap-8 md:grid-cols-2">
+      {
+        need && (
+          <div>
+            <h3 class="text-lg font-bold text-heading">Projenin İhtiyacı</h3>
+            <p class="mt-2 text-muted">{need}</p>
+          </div>
+        )
+      }
+      {
+        solution && (
+          <div>
+            <h3 class="text-lg font-bold text-heading">AKORT'un Çözümü</h3>
+            <p class="mt-2 text-muted">{solution}</p>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="mt-10 grid gap-8 md:grid-cols-2">
+      {
+        systems && systems.length > 0 && (
+          <div>
+            <h3 class="text-lg font-bold text-heading">Uygulanan Sistemler</h3>
+            <ul class="mt-2 space-y-1.5 text-muted list-disc list-inside">
+              {systems.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      {
+        outcomes && outcomes.length > 0 && (
+          <div>
+            <h3 class="text-lg font-bold text-heading">Proje Çıktıları</h3>
+            <ul class="mt-2 space-y-1.5 text-muted list-disc list-inside">
+              {outcomes.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+
+    <div class="mt-12">
+      <a href="/projeler" class="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline">
+        ← Tüm projelere dön
+      </a>
+    </div>
+  </WidgetWrapper>
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Benzer bir projeniz mi var?</Fragment>
+    <Fragment slot="subtitle">İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>

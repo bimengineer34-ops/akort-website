@@ -1,0 +1,48 @@
+---
+// Font family is provided by Astro's native Fonts API (see `fonts` in
+// astro.config.ts and <Font /> in Layout.astro), exposed as `--font-inter`.
+// To switch typefaces, change the `fonts` entry and repoint `--aw-font-*` below.
+---
+
+<style is:inline>
+  :root {
+    --aw-font-sans: var(--font-inter);
+    --aw-font-serif: var(--font-inter);
+    --aw-font-heading: var(--font-inter);
+
+    --aw-color-primary: rgb(13 30 52);
+    --aw-color-secondary: rgb(30 61 90);
+    --aw-color-accent: rgb(21 132 145);
+
+    --aw-color-text-heading: rgb(10 16 26);
+    --aw-color-text-default: rgb(30 38 51);
+    --aw-color-text-muted: rgb(30 38 51 / 66%);
+    --aw-color-bg-page: rgb(255 255 255);
+
+    --aw-color-bg-page-dark: rgb(8 12 20);
+
+    ::selection {
+      background-color: rgb(21 132 145 / 30%);
+    }
+  }
+
+  .dark {
+    --aw-font-sans: var(--font-inter);
+    --aw-font-serif: var(--font-inter);
+    --aw-font-heading: var(--font-inter);
+
+    --aw-color-primary: rgb(45 99 156);
+    --aw-color-secondary: rgb(30 61 90);
+    --aw-color-accent: rgb(56 178 189);
+
+    --aw-color-text-heading: rgb(247, 248, 248);
+    --aw-color-text-default: rgb(229 236 246);
+    --aw-color-text-muted: rgb(229 236 246 / 66%);
+    --aw-color-bg-page: rgb(8 9 10);
+
+    ::selection {
+      background-color: black;
+      color: snow;
+    }
+  }
+</style>

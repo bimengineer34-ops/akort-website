@@ -1,0 +1,72 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import ContactUs from '~/components/widgets/Contact.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+
+const metadata = {
+  title: 'Kariyer',
+  description:
+    'AKORT Mühendislik yetenek havuzuna katılın; mekanik, elektrik, BIM ve yapı disiplinlerinde açık pozisyonlar için başvurunuzu iletin.',
+};
+
+const WEB3FORMS_ACCESS_KEY = 'YOUR_WEB3FORMS_ACCESS_KEY';
+const WEB3FORMS_ENDPOINT = 'https://api.web3forms.com/submit';
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Kariyer"
+    title="AKORT'ta Mühendislik Yapmak"
+    subtitle="Şu anda ilan edilmiş açık bir pozisyonumuz olmayabilir; ancak mekanik, elektrik, BIM, enerji ve yapı disiplinlerinde güçlü bir ekip kurmaya devam ediyoruz. Özgeçmişinizi yetenek havuzumuza ekleyebilirsiniz."
+  />
+
+  <Features2
+    columns={3}
+    items={[
+      {
+        title: 'Multidisipliner Ekip',
+        description: 'Farklı mühendislik disiplinlerinden gelen ekip arkadaşlarıyla birlikte çalışırsınız.',
+        icon: 'tabler:users-group',
+      },
+      {
+        title: 'BIM Odaklı Çalışma',
+        description: 'Güncel dijital mühendislik araçlarıyla proje geliştirme deneyimi kazanırsınız.',
+        icon: 'tabler:cube-3d-sphere',
+      },
+      {
+        title: 'Sahada Deneyim',
+        description: 'Tasarım kararlarının sahada nasıl hayata geçtiğini yakından görürsünüz.',
+        icon: 'tabler:hammer',
+      },
+    ]}
+  />
+
+  <ContactUs
+    id="basvuru"
+    tagline="Başvuru"
+    title="Özgeçmişinizi Gönderin"
+    subtitle="Bilgilerinizi ve özgeçmişinizi paylaşın; uygun bir pozisyon açıldığında sizinle iletişime geçelim."
+    action={WEB3FORMS_ENDPOINT}
+    inputs={[
+      { type: 'hidden', name: 'access_key', value: WEB3FORMS_ACCESS_KEY },
+      { type: 'hidden', name: 'subject', value: 'AKORT Mühendislik — Kariyer Başvurusu' },
+      { type: 'text', name: 'name', label: 'Ad Soyad', required: true },
+      { type: 'email', name: 'email', label: 'E-posta', required: true },
+      { type: 'tel', name: 'phone', label: 'Telefon' },
+      {
+        type: 'text',
+        name: 'position_interest',
+        label: 'İlgi Duyduğunuz Alan',
+        placeholder: 'Örn. Mekanik, Elektrik, BIM',
+      },
+      { type: 'file', name: 'cv', label: 'Özgeçmiş (CV)', accept: '.pdf,.doc,.docx' },
+    ]}
+    textarea={{ label: 'Kısa Not', name: 'message', rows: 4 }}
+    disclaimer={{
+      label:
+        'Bu formu göndererek, başvurunuzun değerlendirilmesi amacıyla kişisel verilerinizin işlenmesini kabul edersiniz.',
+    }}
+    button="Başvuruyu Gönder"
+  />
+</Layout>

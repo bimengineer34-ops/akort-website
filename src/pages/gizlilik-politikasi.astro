@@ -1,0 +1,56 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'Gizlilik Politikası',
+  description: 'AKORT Mühendislik gizlilik politikası: web sitemizi kullanırken kişisel verilerinizin nasıl korunduğu.',
+  robots: { index: false, follow: true },
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline="Yasal" title="Gizlilik Politikası" />
+
+  <WidgetWrapper containerClass="max-w-3xl mx-auto">
+    <div class="prose dark:prose-invert max-w-none">
+      <p class="text-sm text-muted">
+        Bu metin taslak niteliğindedir; yürürlükteki mevzuata uygunluğunun sağlanması için hukuk danışmanınızca gözden
+        geçirilmesini öneririz.
+      </p>
+
+      <h2>Kapsam</h2>
+      <p>
+        Bu gizlilik politikası, akortmuhendislik.com üzerinden bizimle paylaştığınız bilgilerin nasıl toplandığını,
+        kullanıldığını ve korunduğunu açıklar.
+      </p>
+
+      <h2>Topladığımız Bilgiler</h2>
+      <p>
+        İletişim ve teklif formlarımızı doldurduğunuzda ad-soyad, e-posta, telefon, firma ve proje bilgileri gibi sizin
+        bize sağladığınız bilgileri topluyoruz. Sitemizi ziyaretiniz sırasında, kullanılan çerezler hakkında bilgi için <a
+          href="/cerez-politikasi">Çerez Politikamıza</a
+        > bakabilirsiniz.
+      </p>
+
+      <h2>Bilgilerin Kullanımı</h2>
+      <p>
+        Paylaştığınız bilgileri yalnızca talebinizi yanıtlamak, teklif hazırlamak ve gerektiğinde sizinle iletişime
+        geçmek amacıyla kullanırız. Bilgileriniz, açık rızanız veya yasal bir zorunluluk olmadıkça üçüncü taraflarla
+        pazarlama amacıyla paylaşılmaz.
+      </p>
+
+      <h2>Veri Güvenliği</h2>
+      <p>
+        Kişisel verilerinizi yetkisiz erişime, kayba veya kötüye kullanıma karşı korumak için makul teknik ve idari
+        önlemler alıyoruz.
+      </p>
+
+      <h2>İletişim</h2>
+      <p>
+        Gizlilik politikamızla ilgili sorularınız için <a href="/iletisim">İletişim</a> sayfamız üzerinden bize ulaşabilirsiniz.
+      </p>
+    </div>
+  </WidgetWrapper>
+</Layout>

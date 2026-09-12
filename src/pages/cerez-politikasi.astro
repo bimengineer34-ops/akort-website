@@ -1,0 +1,50 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'Çerez Politikası',
+  description: 'AKORT Mühendislik çerez politikası: web sitemizde kullanılan çerez türleri ve yönetimi.',
+  robots: { index: false, follow: true },
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText tagline="Yasal" title="Çerez Politikası" />
+
+  <WidgetWrapper containerClass="max-w-3xl mx-auto">
+    <div class="prose dark:prose-invert max-w-none">
+      <p class="text-sm text-muted">
+        Bu metin taslak niteliğindedir; yürürlükteki mevzuata uygunluğunun sağlanması için hukuk danışmanınızca gözden
+        geçirilmesini öneririz.
+      </p>
+
+      <h2>Çerez Nedir?</h2>
+      <p>
+        Çerezler, bir web sitesini ziyaret ettiğinizde tarayıcınıza kaydedilen küçük metin dosyalarıdır. Sitemizin doğru
+        çalışmasını ve deneyiminizi iyileştirmeyi sağlarlar.
+      </p>
+
+      <h2>Kullandığımız Çerez Türleri</h2>
+      <ul>
+        <li><strong>Zorunlu çerezler:</strong> Sitenin temel işlevleri (ör. tema tercihi) için gereklidir.</li>
+        <li>
+          <strong>Analitik çerezler:</strong> Yalnızca etkinleştirilmişse, site kullanımını anlamamıza yardımcı olur (bkz.
+          <code>src/config.yaml</code> içindeki <code>analytics</code> ayarları).
+        </li>
+      </ul>
+
+      <h2>Çerezleri Nasıl Yönetebilirsiniz?</h2>
+      <p>
+        Çoğu tarayıcı, çerezleri tarayıcı ayarları üzerinden engellemenize veya silmenize olanak tanır. Çerezleri devre
+        dışı bırakmanız durumunda sitenin bazı bölümleri beklendiği gibi çalışmayabilir.
+      </p>
+
+      <h2>İletişim</h2>
+      <p>
+        Çerez politikamızla ilgili sorularınız için <a href="/iletisim">İletişim</a> sayfamız üzerinden bize ulaşabilirsiniz.
+      </p>
+    </div>
+  </WidgetWrapper>
+</Layout>

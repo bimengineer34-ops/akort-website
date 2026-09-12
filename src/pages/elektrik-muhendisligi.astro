@@ -1,0 +1,111 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Elektrik Mühendisliği',
+  description: 'Kuvvetli akım, zayıf akım, enerji dağıtımı, aydınlatma ve otomasyon sistemlerinin projelendirilmesi.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hizmetler / Elektrik Mühendisliği"
+    title="Elektrik Mühendisliği"
+    subtitle="Kuvvetli akım, zayıf akım, enerji dağıtımı ve otomasyon sistemlerini; güvenlik, verimlilik ve gelecekteki genişleme ihtiyaçlarını gözeterek tasarlıyoruz."
+  />
+
+  <Features
+    tagline="Hizmet Kapsamı"
+    title="Neleri Kapsar?"
+    columns={2}
+    items={[
+      {
+        title: 'Kuvvetli Akım',
+        description: 'Enerji dağıtım panoları, kablolama ve topraklama sistemlerinin projelendirilmesi.',
+        icon: 'tabler:bolt',
+      },
+      {
+        title: 'Zayıf Akım',
+        description: 'Haberleşme, güvenlik ve yapısal kablolama altyapılarının tasarımı.',
+        icon: 'tabler:broadcast',
+      },
+      {
+        title: 'Enerji Dağıtımı',
+        description: 'Trafo, pano ve dağıtım hattı kapasitelerinin doğru boyutlandırılması.',
+        icon: 'tabler:transform',
+      },
+      {
+        title: 'Aydınlatma',
+        description: 'İç ve dış mekan aydınlatma tasarımı; konfor ve enerji verimliliği dengesi.',
+        icon: 'tabler:bulb',
+      },
+      {
+        title: 'Otomasyon',
+        description: 'Bina otomasyonu ve kontrol sistemlerinin diğer disiplinlerle entegrasyonu.',
+        icon: 'tabler:cpu',
+      },
+      {
+        title: 'Elektrik Altyapı Sistemleri',
+        description: 'Acil durum, UPS ve yedekli güç sistemlerinin planlanması.',
+        icon: 'tabler:plug',
+      },
+    ]}
+  />
+
+  <Content
+    tagline="Yaklaşımımız"
+    title="Güvenli, Ölçeklenebilir Altyapı."
+    items={[
+      {
+        title: 'Kapasite Planlaması',
+        description: 'Mevcut ve gelecekteki yük artışlarını hesaba katan pano ve hat boyutlandırması yaparız.',
+      },
+      {
+        title: 'Standartlara Uygunluk',
+        description: 'Tasarımlarımızı ilgili elektrik tesisat standartlarına ve yönetmeliklere dayandırırız.',
+      },
+      {
+        title: 'Mekanik ile Koordinasyon',
+        description:
+          'Elektrik altyapısını mekanik ve BIM modeliyle senkronize ederek çakışmaları önceden tespit ederiz.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
+      alt: 'Elektrik altyapı ve enerji dağıtım sistemleri tasarımı',
+    }}
+  />
+
+  <Features2
+    tagline="İlgili Hizmetler"
+    columns={2}
+    items={[
+      {
+        title: 'Mekanik Mühendislik',
+        description: 'HVAC ve mekanik altyapı ile birlikte koordineli tasarım.',
+        icon: 'tabler:wind',
+        href: '/mekanik-muhendislik',
+      },
+      {
+        title: 'Enerji & Enerji Verimliliği',
+        description: 'Sistem seçimlerinde enerji tüketimini optimize ederiz.',
+        icon: 'tabler:leaf',
+        href: '/enerji-verimliligi',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Elektrik altyapınızı konuşalım.</Fragment>
+    <Fragment slot="subtitle"
+      >Projenizin ihtiyaçlarını birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>

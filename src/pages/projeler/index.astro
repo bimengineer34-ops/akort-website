@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import Image from '~/components/common/Image.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+
+const metadata = {
+  title: 'Projeler',
+  description:
+    'AKORT Mühendislik hizmet kapsamını örnekleyen mekanik, elektrik, BIM, enerji, GES, yapı, çelik ve taahhüt projeleri.',
+};
+
+const allProjects = (await getCollection('project')).filter((p) => !p.data.draft);
+allProjects.sort((a, b) => Number(b.data.year ?? 0) - Number(a.data.year ?? 0));
+
+const categories = ['Tümü', 'Mekanik', 'Elektrik', 'BIM', 'Enerji', 'GES', 'Yapı', 'Çelik', 'Taahhüt'];
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Projeler"
+    title="Hizmet Kapsamımızı Yansıtan Projeler"
+    subtitle="Aşağıdaki çalışmalar, AKORT Mühendislik'in farklı disiplinlerdeki hizmet kapsamını örneklemek amacıyla hazırlanmıştır. Gerçek referans projeleriniz eklendiğinde bu bölüm güncellenecektir."
+  />
+
+  <WidgetWrapper containerClass="max-w-6xl mx-auto">
+    <div id="project-filters" class="mb-10 flex flex-wrap justify-center gap-2">
+      {
+        categories.map((cat, i) => (
+          <button
+            type="button"
+            data-filter={cat}
+            class:list={[
+              'rounded-full border px-4 py-1.5 text-sm font-medium transition',
+              i === 0
+                ? 'bg-primary text-white border-primary'
+                : 'border-gray-300 text-muted hover:border-primary hover:text-primary dark:border-slate-700',
+            ]}
+          >
+            {cat}
+          </button>
+        ))
+      }
+    </div>
+
+    <ul id="project-grid" class="grid gap-6 md:gap-8 sm:grid-cols-2 lg:grid-cols-3 list-none">
+      {
+        allProjects.map((project) => (
+          <li
+            data-tags={project.data.tags.join(',')}
+            class="project-card group flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-slate-700 dark:bg-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg hover:border-primary/40"
+          >
+            <a href={`/projeler/${project.id}`} class="flex h-full flex-col">
+              {project.data.image && (
+                <div class="overflow-hidden">
+                  <Image
+                    src={project.data.image}
+                    alt={project.data.imageAlt ?? project.data.title}
+                    class="aspect-[16/10] w-full object-cover transition group-hover:scale-[1.03]"
+                    widths={[400, 640]}
+                    sizes="(max-width: 639px) 100vw, (max-width: 1023px) 50vw, 400px"
+                    width={400}
+                    height={250}
+                    layout="cover"
+                    format="webp"
+                  />
+                </div>
+              )}
+              <div class="flex flex-1 flex-col p-6">
+                <ul class="mb-3 flex flex-wrap gap-1.5 list-none">
+                  {project.data.tags.map((tag) => (
+                    <li class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-muted dark:bg-slate-800">
+                      {tag}
+                    </li>
+                  ))}
+                </ul>
+                <h3 class="text-xl font-bold text-heading">{project.data.title}</h3>
+                {project.data.excerpt && <p class="mt-2 text-muted text-pretty">{project.data.excerpt}</p>}
+                <p class="mt-auto pt-4 text-sm text-muted">
+                  {project.data.location} · {project.data.year}
+                </p>
+              </div>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p id="project-empty" hidden class="py-12 text-center text-muted">Bu kategoride henüz proje bulunmuyor.</p>
+  </WidgetWrapper>
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Projenizi konuşalım.</Fragment>
+    <Fragment slot="subtitle">İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>
+
+<script>
+  const filters = document.getElementById('project-filters');
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.project-card'));
+  const empty = document.getElementById('project-empty');
+
+  filters?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement)?.closest<HTMLButtonElement>('[data-filter]');
+    if (!btn) return;
+
+    filters.querySelectorAll('[data-filter]').forEach((b) => {
+      b.classList.remove('bg-primary', 'text-white', 'border-primary');
+      b.classList.add('border-gray-300', 'text-muted');
+    });
+    btn.classList.add('bg-primary', 'text-white', 'border-primary');
+    btn.classList.remove('border-gray-300', 'text-muted');
+
+    const filter = btn.dataset.filter;
+    let visibleCount = 0;
+    cards.forEach((card) => {
+      const tags = card.dataset.tags?.split(',') ?? [];
+      const show = filter === 'Tümü' || tags.includes(filter ?? '');
+      card.hidden = !show;
+      if (show) visibleCount++;
+    });
+    if (empty) empty.hidden = visibleCount !== 0;
+  });
+</script>

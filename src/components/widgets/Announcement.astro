@@ -1,0 +1,54 @@
+---
+// Slim utility bar above the header: quick contact details instead of a
+// marketing banner. Everything is a prop so it can be overridden per page.
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  phone?: string;
+  email?: string;
+  linkedin?: string;
+  instagram?: string;
+}
+
+const {
+  phone = '+90 (2xx) xxx xx xx',
+  email = 'info@akortmuhendislik.com',
+  linkedin = 'https://www.linkedin.com/',
+  instagram = 'https://www.instagram.com/',
+} = Astro.props;
+---
+
+<div
+  class="text-xs bg-primary text-white/80 dark:bg-slate-950 dark:border-b dark:border-slate-800 hidden lg:flex items-center justify-between gap-4 overflow-hidden px-3 py-2"
+>
+  <div class="flex items-center gap-5">
+    <a href={`tel:${phone.replace(/[^+\d]/g, '')}`} class="flex items-center gap-1.5 hover:text-white transition">
+      <Icon name="tabler:phone" class="w-3.5 h-3.5" />
+      {phone}
+    </a>
+    <a href={`mailto:${email}`} class="flex items-center gap-1.5 hover:text-white transition">
+      <Icon name="tabler:mail" class="w-3.5 h-3.5" />
+      {email}
+    </a>
+  </div>
+  <div class="flex items-center gap-3">
+    <a
+      href={linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="LinkedIn"
+      class="hover:text-white transition"
+    >
+      <Icon name="tabler:brand-linkedin" class="w-4 h-4" />
+    </a>
+    <a
+      href={instagram}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Instagram"
+      class="hover:text-white transition"
+    >
+      <Icon name="tabler:brand-instagram" class="w-4 h-4" />
+    </a>
+  </div>
+</div>

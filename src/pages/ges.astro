@@ -1,0 +1,107 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'GES — Güneş Enerjisi Sistemleri',
+  description:
+    'Güneş enerji sistemlerinde fizibilite, tasarım, mühendislik ve uygulama koordinasyonu ile teknik danışmanlık hizmetleri.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hizmetler / GES"
+    title="Güneş Enerjisi Sistemleri (GES)"
+    subtitle="Fizibiliteden devreye almaya, güneş enerji sistemlerinin mühendislik süreçlerini uçtan uca yönetiyoruz."
+  />
+
+  <Features
+    tagline="Hizmet Kapsamı"
+    title="Neleri Kapsar?"
+    columns={2}
+    items={[
+      {
+        title: 'Fizibilite',
+        description: 'Saha potansiyeli, üretim tahmini ve yatırım geri dönüş analizi.',
+        icon: 'tabler:gauge',
+      },
+      {
+        title: 'Saha Etüdü',
+        description: 'Gölgelenme, eğim ve zemin koşullarının teknik değerlendirmesi.',
+        icon: 'tabler:map-2',
+      },
+      {
+        title: 'Sistem Tasarımı',
+        description: 'Panel dizilimi, invertör seçimi ve elektriksel sistem tasarımı.',
+        icon: 'tabler:solar-panel-2',
+      },
+      {
+        title: 'Şebeke Bağlantı Mühendisliği',
+        description: 'Bağlantı anlaşması süreçlerine teknik destek ve koordinasyon.',
+        icon: 'tabler:plug',
+      },
+      {
+        title: 'Uygulama Koordinasyonu',
+        description: 'Kurulum sürecinin mühendislik esaslarına uygun yürütülmesi.',
+        icon: 'tabler:tools',
+      },
+      {
+        title: 'Teknik Danışmanlık',
+        description: 'İşletme dönemi performans takibi ve teknik sorunlara çözüm önerileri.',
+        icon: 'tabler:bulb',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="Yaklaşımımız"
+    title="Üretimi garanti eden mühendislik."
+    items={[
+      {
+        title: 'Doğru Boyutlandırma',
+        description: 'Tüketim profiline uygun, ne eksik ne fazla kapasitede sistemler tasarlarız.',
+      },
+      {
+        title: 'Elektrik Altyapısıyla Uyum',
+        description: 'GES sistemini mevcut veya planlanan elektrik altyapısıyla sorunsuz entegre ederiz.',
+      },
+      { title: 'Uygulama Takibi', description: 'Kurulumun tasarım kriterlerine uygun ilerlediğini sahada denetleriz.' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
+      alt: 'Güneş enerjisi sistemleri mühendislik ve uygulama süreci',
+    }}
+  />
+
+  <Features2
+    tagline="İlgili Hizmetler"
+    columns={2}
+    items={[
+      {
+        title: 'Enerji & Enerji Verimliliği',
+        description: 'Üretim ve tüketimi birlikte optimize eden yaklaşım.',
+        icon: 'tabler:leaf',
+        href: '/enerji-verimliligi',
+      },
+      {
+        title: 'Elektrik Mühendisliği',
+        description: 'Şebeke bağlantısı ve elektrik altyapı entegrasyonu.',
+        icon: 'tabler:bolt',
+        href: '/elektrik-muhendisligi',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">GES yatırımınızı konuşalım.</Fragment>
+    <Fragment slot="subtitle">Saha bilgilerinizi paylaşın, fizibilite değerlendirmesine birlikte başlayalım.</Fragment>
+  </CallToAction>
+</Layout>

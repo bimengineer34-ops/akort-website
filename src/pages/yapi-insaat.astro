@@ -1,0 +1,104 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Yapı & İnşaat',
+  description: 'Statik proje, yapısal detaylandırma, malzeme ve sistem seçimi ile uygulama koordinasyonu.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hizmetler / Yapı & İnşaat"
+    title="Yapı & İnşaat"
+    subtitle="Taşıyıcı sistem kararlarını; mimari, zemin koşulları ve uygulama gerçekliğiyle birlikte değerlendirerek güvenli ve ekonomik yapı çözümleri üretiyoruz."
+  />
+
+  <Features
+    tagline="Hizmet Kapsamı"
+    title="Neleri Kapsar?"
+    columns={2}
+    items={[
+      {
+        title: 'Statik Proje',
+        description: 'Taşıyıcı sistem analizi ve betonarme/çelik statik projelerinin hazırlanması.',
+        icon: 'tabler:building-skyscraper',
+      },
+      {
+        title: 'Zemin Etüdü Değerlendirmesi',
+        description: 'Jeoteknik verilerin taşıyıcı sistem tasarımına doğru şekilde yansıtılması.',
+        icon: 'tabler:map-2',
+      },
+      {
+        title: 'Yapısal Detaylandırma',
+        description: 'Bağlantı, donatı ve uygulama detaylarının imalata uygun hazırlanması.',
+        icon: 'tabler:ruler-2',
+      },
+      {
+        title: 'Malzeme ve Sistem Seçimi',
+        description: 'Proje ölçeği ve bütçesine uygun yapı sistemi ve malzeme alternatifleri.',
+        icon: 'tabler:stack-2',
+      },
+      {
+        title: 'Uygulama Koordinasyonu',
+        description: 'Statik projenin sahada doğru uygulandığının teknik takibi.',
+        icon: 'tabler:tools',
+      },
+      {
+        title: 'Teknik Proje Kontrolü',
+        description: 'Tasarım ile imalat arasındaki tutarlılığın sürekli denetimi.',
+        icon: 'tabler:clipboard-check',
+      },
+    ]}
+  />
+
+  <Content
+    isReversed
+    tagline="Yaklaşımımız"
+    title="Güvenlik ve ekonomi arasında doğru denge."
+    items={[
+      {
+        title: 'Gerçekçi Yük Varsayımları',
+        description: 'Taşıyıcı sistem tasarımını gerçek kullanım ve çevresel yüklere göre kurgularız.',
+      },
+      { title: 'Mimari ile Uyum', description: 'Statik kararları, mimari mekan kurgusunu bozmadan optimize ederiz.' },
+      { title: 'Sahada Doğrulama', description: 'Uygulama sürecinde projeden sapmaları erken tespit ederiz.' },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=85',
+      alt: 'Yapı ve inşaat mühendisliği uygulama süreci',
+    }}
+  />
+
+  <Features2
+    tagline="İlgili Hizmetler"
+    columns={2}
+    items={[
+      {
+        title: 'Mimari',
+        description: 'Taşıyıcı sistemle uyumlu mekansal tasarım.',
+        icon: 'tabler:template',
+        href: '/mimari',
+      },
+      {
+        title: 'Çelik Yapılar',
+        description: 'Çelik konstrüksiyon gerektiren projelerde detaylı çözüm.',
+        icon: 'tabler:building-warehouse',
+        href: '/celik-yapilar',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Yapı projenizi konuşalım.</Fragment>
+    <Fragment slot="subtitle">İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>

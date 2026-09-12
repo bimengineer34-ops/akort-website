@@ -1,0 +1,72 @@
+site:
+  name: AKORT Mühendislik
+  site: 'https://akortmuhendislik.com'
+  base: '/'
+  trailingSlash: false
+
+  googleSiteVerificationId: ''
+
+# Default SEO metadata
+metadata:
+  title:
+    default: AKORT Mühendislik
+    template: '%s — AKORT Mühendislik'
+  description: 'AKORT Mühendislik; mekanik, elektrik, BIM, enerji, GES, yapı ve çelik disiplinlerini bir araya getiren multidisipliner mühendislik, danışmanlık, proje kontrol ve taahhüt hizmetleri sunar.'
+  robots:
+    index: true
+    follow: true
+  openGraph:
+    site_name: AKORT Mühendislik
+    images:
+      - url: '~/assets/images/default.png'
+        width: 1200
+        height: 628
+    type: website
+  twitter:
+    handle: ''
+    site: ''
+    cardType: summary_large_image
+
+i18n:
+  language: tr
+  textDirection: ltr
+
+apps:
+  blog:
+    isEnabled: true
+    postsPerPage: 9
+
+    post:
+      isEnabled: true
+      permalink: '/bilgi-merkezi/%slug%' # Variables: %slug%, %year%, %month%, %day%, %hour%, %minute%, %second%, %category%
+      robots:
+        index: true
+
+    list:
+      isEnabled: true
+      pathname: 'bilgi-merkezi'
+      robots:
+        index: true
+
+    category:
+      isEnabled: true
+      pathname: 'bilgi-merkezi/kategori'
+      robots:
+        index: true
+
+    tag:
+      isEnabled: true
+      pathname: 'bilgi-merkezi/etiket'
+      robots:
+        index: false
+
+    isRelatedPostsEnabled: true
+    relatedPostsCount: 4
+
+analytics:
+  vendors:
+    googleAnalytics:
+      id: null # or "G-XXXXXXXXXX"
+
+ui:
+  theme: 'system' # Values: "system" | "light" | "dark" | "light:only" | "dark:only"

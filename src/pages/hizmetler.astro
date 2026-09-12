@@ -1,0 +1,99 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Hizmetlerimiz',
+  description:
+    'AKORT Mühendislik hizmetleri: mekanik, elektrik, BIM, enerji, GES, mimari, yapı, çelik, teknik danışmanlık, proje kontrol ve taahhüt & uygulama.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Hizmetlerimiz"
+    title="Bütünleşik Mühendislik Hizmetleri"
+    subtitle="Projelerinizi tek bir disiplin üzerinden değil; mimari, yapı, mekanik, elektrik, enerji ve dijital mühendislik bileşenlerini birlikte değerlendirerek ele alıyoruz."
+  />
+
+  <Features2
+    columns={3}
+    items={[
+      {
+        title: 'Mekanik Mühendislik',
+        description: 'HVAC, sıhhi tesisat, yangın tesisatı, merkezi sistemler ve mekanik altyapı çözümleri.',
+        icon: 'tabler:wind',
+        href: '/mekanik-muhendislik',
+      },
+      {
+        title: 'Elektrik Mühendisliği',
+        description: 'Kuvvetli akım, zayıf akım, enerji dağıtımı, aydınlatma ve otomasyon sistemleri.',
+        icon: 'tabler:bolt',
+        href: '/elektrik-muhendisligi',
+      },
+      {
+        title: 'BIM & Dijital Mühendislik',
+        description: 'BIM modelleme, MEP koordinasyonu, clash detection, metraj ve dijital proje yönetimi.',
+        icon: 'tabler:cube-3d-sphere',
+        href: '/bim',
+      },
+      {
+        title: 'Enerji & Enerji Verimliliği',
+        description: 'Enerji analizleri, sistem optimizasyonu ve sürdürülebilir mühendislik çözümleri.',
+        icon: 'tabler:leaf',
+        href: '/enerji-verimliligi',
+      },
+      {
+        title: 'GES',
+        description: 'Güneş enerji sistemlerinde fizibilite, tasarım, mühendislik ve uygulama koordinasyonu.',
+        icon: 'tabler:sun-high',
+        href: '/ges',
+      },
+      {
+        title: 'Mimari',
+        description: 'Konsept tasarımdan uygulama projesine, disiplinlerle koordineli mimari çözümler.',
+        icon: 'tabler:template',
+        href: '/mimari',
+      },
+      {
+        title: 'Yapı & İnşaat',
+        description: 'Statik proje, yapısal detaylandırma ve uygulama koordinasyonu.',
+        icon: 'tabler:building-skyscraper',
+        href: '/yapi-insaat',
+      },
+      {
+        title: 'Çelik Yapılar',
+        description: 'Çelik konstrüksiyon tasarımı, detaylandırma ve montaj denetimi.',
+        icon: 'tabler:building-warehouse',
+        href: '/celik-yapilar',
+      },
+      {
+        title: 'Teknik Danışmanlık',
+        description: 'Proje uygunluk incelemesi, ikinci göz denetimi ve standart uyum değerlendirmesi.',
+        icon: 'tabler:bulb',
+        href: '/teknik-danismanlik',
+      },
+      {
+        title: 'Proje Kontrol',
+        description: 'Tasarım ile saha uygulaması arasındaki tutarlılığın sürekli denetimi.',
+        icon: 'tabler:clipboard-check',
+        href: '/proje-kontrol',
+      },
+      {
+        title: 'Taahhüt & Uygulama',
+        description: 'Projelerin sahada doğru, kontrollü ve mühendislik esaslarına uygun uygulanması.',
+        icon: 'tabler:tools',
+        href: '/taahhut',
+      },
+    ]}
+  />
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Teklif Talep Edin', href: '/iletisim#teklif', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Hangi hizmete ihtiyacınız var?</Fragment>
+    <Fragment slot="subtitle">Projenizi anlatın, size en uygun disiplin kombinasyonunu birlikte belirleyelim.</Fragment>
+  </CallToAction>
+</Layout>

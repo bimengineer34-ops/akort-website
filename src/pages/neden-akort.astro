@@ -1,0 +1,92 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const metadata = {
+  title: 'Neden AKORT?',
+  description:
+    'AKORT Mühendislik; multidisipliner yaklaşım, BIM odaklı çalışma, uygulanabilir tasarım ve sürekli proje kontrolü ile teknik kararların korunmasını sağlar.',
+};
+---
+
+<Layout metadata={metadata}>
+  <HeroText
+    tagline="Neden AKORT?"
+    title="Teknik kararları, uyum içinde yönetiyoruz."
+    subtitle="Amacımız yalnızca proje üretmek değil; doğru mühendislik kararlarının tasarım, uygulama ve işletme boyunca korunmasını sağlamaktır."
+  />
+
+  <Features
+    columns={2}
+    items={[
+      {
+        title: 'Multidisipliner Yaklaşım',
+        description:
+          'Farklı mühendislik disiplinlerinin tek merkezden koordinasyonunu sağlayarak çelişkili kararların önüne geçeriz.',
+        icon: 'tabler:network',
+      },
+      {
+        title: 'Teknik Uzmanlık',
+        description: 'Çözümlerimizi mühendislik hesaplarına ve ilgili standartlara dayandırırız.',
+        icon: 'tabler:certificate',
+      },
+      {
+        title: 'BIM Odaklı Çalışma',
+        description: 'Projeleri dijital ortamda koordine ederek çakışmaları uygulama öncesinde tespit ederiz.',
+        icon: 'tabler:cube-3d-sphere',
+      },
+      {
+        title: 'Uygulanabilir Tasarım',
+        description: 'Kağıt üzerinde değil; sahada montaj, işletme ve bakım koşullarında çalışan projeler üretiriz.',
+        icon: 'tabler:hammer',
+      },
+      {
+        title: 'Enerji Verimliliği',
+        description: 'Sistem seçimlerinde ilk yatırım ve işletme maliyetlerini birlikte değerlendiririz.',
+        icon: 'tabler:battery-eco',
+      },
+      {
+        title: 'Proje Kontrolü',
+        description: 'Tasarım ile saha uygulaması arasındaki tutarlılığı süreç boyunca sürekli kontrol ederiz.',
+        icon: 'tabler:clipboard-check',
+      },
+    ]}
+  />
+
+  <Content
+    isAfterContent
+    tagline="Farklı Disiplinler. Tek Hedef."
+    title="Koordinasyon, şansa bırakılmaz."
+    items={[
+      {
+        title: 'Mimari → Yapı',
+        description: 'Mimari kararlar, taşıyıcı sistem ve yapı çözümleriyle birlikte kurgulanır.',
+      },
+      { title: 'Mekanik → Elektrik', description: 'HVAC ve elektrik altyapısı, aynı koordinasyon modelinde ilerler.' },
+      {
+        title: 'BIM → Enerji → Uygulama',
+        description: 'Dijital model üzerinden doğrulanan kararlar, sahada aynı bütünlükle uygulanır.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1600&q=85',
+      alt: 'BIM ve dijital mühendislik ile disiplin koordinasyonu',
+    }}
+  >
+    <Fragment slot="content">
+      Her disiplin doğru çalışabilir; asıl fark, birlikte doğru çalışmalarındadır. AKORT, bu koordinasyonu bir seçenek
+      değil, çalışma biçiminin temeli olarak görür.
+    </Fragment>
+  </Content>
+
+  <CallToAction
+    actions={[{ variant: 'primary', text: 'Projenizi Konuşalım', href: '/iletisim', icon: 'tabler:arrow-right' }]}
+  >
+    <Fragment slot="title">Doğru mühendislik ortağını mı arıyorsunuz?</Fragment>
+    <Fragment slot="subtitle">İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.</Fragment
+    >
+  </CallToAction>
+</Layout>
