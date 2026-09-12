@@ -2,8 +2,8 @@ services:
   astrowind:
     build: .
     container_name: astrowind
-    ports:
-      - 8080:8080
+    expose:
+      - '8080'
     depends_on:
       - oauth
 
@@ -16,3 +16,23 @@ services:
       - .env
     expose:
       - '8081'
+
+  # Public entry point: automatic HTTPS (Let's Encrypt) for the domain, then
+  # routes to the site and to the OAuth provider. See ./Caddyfile.
+  caddy:
+    image: caddy:2-alpine
+    container_name: akort-caddy
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - astrowind
+      - oauth
+
+volumes:
+  caddy_data:
+  caddy_config:

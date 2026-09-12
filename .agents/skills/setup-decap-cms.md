@@ -11,13 +11,13 @@ The admin panel lives at `/admin` (`public/admin/index.html` + `config.yml`). Th
 
 ## One-time setup
 
-1. Deploy the site (Docker Compose brings up both `astrowind` and `oauth`).
+1. Point DNS: both the apex domain and `www` (e.g. `akortmuhendislik.com` and `www.akortmuhendislik.com`) need an A record to the VPS's IP — `caddy` (see `docker-compose.yml` / `Caddyfile`) requests a Let's Encrypt certificate for both and redirects the apex to `www`.
 2. On GitHub: [Settings → Developer settings → OAuth Apps → New OAuth App](https://github.com/settings/developers).
    - Homepage URL: your site's public URL.
    - Authorization callback URL: `<public URL>/oauth/callback`.
 3. Copy `.env.example` to `.env` on the server and fill in `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, `PUBLIC_SITE_URL`.
-4. In `public/admin/config.yml`, set `backend.base_url` to the same public URL.
-5. `docker compose up -d --build` (or redeploy).
+4. In `public/admin/config.yml`, set `backend.base_url` to the same public URL, and in `Caddyfile` set the two domains.
+5. `docker compose up -d --build` — brings up `astrowind` (the site, nginx), `oauth` (the OAuth provider) and `caddy` (public HTTPS entry point; only `caddy` publishes ports 80/443 to the host).
 6. Open `https://your-domain/admin`, click login — it redirects to GitHub, then back, and Decap opens with write access to the repo.
 
 ## Collections

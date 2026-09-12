@@ -1,0 +1,12 @@
+www.akortmuhendislik.com {
+	handle /oauth/* {
+		reverse_proxy oauth:8081
+	}
+	handle {
+		reverse_proxy astrowind:8080
+	}
+}
+
+akortmuhendislik.com {
+	redir https://www.akortmuhendislik.com{uri} permanent
+}
