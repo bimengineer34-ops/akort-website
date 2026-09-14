@@ -904,7 +904,11 @@ Malzeme ve sistem seçiminde (betonarme, çelik veya karma sistemler); açıklı
 
 ### Zeminden temele, temelden uygulamaya
 
-Zemin etüdü bulgularının taşıyıcı sistem tasarımına doğru aktarılması, projenin güvenliği kadar ekonomikliği açısından da belirleyicidir. Uygulama sürecinde düzenli saha kontrolleriyle, imalatın onaylı projeye uygunluğunu teyit ederiz.`,
+Zemin etüdü bulgularının taşıyıcı sistem tasarımına doğru aktarılması, projenin güvenliği kadar ekonomikliği açısından da belirleyicidir. Uygulama sürecinde düzenli saha kontrolleriyle, imalatın onaylı projeye uygunluğunu teyit ederiz.
+
+### Mevcut yapılarda güçlendirme ve tadilat
+
+Mevcut bir yapıda güçlendirme, tadilat veya kat ilavesi söz konusu olduğunda, öncelik gerçek yapı durumunu doğru tespit etmektir. Gerektiğinde lazer tarama ile elde edilen nokta bulutu verisini güncel bir modele dönüştürerek, mevcut taşıyıcı sistemi projelendirme öncesinde net biçimde ortaya koyarız.`,
     ctaTitle: 'Yapı projenizi konuşalım.',
     ctaSubtitle: 'İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.',
   },
@@ -1114,7 +1118,7 @@ Revizyon yönetiminde her değişikliği, gerekçesi ve etkilediği disiplinlerl
 
 ### Metrajdan hakedişe izlenebilirlik
 
-Şartname uygunluk denetimi ve metraj/hakediş kontrolü, uygulanan işin sözleşme ve proje şartlarıyla örtüştüğünü doğrular. Düzenli raporlama, proje durumunun işveren ve saha ekipleri tarafından her zaman şeffaf biçimde izlenmesini sağlar.`,
+Şartname uygunluk denetimi ve metraj/hakediş kontrolü, uygulanan işin sözleşme ve proje şartlarıyla örtüştüğünü doğrular. Düzenli raporlama, proje durumunun işveren ve saha ekipleri tarafından her zaman şeffaf biçimde izlenmesini sağlar; BIM ile yürütülen projelerde bu raporlamayı, model tabanlı gösterge panelleriyle destekleriz.`,
     ctaTitle: 'Projenizin kontrol sürecini konuşalım.',
     ctaSubtitle: 'İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.',
   },
