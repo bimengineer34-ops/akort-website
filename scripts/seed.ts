@@ -578,6 +578,18 @@ Kritik yükler için yedekli güç sistemleri (jeneratör, UPS) tasarımını, o
         title: 'Dijital İş Akışları',
         description: 'Proje verilerinin tüm paydaşlar arasında tutarlı biçimde yönetilmesi.',
       },
+      {
+        icon: 'tabler:clock-play',
+        title: 'Dijital İkiz & 4D/5D Simülasyon',
+        description:
+          'İş programını ve maliyeti modele bağlayarak süreci zaman ekseninde simüle ediyor, tamamlanan yapılar için işletme dönemine yönelik dijital ikiz modeller oluşturuyoruz.',
+      },
+      {
+        icon: 'tabler:scan',
+        title: 'Lazer Tarama & Fotogrametrik İzleme',
+        description:
+          'Mevcut yapıları nokta bulutu taramasıyla dijitalleştiriyor, saha ilerlemesini düzenli görüntülerle modelle karşılaştırarak izliyoruz.',
+      },
     ],
     approachTagline: 'Neden BIM?',
     approachTitle: 'Hatayı sahada değil, ekranda bulmak.',
@@ -611,7 +623,11 @@ Koordinasyonu tamamlanmış model, saha ekipleri için imalat ve montaj çizimle
 
 ### Metraj, proje kontrolü ve ekip yapısı
 
-Model tabanlı metraj, keşif ve hakediş süreçlerini büyük ölçüde hızlandırır ve insan hatasına bağlı sapmaları azaltır. Süreci; bir BIM koordinatörü ve disiplin bazlı model sorumlularından oluşan bir ekip yürütür, düzenli koordinasyon toplantılarıyla modelin güncelliğini ve doğruluğunu sürekli kontrol eder.`,
+Model tabanlı metraj, keşif ve hakediş süreçlerini büyük ölçüde hızlandırır ve insan hatasına bağlı sapmaları azaltır. Süreci; bir BIM koordinatörü ve disiplin bazlı model sorumlularından oluşan bir ekip yürütür, düzenli koordinasyon toplantılarıyla modelin güncelliğini ve doğruluğunu sürekli kontrol eder (VDC — Sanal Tasarım ve Yapım — yönetimi).
+
+### Zamanla, maliyetle ve sahayla bağlantılı model
+
+Model, yalnızca geometrik bir temsil olarak kalmaz. İş programını modele bağlayarak inşaat sürecini zaman ekseninde (4D), metraj ve maliyet verilerini bağlayarak bütçe etkisini (5D) simüle edebiliriz. Mevcut yapılarda lazer tarama ile elde edilen nokta bulutu verisi, tersine mühendislikle güncel bir modele dönüştürülür; saha ilerlemesi ise düzenli fotogrametrik görüntülerle karşılaştırılarak takip edilir. Bu veriler, proje durumunu gösterge panellerinde özetleyerek işverenin karar alma sürecini hızlandırır.`,
     ctaTitle: 'Projenizi BIM ile koordine edelim.',
     ctaSubtitle: 'İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.',
   },
