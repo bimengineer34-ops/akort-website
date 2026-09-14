@@ -3,6 +3,9 @@ import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { pages } from '~/db/schema';
 import { parseBodySections } from '~/lib/markdown';
+import { getSiteSettings } from '~/lib/siteSettings';
+import { getPermalink, getCanonical } from '~/utils/permalinks';
+import { SITE } from 'astrowind:config';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import Features from '~/components/widgets/Features.astro';
@@ -10,6 +13,8 @@ import Content from '~/components/widgets/Content.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import StructuredData from '~/components/common/StructuredData.astro';
 
 export const prerender = false;
 
@@ -25,9 +30,42 @@ if (!page) {
 
 const metadata = { title: page.title, description: page.seoDescription ?? undefined };
 const { introTitle, introHtml, sections } = parseBodySections(page.body);
+
+// Only hizmet pages get a real, clickable middle crumb (Hizmetler ->
+// /hizmetler); the hero's `tagline` eyebrow there already reads e.g.
+// "Hizmetler / BIM & Dijital Mühendislik", so hideCurrent drops the trailing
+// duplicate title from the visible trail (it stays in the ARIA text and
+// JSON-LD). Other groups have no group landing page to link to, so they just
+// show the plain two-level trail with the title visible — `hideCurrent` would
+// wrongly hide a *middle*, non-linked "Kurumsal" crumb too (it hides every
+// non-anchor item, not only the last one).
+const groupCrumb = page.group === 'hizmet' ? { text: 'Hizmetler', href: getPermalink('/hizmetler') } : null;
+const breadcrumbItems = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  ...(groupCrumb ? [groupCrumb] : []),
+  { text: page.title },
+];
+
+const siteSettings = getSiteSettings();
+const siteUrl = siteSettings?.url || SITE?.site;
+const serviceSchema =
+  page.group === 'hizmet'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        name: page.title,
+        description: page.seoDescription ?? page.heroSubtitle ?? undefined,
+        url: String(getCanonical(Astro.url.pathname)),
+        serviceType: page.title,
+        provider: { '@type': 'Organization', '@id': `${siteUrl}/#organization` },
+        areaServed: 'TR',
+      }
+    : undefined;
 ---
 
 <Layout metadata={metadata}>
+  {serviceSchema && <StructuredData slot="head" schema={serviceSchema} />}
+  <Breadcrumbs bar hideCurrent={page.group === 'hizmet'} items={breadcrumbItems} />
   <HeroText
     tagline={page.tagline ?? undefined}
     title={page.heroTitle ?? page.title}

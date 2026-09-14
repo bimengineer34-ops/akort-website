@@ -3,11 +3,13 @@ import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { projects } from '~/db/schema';
 import { renderMarkdown } from '~/lib/markdown';
+import { getPermalink } from '~/utils/permalinks';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Image from '~/components/common/Image.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
 
 export const prerender = false;
 
@@ -49,9 +51,16 @@ const facts = [
 ];
 
 const bodyHtml = renderMarkdown(body);
+
+const breadcrumbItems = [
+  { text: 'Ana Sayfa', href: getPermalink('/') },
+  { text: 'Projeler', href: getPermalink('/projeler') },
+  { text: title },
+];
 ---
 
 <Layout metadata={metadata}>
+  <Breadcrumbs bar hideCurrent items={breadcrumbItems} />
   <HeroText tagline={(tags ?? []).join(' · ')} title={title} subtitle={excerpt ?? undefined} />
 
   <WidgetWrapper containerClass="max-w-5xl mx-auto">
