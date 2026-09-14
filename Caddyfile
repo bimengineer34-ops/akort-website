@@ -1,7 +1,23 @@
 www.akortmuhendislik.com {
-	reverse_proxy astrowind:4321
+	# Admin panel is not reachable on the public port — it only answers on the
+	# dedicated admin port below (:8443). `handle` blocks are mutually
+	# exclusive, so the catch-all only runs when /admin* didn't match.
+	handle /admin* {
+		respond 404
+	}
+	handle {
+		reverse_proxy astrowind:4321
+	}
 }
 
 akortmuhendislik.com {
 	redir https://www.akortmuhendislik.com{uri} permanent
+}
+
+# Admin panel, on its own port so it never shows up while browsing the public
+# site. Same domain (reuses the cert Caddy already manages for it), same
+# backend — only the port differs. Requires port 8443 open in the VPS
+# firewall/security group; log in at https://www.akortmuhendislik.com:8443/admin
+www.akortmuhendislik.com:8443 {
+	reverse_proxy astrowind:4321
 }

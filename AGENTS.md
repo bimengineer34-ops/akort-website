@@ -137,7 +137,9 @@ Unchanged from the original template: Astro's native Fonts API, configured in `a
 
 ## Deploy
 
-Self-hosted via Docker Compose (`docker-compose.yml`): `astrowind` (the Node SSR app) + `caddy` (public HTTPS entry point, automatic Let's Encrypt — see `Caddyfile` for the two domains it's configured for). No nginx, no separate OAuth/CMS service. `.env` (never committed) holds `DATABASE_PATH` and `NODE_ENV=production`.
+Self-hosted via Docker Compose (`docker-compose.yml`): `astrowind` (the Node SSR app) + `caddy` (public HTTPS entry point, automatic Let's Encrypt — see `Caddyfile`). No nginx, no separate OAuth/CMS service. `.env` (never committed) holds `DATABASE_PATH` and `NODE_ENV=production`.
+
+`/admin*` returns 404 on the public port (443); it only answers on a dedicated port, **8443**, same domain — log in at `https://www.akortmuhendislik.com:8443/admin`. Same Node backend both ways, Caddy just routes by port. Port 8443 must be open in the VPS firewall/cloud security group (in addition to 80/443) for this to be reachable.
 
 ## Verification Checklist
 
