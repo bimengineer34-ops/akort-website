@@ -590,6 +590,17 @@ Kritik yükler için yedekli güç sistemleri (jeneratör, UPS) tasarımını, o
         description:
           'Mevcut yapıları nokta bulutu taramasıyla dijitalleştiriyor, saha ilerlemesini düzenli görüntülerle modelle karşılaştırarak izliyoruz.',
       },
+      {
+        icon: 'tabler:route',
+        title: 'Dijital Dönüşüm Danışmanlığı',
+        description:
+          'Yatırımcı ve işveren ekiplerine BIM/VDC süreçlerine geçiş, model gereksinimleri (EIR) ve dijital iş akışı kurgusunda danışmanlık.',
+      },
+      {
+        icon: 'tabler:chart-infographic',
+        title: 'İş Zekası & Proje Gösterge Panelleri',
+        description: 'Model ve saha verilerinin, karar alma sürecini hızlandıran gösterge panellerine dönüştürülmesi.',
+      },
     ],
     approachTagline: 'Neden BIM?',
     approachTitle: 'Hatayı sahada değil, ekranda bulmak.',
