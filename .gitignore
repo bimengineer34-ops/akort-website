@@ -33,3 +33,7 @@ data/
 *.db-journal
 *.db-wal
 *.db-shm
+
+# admin-uploaded images (runtime data, mounted as a Docker volume in production)
+public/uploads/*
+!public/uploads/.gitkeep
