@@ -119,10 +119,20 @@ interface PageSeed {
 }
 
 const IMG = {
-  a: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1600&q=85',
+  // Was photo-1503387762-592deb58ef4e — swapped out because it shows a
+  // visible, legible third-party logo on the man's shirt (looks like an
+  // accidental brand endorsement on a corporate site). Replaced everywhere
+  // it was used.
+  a: 'https://images.unsplash.com/photo-1542621334-a254cf47733d?auto=format&fit=crop&w=1600&q=85',
   b: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85',
   c: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1600&q=85',
   d: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1600&q=85',
+  // Electrical switchgear close-up, used only on Elektrik Mühendisliği.
+  e: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=1600&q=85',
+  // Solar farm, used only on GES.
+  f: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1600&q=85',
+  // Office/consulting scene, used only on Teknik Danışmanlık.
+  g: 'https://images.unsplash.com/photo-1616587656879-8a8a7cce9d6c?auto=format&fit=crop&w=1600&q=85',
 };
 
 const DEFAULT_CTA = {
@@ -523,7 +533,7 @@ Mekanik sistem tasarımı, ekipmanın sahaya konulmasıyla bitmez. Seçilen ekip
           'Elektrik altyapısını mekanik ve BIM modeliyle senkronize ederek çakışmaları önceden tespit ederiz.',
       },
     ],
-    image: IMG.a,
+    image: IMG.e,
     imageAlt: 'Elektrik altyapı ve enerji dağıtım sistemleri tasarımı',
     body: `## Elektrik tasarımında önceliklerimiz
 
@@ -769,7 +779,7 @@ Her enerji verimliliği önerisini, ilk yatırım maliyeti ile beklenen tasarruf
       },
       { title: 'Uygulama Takibi', description: 'Kurulumun tasarım kriterlerine uygun ilerlediğini sahada denetleriz.' },
     ],
-    image: IMG.a,
+    image: IMG.f,
     imageAlt: 'Güneş enerjisi sistemleri mühendislik ve uygulama süreci',
     body: `## Fizibiliteden şebeke bağlantısına
 
@@ -1053,7 +1063,7 @@ Büyük açıklıklı çelik yapılarda montaj sırası ve geçici stabilite, ta
         description: 'Her bulguyu, hayata geçirilebilir bir aksiyon önerisiyle birlikte sunarız.',
       },
     ],
-    image: IMG.a,
+    image: IMG.g,
     imageAlt: 'Teknik danışmanlık ve proje inceleme süreci',
     body: `## Bağımsız gözün değeri
 
