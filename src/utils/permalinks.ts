@@ -4,6 +4,26 @@ import { SITE, APP_BLOG } from 'astrowind:config';
 
 import { trim } from '~/utils/utils';
 
+// limax (the slugify library) doesn't know Turkish: left alone it transliterates
+// ö/ü the German way (ö→oe, ü→ue), which reads as a typo to a Turkish audience
+// (e.g. "bölgelerinde" → "boelgelerinde" instead of "bolgelerinde"). Folding the
+// Turkish-specific letters to their plain ASCII equivalent first sidesteps that.
+const TURKISH_ASCII_MAP: Record<string, string> = {
+  ı: 'i',
+  İ: 'i',
+  ğ: 'g',
+  Ğ: 'g',
+  ü: 'u',
+  Ü: 'u',
+  ş: 's',
+  Ş: 's',
+  ö: 'o',
+  Ö: 'o',
+  ç: 'c',
+  Ç: 'c',
+};
+const foldTurkish = (text: string) => text.replace(/[ışğüçöİĞÜŞÇÖ]/g, (ch) => TURKISH_ASCII_MAP[ch] ?? ch);
+
 export const trimSlash = (s: string) => trim(trim(s, '/'));
 const createPath = (...params: string[]) => {
   const paths = params
@@ -18,7 +38,7 @@ const BASE_PATHNAME = SITE.base || '/';
 export const cleanSlug = (text = '') =>
   trimSlash(text)
     .split('/')
-    .map((slug) => slugify(slug))
+    .map((slug) => slugify(foldTurkish(slug)))
     .join('/');
 
 export const BLOG_BASE = cleanSlug(APP_BLOG?.list?.pathname);
