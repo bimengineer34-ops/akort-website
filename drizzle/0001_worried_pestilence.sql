@@ -1,0 +1,1 @@
+ALTER TABLE `pages` ADD `body` text DEFAULT '' NOT NULL;

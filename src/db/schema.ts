@@ -102,6 +102,8 @@ export const pages = sqliteTable('pages', {
   approachItems: text('approach_items', { mode: 'json' }).$type<PageApproachItem[]>().default([]),
   image: text('image'),
   imageAlt: text('image_alt'),
+  /** Long-form Markdown section rendered below the approach block (methodology, scope detail, standards). */
+  body: text('body').notNull().default(''),
   ctaTitle: text('cta_title'),
   ctaSubtitle: text('cta_subtitle'),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),

@@ -2,10 +2,12 @@
 import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { pages } from '~/db/schema';
+import { renderMarkdown } from '~/lib/markdown';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import Features from '~/components/widgets/Features.astro';
 import Content from '~/components/widgets/Content.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 
 export const prerender = false;
@@ -21,6 +23,7 @@ if (!page) {
 }
 
 const metadata = { title: page.title, description: page.seoDescription ?? undefined };
+const bodyHtml = renderMarkdown(page.body);
 ---
 
 <Layout metadata={metadata}>
@@ -44,6 +47,14 @@ const metadata = { title: page.title, description: page.seoDescription ?? undefi
         items={page.approachItems}
         image={page.image ? { src: page.image, alt: page.imageAlt ?? page.title } : undefined}
       />
+    )
+  }
+
+  {
+    bodyHtml && (
+      <WidgetWrapper containerClass="max-w-3xl mx-auto">
+        <div class="prose prose-lg dark:prose-invert max-w-none" set:html={bodyHtml} />
+      </WidgetWrapper>
     )
   }
 
