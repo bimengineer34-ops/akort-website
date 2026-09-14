@@ -1,7 +1,7 @@
 ---
 title: 'Alışveriş Merkezi — Elektrik Altyapısı ve Enerji Dağıtımı'
 excerpt: 'Yoğun kullanım yükü altında güvenilir enerji dağıtımı için uçtan uca elektrik mühendisliği çözümü.'
-image: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=85'
+image: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Alışveriş merkezi elektrik altyapı ve enerji dağıtım sistemleri'
 tags: ['Elektrik']
 client: 'Gizlilik politikası gereği paylaşılmamaktadır'
