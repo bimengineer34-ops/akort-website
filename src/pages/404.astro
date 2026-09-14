@@ -1,12 +1,19 @@
 ---
-import Layout from '~/layouts/Layout.astro';
-import { getHomePermalink } from '~/utils/permalinks';
+import Layout from '~/layouts/PageLayout.astro';
+import { getHomePermalink, getPermalink } from '~/utils/permalinks';
 
 const title = `Error 404`;
+
+const quickLinks = [
+  { text: 'Hizmetlerimiz', href: getPermalink('/hizmetler') },
+  { text: 'Projeler', href: getPermalink('/projeler') },
+  { text: 'Bilgi Merkezi', href: getPermalink('/bilgi-merkezi') },
+  { text: 'İletişim', href: getPermalink('/iletisim') },
+];
 ---
 
 <Layout metadata={{ title }}>
-  <section class="flex items-center h-full p-16">
+  <section class="flex items-center py-16 md:py-24">
     <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8">
       <div class="max-w-md text-center">
         <h2 class="mb-8 font-bold text-9xl">
@@ -17,7 +24,22 @@ const title = `Error 404`;
         <p class="mt-4 mb-8 text-lg text-muted dark:text-slate-400">
           Merak etmeyin, aradığınız bilgiye ana sayfamızdan veya hizmetlerimizden ulaşabilirsiniz.
         </p>
-        <a rel="noopener noreferrer" href={getHomePermalink()} class="btn ml-4">Ana Sayfaya Dön</a>
+        <a rel="noopener noreferrer" href={getHomePermalink()} class="btn-primary">Ana Sayfaya Dön</a>
+
+        <div class="mt-10 pt-8 border-t border-gray-200 dark:border-slate-700">
+          <p class="mb-4 text-sm font-semibold uppercase tracking-wide text-muted">Belki bunlar aradığınızdır</p>
+          <ul class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+            {
+              quickLinks.map((link) => (
+                <li>
+                  <a href={link.href} class="text-primary hover:underline font-medium">
+                    {link.text}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
       </div>
     </div>
   </section>

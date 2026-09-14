@@ -9,7 +9,12 @@ const fieldClass =
   'py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900';
 ---
 
-<form action={action} method={action ? method : undefined} enctype={hasFile ? 'multipart/form-data' : undefined}>
+<form
+  data-aw-form
+  action={action}
+  method={action ? method : undefined}
+  enctype={hasFile ? 'multipart/form-data' : undefined}
+>
   {
     inputs &&
       inputs.map(
@@ -119,3 +124,25 @@ const fieldClass =
     )
   }
 </form>
+
+<script>
+  // This is a plain full-page POST (no fetch/AJAX), so the only thing to do
+  // client-side is signal "submitting" and block a double-click — the actual
+  // success/error feedback comes back as a fresh page with a `?sent=1`/`?error=1`
+  // banner. Rebind after Astro's view-transition navigations too.
+  function bindAwForms() {
+    document.querySelectorAll<HTMLFormElement>('form[data-aw-form]:not([data-aw-bound])').forEach((form) => {
+      form.dataset.awBound = 'true';
+      form.addEventListener('submit', () => {
+        const btn = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+        if (!btn || btn.disabled) return;
+        btn.dataset.originalText = btn.textContent ?? '';
+        btn.textContent = 'Gönderiliyor…';
+        btn.disabled = true;
+        btn.classList.add('opacity-70', 'cursor-not-allowed');
+      });
+    });
+  }
+  bindAwForms();
+  document.addEventListener('astro:page-load', bindAwForms);
+</script>
