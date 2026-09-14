@@ -5,6 +5,8 @@ import { galleryItems } from '~/db/schema';
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import Gallery from '~/components/widgets/Gallery.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import { Icon } from 'astro-icon/components';
 
 export const prerender = false;
 
@@ -19,9 +21,24 @@ const metadata = {
 <Layout metadata={metadata}>
   <HeroText tagline="Galeri" title="Sahadan ve Projelerden Kareler" />
 
-  <Gallery
-    columns={3}
-    lightbox
-    images={items.map((item) => ({ src: item.image, alt: item.caption ?? '', caption: item.caption ?? undefined }))}
-  />
+  {
+    items.length > 0 ? (
+      <Gallery
+        columns={3}
+        lightbox
+        images={items.map((item) => ({ src: item.image, alt: item.caption ?? '', caption: item.caption ?? undefined }))}
+      />
+    ) : (
+      <WidgetWrapper containerClass="max-w-2xl mx-auto text-center">
+        <Icon name="tabler:photo-plus" class="mx-auto h-10 w-10 text-muted" />
+        <p class="mt-4 text-lg text-muted">
+          Saha ve proje görselleri çok yakında burada olacak. O zamana kadar{' '}
+          <a href="/projeler" class="text-primary hover:underline">
+            projelerimize
+          </a>{' '}
+          göz atabilirsiniz.
+        </p>
+      </WidgetWrapper>
+    )
+  }
 </Layout>
