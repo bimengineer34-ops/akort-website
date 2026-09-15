@@ -14,6 +14,8 @@ import StructuredData from '~/components/common/StructuredData.astro';
 
 import { SITE, I18N } from 'astrowind:config';
 import favIconSvg from '~/assets/favicons/favicon.svg';
+import heroSliderImage from '~/assets/images/akort-hero-slider.png';
+import akortYaklasimiImage from '~/assets/images/akort-yaklasimi.png';
 import { getSiteSettings } from '~/lib/siteSettings';
 import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
@@ -97,8 +99,8 @@ const structuredData = [
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=2200&q=85',
-      alt: 'Saha ekibi, temel imalatı tamamlanmış bir inşaat alanında',
+      src: heroSliderImage,
+      alt: 'AKORT Mühendislik — BIM, enerji verimliliği ve sürdürülebilir bina teknolojileriyle mühendislik vizyonu',
     }}
   />
 
@@ -200,8 +202,8 @@ const structuredData = [
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85',
-      alt: 'Modern yapı ve disiplinler arası mühendislik koordinasyonu',
+      src: akortYaklasimiImage,
+      alt: 'Bir binanın mimari, yapısal ve MEP katmanlarının BIM modelinde ayrıştırılmış görünümü',
     }}
   >
     <Fragment slot="content">

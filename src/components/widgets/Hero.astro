@@ -34,6 +34,7 @@ const imageProps = typeof image === 'object' && image ? image : { src: '', alt: 
         ) : (
           <Image
             class="h-full w-full object-cover"
+            layout="cover"
             widths={[768, 1024, 1600, 2040]}
             sizes="100vw"
             loading="eager"
