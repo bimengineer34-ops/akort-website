@@ -208,7 +208,9 @@ const approachRows = Array.from(
         <h4>Detaylı Anlatım (Markdown, opsiyonel)</h4>
         <p class="text-muted small">
           Yaklaşımımız bölümünün altında, sayfaya özgü uzun metin (yöntem, kapsam detayı, standartlar vb.) olarak
-          görünür.
+          görünür. <code>##</code> ile bir giriş başlığı, <code>###</code> ile numaralı alt bölümler oluşturun; her
+          <code>###</code> bölümünün altına, istersen <code>####</code> ile kenarlıklı bir alt-madde kutusu (başlık + açıklama)
+          ekleyebilirsin.
         </p>
         <div class="mb-3">
           <textarea name="body" class="form-control font-monospace" rows="14">{page?.body}</textarea>

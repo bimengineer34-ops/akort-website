@@ -636,7 +636,19 @@ Yapı Bilgi Modellemesi (BIM), mimari, mekanik, elektrik ve yapısal sistemlerin
 
 ### Federe model ve clash detection süreci
 
-Her disiplin kendi modelini kendi yazılımında geliştirir; bu modeller düzenli aralıklarla ortak bir "federe model" içinde birleştirilir. Bu federe model üzerinde otomatik ve manuel çakışma taramaları (clash detection) yapılır: sert çakışmalar (iki elemanın fiziksel olarak kesişmesi), yumuşak çakışmalar (bakım/erişim mesafesi ihlalleri) ve iş programı çakışmaları (montaj sırası çelişkileri) ayrı ayrı değerlendirilir. Her çakışma; kritiklik derecesine göre önceliklendirilir, sorumlu disipline atanır ve çözülene kadar model üzerinden takip edilir.
+Her disiplin kendi modelini kendi yazılımında geliştirir; bu modeller düzenli aralıklarla ortak bir "federe model" içinde birleştirilir. Bu federe model üzerinde otomatik ve manuel çakışma taramaları (clash detection) yapılır. Her çakışma; kritiklik derecesine göre önceliklendirilir, sorumlu disipline atanır ve çözülene kadar model üzerinden takip edilir.
+
+#### Sert Çakışmalar
+
+İki elemanın fiziksel olarak aynı uzayda kesişmesi — örneğin bir havalandırma kanalının yapısal bir kirişle çakışması.
+
+#### Yumuşak Çakışmalar
+
+Bakım ve erişim mesafesi ihlalleri — bir ekipmanın servis ve bakım için ihtiyaç duyduğu boşluğun başka bir eleman tarafından işgal edilmesi.
+
+#### İş Programı Çakışmaları
+
+Montaj sırası çelişkileri — bir imalatın, saha uygulama sırasına göre önce tamamlanması gereken başka bir imalatı fiziksel olarak engellemesi.
 
 ### Modelden sahaya: shop drawing ve as-built
 
@@ -644,7 +656,15 @@ Koordinasyonu tamamlanmış model, saha ekipleri için imalat ve montaj çizimle
 
 ### Metraj, proje kontrolü ve ekip yapısı
 
-Model tabanlı metraj, keşif ve hakediş süreçlerini büyük ölçüde hızlandırır ve insan hatasına bağlı sapmaları azaltır. Süreci; bir BIM koordinatörü ve disiplin bazlı model sorumlularından oluşan bir ekip yürütür, düzenli koordinasyon toplantılarıyla modelin güncelliğini ve doğruluğunu sürekli kontrol eder (VDC — Sanal Tasarım ve Yapım — yönetimi).
+Model tabanlı metraj, keşif ve hakediş süreçlerini büyük ölçüde hızlandırır ve insan hatasına bağlı sapmaları azaltır.
+
+#### Model Tabanlı Metraj
+
+Metraj, keşif ve hakediş süreçlerinin model üzerinden çıkarılması; miktar sapmalarını ve insan hatasına bağlı hesaplama farklarını en aza indirir.
+
+#### VDC Ekip Yapısı
+
+Süreci bir BIM koordinatörü ve disiplin bazlı model sorumlularından oluşan bir ekip yürütür; düzenli koordinasyon toplantılarıyla modelin güncelliğini ve doğruluğunu sürekli kontrol eder.
 
 ### Zamanla, maliyetle ve sahayla bağlantılı model
 
