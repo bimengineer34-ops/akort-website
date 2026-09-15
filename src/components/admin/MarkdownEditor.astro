@@ -1,0 +1,124 @@
+---
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  name: string;
+  value?: string | null;
+  rows?: number;
+  id?: string;
+}
+
+const { name, value, rows = 12, id } = Astro.props;
+const textareaId = id ?? `md-${name}`;
+
+const buttons: Array<{ cmd: string; title: string; icon?: string; label?: string }> = [
+  { cmd: 'h2', title: 'Başlık', label: 'H2' },
+  { cmd: 'h3', title: 'Alt Başlık', label: 'H3' },
+  { cmd: 'bold', title: 'Kalın', label: 'K' },
+  { cmd: 'italic', title: 'İtalik', label: 'İ' },
+  { cmd: 'link', title: 'Bağlantı Ekle', icon: 'tabler:link' },
+  { cmd: 'ul', title: 'Madde Listesi', icon: 'tabler:list' },
+  { cmd: 'ol', title: 'Numaralı Liste', icon: 'tabler:list-numbers' },
+  { cmd: 'quote', title: 'Alıntı', icon: 'tabler:blockquote' },
+  { cmd: 'code', title: 'Satır İçi Kod', icon: 'tabler:code' },
+];
+---
+
+<aw-md-editor>
+  <div class="btn-toolbar mb-1" role="toolbar" aria-label="Biçimlendirme araç çubuğu">
+    <div class="btn-group btn-group-sm">
+      {
+        buttons.map((b) => (
+          <button type="button" class="btn btn-outline-secondary" data-md-cmd={b.cmd} title={b.title}>
+            {b.icon ? <Icon name={b.icon} class="w-4 h-4" /> : <span class="fw-bold">{b.label}</span>}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+  <textarea id={textareaId} name={name} class="form-control font-monospace" rows={rows} data-md-textarea
+    >{value}</textarea
+  >
+</aw-md-editor>
+
+<script>
+  class AwMdEditor extends HTMLElement {
+    connectedCallback() {
+      const textarea = this.querySelector('[data-md-textarea]');
+      if (!(textarea instanceof HTMLTextAreaElement)) return;
+
+      this.querySelectorAll<HTMLButtonElement>('[data-md-cmd]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const cmd = btn.dataset.mdCmd;
+          if (cmd) this.applyCommand(textarea, cmd);
+        });
+      });
+    }
+
+    applyCommand(textarea: HTMLTextAreaElement, cmd: string) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const value = textarea.value;
+      const selected = value.slice(start, end);
+      const before = value.slice(0, start);
+      const after = value.slice(end);
+
+      const wrap = (marker: string, placeholder: string) => {
+        const text = selected || placeholder;
+        textarea.value = `${before}${marker}${text}${marker}${after}`;
+        const from = before.length + marker.length;
+        textarea.setSelectionRange(from, from + text.length);
+      };
+
+      const linePrefix = (prefix: string, placeholder: string) => {
+        const text = selected || placeholder;
+        const lines = text
+          .split('\n')
+          .map((line) => `${prefix}${line}`)
+          .join('\n');
+        textarea.value = `${before}${lines}${after}`;
+        textarea.setSelectionRange(before.length, before.length + lines.length);
+      };
+
+      switch (cmd) {
+        case 'bold':
+          wrap('**', 'kalın metin');
+          break;
+        case 'italic':
+          wrap('_', 'italik metin');
+          break;
+        case 'h2':
+          linePrefix('## ', 'Başlık');
+          break;
+        case 'h3':
+          linePrefix('### ', 'Alt başlık');
+          break;
+        case 'quote':
+          linePrefix('> ', 'Alıntı metni');
+          break;
+        case 'ul':
+          linePrefix('- ', 'Liste öğesi');
+          break;
+        case 'ol':
+          linePrefix('1. ', 'Liste öğesi');
+          break;
+        case 'code':
+          wrap('`', 'kod');
+          break;
+        case 'link': {
+          const url = window.prompt("Bağlantı URL'si:", 'https://');
+          if (!url) return;
+          const text = selected || 'bağlantı metni';
+          const inserted = `[${text}](${url})`;
+          textarea.value = `${before}${inserted}${after}`;
+          textarea.setSelectionRange(before.length + 1, before.length + 1 + text.length);
+          break;
+        }
+      }
+
+      textarea.focus();
+      textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }
+  if (!customElements.get('aw-md-editor')) customElements.define('aw-md-editor', AwMdEditor);
+</script>

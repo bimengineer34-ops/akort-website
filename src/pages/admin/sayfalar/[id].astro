@@ -5,6 +5,7 @@ import { pages, type PageFeatureItem, type PageApproachItem } from '~/db/schema'
 import { resolveImage } from '~/lib/upload';
 import { cleanSlug } from '~/utils/permalinks';
 import AdminLayout from '~/layouts/AdminLayout.astro';
+import MarkdownEditor from '~/components/admin/MarkdownEditor.astro';
 
 export const prerender = false;
 
@@ -213,7 +214,7 @@ const approachRows = Array.from(
           ekleyebilirsin.
         </p>
         <div class="mb-3">
-          <textarea name="body" class="form-control font-monospace" rows="14">{page?.body}</textarea>
+          <MarkdownEditor name="body" value={page?.body} rows={14} />
         </div>
 
         <hr />
