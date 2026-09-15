@@ -3,56 +3,590 @@ import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { settings } from '~/db/schema';
 import AdminLayout from '~/layouts/AdminLayout.astro';
+import { Icon } from 'astro-icon/components';
 
 export const prerender = false;
 
-let error = '';
+interface NavLink {
+  text: string;
+  href?: string;
+  links?: NavLink[];
+}
+interface NavData {
+  header: { links: NavLink[]; actions: Array<{ text: string; href: string }> };
+  footer: {
+    links: Array<{ title: string; links: Array<{ text: string; href: string }> }>;
+    secondaryLinks: Array<{ text: string; href: string }>;
+    socialLinks: Array<{ ariaLabel: string; icon: string; href: string }>;
+    footNote: string;
+  };
+}
+
+const EMPTY_NAV: NavData = {
+  header: { links: [], actions: [] },
+  footer: { links: [], secondaryLinks: [], socialLinks: [], footNote: '' },
+};
+
 let success = '';
 
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
-  const raw = String(form.get('json') ?? '');
-  try {
-    const parsed = JSON.parse(raw);
-    db.update(settings).set({ value: parsed }).where(eq(settings.key, 'navigation')).run();
-    success = 'Menü güncellendi.';
-  } catch {
-    error = 'Geçersiz JSON — lütfen sözdizimini kontrol edin (eksik virgül, tırnak vb.).';
-  }
+  const s = (v: unknown) => String(v ?? '').trim();
+
+  // Header links: top-level rows (hl_*) each carry a stable hl_id; sub-menu
+  // rows (hs_*) reference their parent via hs_parent. Reconstructed by
+  // zipping the parallel arrays FormData gives us, same pattern already used
+  // for repeatable rows elsewhere in the admin (feature/approach items).
+  const hlId = form.getAll('hl_id').map(String);
+  const hlText = form.getAll('hl_text').map(String);
+  const hlHref = form.getAll('hl_href').map(String);
+  const hsParent = form.getAll('hs_parent').map(String);
+  const hsText = form.getAll('hs_text').map(String);
+  const hsHref = form.getAll('hs_href').map(String);
+
+  const headerLinks: NavLink[] = [];
+  hlId.forEach((id, i) => {
+    const text = hlText[i]?.trim() ?? '';
+    if (!text) return;
+    const subs = hsParent
+      .map((p, j) => (p === id ? { text: hsText[j]?.trim() ?? '', href: hsHref[j]?.trim() ?? '' } : null))
+      .filter((x): x is { text: string; href: string } => !!x && x.text !== '');
+    const link: NavLink = subs.length > 0 ? { text, links: subs } : { text, href: (hlHref[i] ?? '').trim() };
+    headerLinks.push(link);
+  });
+
+  const haText = form.getAll('ha_text').map(String);
+  const haHref = form.getAll('ha_href').map(String);
+  const headerActions = haText
+    .map((t, i) => ({ text: t.trim(), href: (haHref[i] ?? '').trim() }))
+    .filter((a) => a.text && a.href);
+
+  const fcId = form.getAll('fc_id').map(String);
+  const fcTitle = form.getAll('fc_title').map(String);
+  const flParent = form.getAll('fl_parent').map(String);
+  const flText = form.getAll('fl_text').map(String);
+  const flHref = form.getAll('fl_href').map(String);
+
+  const footerColumns: Array<{ title: string; links: Array<{ text: string; href: string }> }> = [];
+  fcId.forEach((id, i) => {
+    const title = fcTitle[i]?.trim() ?? '';
+    if (!title) return;
+    const links = flParent
+      .map((p, j) => (p === id ? { text: flText[j]?.trim() ?? '', href: flHref[j]?.trim() ?? '' } : null))
+      .filter((x): x is { text: string; href: string } => !!x && x.text !== '');
+    footerColumns.push({ title, links });
+  });
+
+  const secText = form.getAll('sec_text').map(String);
+  const secHref = form.getAll('sec_href').map(String);
+  const secondaryLinks = secText
+    .map((t, i) => ({ text: t.trim(), href: (secHref[i] ?? '').trim() }))
+    .filter((l) => l.text && l.href);
+
+  const socLabel = form.getAll('soc_label').map(String);
+  const socIcon = form.getAll('soc_icon').map(String);
+  const socHref = form.getAll('soc_href').map(String);
+  const socialLinks = socLabel
+    .map((label, i) => ({ ariaLabel: label.trim(), icon: (socIcon[i] ?? '').trim(), href: (socHref[i] ?? '').trim() }))
+    .filter((x) => x.ariaLabel && x.icon && x.href);
+
+  const value: NavData = {
+    header: { links: headerLinks, actions: headerActions },
+    footer: { links: footerColumns, secondaryLinks, socialLinks, footNote: s(form.get('footnote')) },
+  };
+
+  db.update(settings).set({ value }).where(eq(settings.key, 'navigation')).run();
+  success = 'Menü güncellendi.';
 }
 
 const row = db.select().from(settings).where(eq(settings.key, 'navigation')).get();
-const json = JSON.stringify(row?.value ?? {}, null, 2);
+const nav = (row?.value as NavData) ?? EMPTY_NAV;
 ---
 
 <AdminLayout title="Menü Yönetimi">
-  {error && <div class="alert alert-danger">{error}</div>}
   {success && <div class="alert alert-success">{success}</div>}
 
-  <div class="card">
-    <div class="card-header">
-      <h3 class="card-title">Üst Menü, Footer ve Sosyal Medya</h3>
-    </div>
-    <div class="card-body">
-      <p class="text-muted">
-        Bu alan üst menüyü (<code>header.links</code>), sağ üstteki butonu (<code>header.actions</code>), footer
-        sütunlarını (<code>footer.links</code>), alt yasal bağlantıları (<code>footer.secondaryLinks</code>) ve sosyal
-        medya ikonlarını (<code>footer.socialLinks</code>) JSON olarak düzenlemenizi sağlar. Her öğede <code>text</code>
-        (görünen metin) ve <code>href</code> (adres) alanları bulunur; bir menü öğesinin alt menüsü varsa <code
-          >href</code
-        >
-        yerine bir <code>links</code> listesi kullanılır.
-      </p>
-      <form method="POST">
-        <textarea
-          name="json"
-          class="form-control font-monospace"
-          rows="28"
-          style="font-size: 0.85rem"
-          spellcheck="false">{json}</textarea
-        >
-        <button type="submit" class="btn btn-primary mt-3">Kaydet</button>
-      </form>
-    </div>
-  </div>
+  <aw-menu-editor>
+    <form method="POST">
+      <!-- ============ HEADER MENU ============ -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">Üst Menü</h3>
+        </div>
+        <div class="card-body" data-nested-repeater data-id-prefix="h">
+          <div data-top-rows>
+            {
+              nav.header.links.map((link, i) => {
+                const id = `h${i}`;
+                return (
+                  <div class="border rounded p-3 mb-3" data-top-row data-row data-row-id={id}>
+                    <div class="row g-2 align-items-start">
+                      <div class="col-md-4">
+                        <label class="form-label small text-muted">Metin</label>
+                        <input type="hidden" name="hl_id" data-id-field value={id} />
+                        <input type="text" name="hl_text" class="form-control" value={link.text} />
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label small text-muted">
+                          Bağlantı {link.links?.length ? '(alt menü varsa kullanılmaz)' : ''}
+                        </label>
+                        <input type="text" name="hl_href" class="form-control" value={link.href} />
+                      </div>
+                      <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                          <Icon name="tabler:trash" class="w-4 h-4" /> Sil
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="mt-3 ps-3 border-start">
+                      <div class="small text-muted mb-2">
+                        Alt menü öğeleri (varsa, yukarıdaki bağlantı yerine bu liste açılır menü olarak gösterilir)
+                      </div>
+                      <div data-sub-rows>
+                        {(link.links ?? []).map((sub) => (
+                          <div class="row g-2 mb-2" data-row>
+                            <input type="hidden" name="hs_parent" data-parent-field value={id} />
+                            <div class="col-md-5">
+                              <input
+                                type="text"
+                                name="hs_text"
+                                class="form-control form-control-sm"
+                                placeholder="Metin"
+                                value={sub.text}
+                              />
+                            </div>
+                            <div class="col-md-5">
+                              <input
+                                type="text"
+                                name="hs_href"
+                                class="form-control form-control-sm"
+                                placeholder="Bağlantı"
+                                value={sub.href}
+                              />
+                            </div>
+                            <div class="col-md-2">
+                              <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                                <Icon name="tabler:x" class="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <button type="button" class="btn btn-outline-secondary btn-sm mt-1" data-add-sub>
+                        <Icon name="tabler:plus" class="w-4 h-4" /> Alt Menü Öğesi Ekle
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            }
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-add-top>
+            <Icon name="tabler:plus" class="w-4 h-4" /> Üst Menü Öğesi Ekle
+          </button>
+
+          <template data-top-template>
+            <div class="border rounded p-3 mb-3" data-top-row data-row>
+              <div class="row g-2 align-items-start">
+                <div class="col-md-4">
+                  <label class="form-label small text-muted">Metin</label>
+                  <input type="hidden" name="hl_id" data-id-field value="" />
+                  <input type="text" name="hl_text" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small text-muted">Bağlantı</label>
+                  <input type="text" name="hl_href" class="form-control" />
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                  <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                    <Icon name="tabler:trash" class="w-4 h-4" /> Sil
+                  </button>
+                </div>
+              </div>
+              <div class="mt-3 ps-3 border-start">
+                <div class="small text-muted mb-2">Alt menü öğeleri</div>
+                <div data-sub-rows></div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-1" data-add-sub>
+                  <Icon name="tabler:plus" class="w-4 h-4" /> Alt Menü Öğesi Ekle
+                </button>
+              </div>
+            </div>
+          </template>
+          <template data-sub-template>
+            <div class="row g-2 mb-2" data-row>
+              <input type="hidden" name="hs_parent" data-parent-field value="" />
+              <div class="col-md-5">
+                <input type="text" name="hs_text" class="form-control form-control-sm" placeholder="Metin" />
+              </div>
+              <div class="col-md-5">
+                <input type="text" name="hs_href" class="form-control form-control-sm" placeholder="Bağlantı" />
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                  <Icon name="tabler:x" class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ============ HEADER BUTTON(S) ============ -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">Üst Menü Butonu</h3>
+          <div class="card-subtitle">Sağ üstte gösterilen çağrı butonu (ör. "Teklif Al").</div>
+        </div>
+        <div class="card-body" data-flat-repeater>
+          <div data-rows>
+            {
+              nav.header.actions.map((a) => (
+                <div class="row g-2 mb-2" data-row>
+                  <div class="col-md-6">
+                    <input type="text" name="ha_text" class="form-control" placeholder="Metin" value={a.text} />
+                  </div>
+                  <div class="col-md-4">
+                    <input type="text" name="ha_href" class="form-control" placeholder="Bağlantı" value={a.href} />
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                      <Icon name="tabler:trash" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-add-flat>
+            <Icon name="tabler:plus" class="w-4 h-4" /> Buton Ekle
+          </button>
+          <template>
+            <div class="row g-2 mb-2" data-row>
+              <div class="col-md-6">
+                <input type="text" name="ha_text" class="form-control" placeholder="Metin" />
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="ha_href" class="form-control" placeholder="Bağlantı" />
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                  <Icon name="tabler:trash" class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ============ FOOTER COLUMNS ============ -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">Footer Sütunları</h3>
+        </div>
+        <div class="card-body" data-nested-repeater data-id-prefix="fc">
+          <div data-top-rows>
+            {
+              nav.footer.links.map((col, i) => {
+                const id = `fc${i}`;
+                return (
+                  <div class="border rounded p-3 mb-3" data-top-row data-row data-row-id={id}>
+                    <div class="row g-2">
+                      <div class="col-md-8">
+                        <label class="form-label small text-muted">Sütun Başlığı</label>
+                        <input type="hidden" name="fc_id" data-id-field value={id} />
+                        <input type="text" name="fc_title" class="form-control" value={col.title} />
+                      </div>
+                      <div class="col-md-4 d-flex align-items-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                          <Icon name="tabler:trash" class="w-4 h-4" /> Sütunu Sil
+                        </button>
+                      </div>
+                    </div>
+                    <div class="mt-3 ps-3 border-start">
+                      <div class="small text-muted mb-2">Bağlantılar</div>
+                      <div data-sub-rows>
+                        {col.links.map((l) => (
+                          <div class="row g-2 mb-2" data-row>
+                            <input type="hidden" name="fl_parent" data-parent-field value={id} />
+                            <div class="col-md-5">
+                              <input
+                                type="text"
+                                name="fl_text"
+                                class="form-control form-control-sm"
+                                placeholder="Metin"
+                                value={l.text}
+                              />
+                            </div>
+                            <div class="col-md-5">
+                              <input
+                                type="text"
+                                name="fl_href"
+                                class="form-control form-control-sm"
+                                placeholder="Bağlantı"
+                                value={l.href}
+                              />
+                            </div>
+                            <div class="col-md-2">
+                              <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                                <Icon name="tabler:x" class="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <button type="button" class="btn btn-outline-secondary btn-sm mt-1" data-add-sub>
+                        <Icon name="tabler:plus" class="w-4 h-4" /> Bağlantı Ekle
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            }
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-add-top>
+            <Icon name="tabler:plus" class="w-4 h-4" /> Sütun Ekle
+          </button>
+
+          <template data-top-template>
+            <div class="border rounded p-3 mb-3" data-top-row data-row>
+              <div class="row g-2">
+                <div class="col-md-8">
+                  <label class="form-label small text-muted">Sütun Başlığı</label>
+                  <input type="hidden" name="fc_id" data-id-field value="" />
+                  <input type="text" name="fc_title" class="form-control" />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                  <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                    <Icon name="tabler:trash" class="w-4 h-4" /> Sütunu Sil
+                  </button>
+                </div>
+              </div>
+              <div class="mt-3 ps-3 border-start">
+                <div class="small text-muted mb-2">Bağlantılar</div>
+                <div data-sub-rows></div>
+                <button type="button" class="btn btn-outline-secondary btn-sm mt-1" data-add-sub>
+                  <Icon name="tabler:plus" class="w-4 h-4" /> Bağlantı Ekle
+                </button>
+              </div>
+            </div>
+          </template>
+          <template data-sub-template>
+            <div class="row g-2 mb-2" data-row>
+              <input type="hidden" name="fl_parent" data-parent-field value="" />
+              <div class="col-md-5">
+                <input type="text" name="fl_text" class="form-control form-control-sm" placeholder="Metin" />
+              </div>
+              <div class="col-md-5">
+                <input type="text" name="fl_href" class="form-control form-control-sm" placeholder="Bağlantı" />
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                  <Icon name="tabler:x" class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ============ LEGAL LINKS ============ -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">Alt Yasal Bağlantılar</h3>
+          <div class="card-subtitle">Footer'ın en altında (KVKK, Gizlilik Politikası vb.)</div>
+        </div>
+        <div class="card-body" data-flat-repeater>
+          <div data-rows>
+            {
+              nav.footer.secondaryLinks.map((l) => (
+                <div class="row g-2 mb-2" data-row>
+                  <div class="col-md-6">
+                    <input type="text" name="sec_text" class="form-control" placeholder="Metin" value={l.text} />
+                  </div>
+                  <div class="col-md-4">
+                    <input type="text" name="sec_href" class="form-control" placeholder="Bağlantı" value={l.href} />
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                      <Icon name="tabler:trash" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-add-flat>
+            <Icon name="tabler:plus" class="w-4 h-4" /> Bağlantı Ekle
+          </button>
+          <template>
+            <div class="row g-2 mb-2" data-row>
+              <div class="col-md-6">
+                <input type="text" name="sec_text" class="form-control" placeholder="Metin" />
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="sec_href" class="form-control" placeholder="Bağlantı" />
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                  <Icon name="tabler:trash" class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ============ SOCIAL LINKS ============ -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">Sosyal Medya</h3>
+          <div class="card-subtitle">
+            İkon adı için <a href="https://tabler.io/icons" target="_blank">tabler.io/icons</a> kullanın (örn. tabler:brand-instagram).
+          </div>
+        </div>
+        <div class="card-body" data-flat-repeater>
+          <div data-rows>
+            {
+              nav.footer.socialLinks.map((s) => (
+                <div class="row g-2 mb-2" data-row>
+                  <div class="col-md-3">
+                    <input
+                      type="text"
+                      name="soc_label"
+                      class="form-control"
+                      placeholder="Etiket (ör. Instagram)"
+                      value={s.ariaLabel}
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <input
+                      type="text"
+                      name="soc_icon"
+                      class="form-control"
+                      placeholder="tabler:brand-instagram"
+                      value={s.icon}
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <input type="text" name="soc_href" class="form-control" placeholder="Bağlantı" value={s.href} />
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                      <Icon name="tabler:trash" class="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-add-flat>
+            <Icon name="tabler:plus" class="w-4 h-4" /> Sosyal Bağlantı Ekle
+          </button>
+          <template>
+            <div class="row g-2 mb-2" data-row>
+              <div class="col-md-3">
+                <input type="text" name="soc_label" class="form-control" placeholder="Etiket (ör. Instagram)" />
+              </div>
+              <div class="col-md-3">
+                <input type="text" name="soc_icon" class="form-control" placeholder="tabler:brand-instagram" />
+              </div>
+              <div class="col-md-4">
+                <input type="text" name="soc_href" class="form-control" placeholder="Bağlantı" />
+              </div>
+              <div class="col-md-2">
+                <button type="button" class="btn btn-outline-danger btn-sm w-100" data-remove-row>
+                  <Icon name="tabler:trash" class="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- ============ FOOTER NOTE ============ -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title">Footer Alt Not Metni</h3>
+        </div>
+        <div class="card-body">
+          <input type="text" name="footnote" class="form-control" value={nav.footer.footNote} />
+          <small class="text-muted"
+            ><code>{'{year}'}</code> yazdığınız yer otomatik olarak güncel yıl ile değişir.</small
+          >
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Kaydet</button>
+    </form>
+  </aw-menu-editor>
 </AdminLayout>
+
+<script>
+  class AwMenuEditor extends HTMLElement {
+    connectedCallback() {
+      let counter = 0;
+      const uid = (prefix: string) => `${prefix}-${Date.now().toString(36)}-${(counter++).toString(36)}`;
+
+      // Flat repeaters: a container with [data-rows], a hidden <template>, and
+      // an "add" button — every row is independent, no nesting.
+      this.querySelectorAll<HTMLElement>('[data-flat-repeater]').forEach((repeater) => {
+        const template = repeater.querySelector('template');
+        const rows = repeater.querySelector('[data-rows]');
+        const addBtn = repeater.querySelector('[data-add-flat]');
+        if (!template || !rows) return;
+        addBtn?.addEventListener('click', () => {
+          rows.appendChild(template.content.cloneNode(true));
+        });
+      });
+
+      // Nested repeaters: header links (with dropdown sub-items) and footer
+      // columns (with their own links) share the same shape — a top-level row
+      // that owns a mini flat-repeater of sub-rows tagged with its id.
+      this.querySelectorAll<HTMLElement>('[data-nested-repeater]').forEach((repeater) => {
+        const idPrefix = repeater.dataset.idPrefix ?? 'x';
+        const topTemplate = repeater.querySelector<HTMLTemplateElement>('template[data-top-template]');
+        const subTemplate = repeater.querySelector<HTMLTemplateElement>('template[data-sub-template]');
+        const topRows = repeater.querySelector('[data-top-rows]');
+        const addTopBtn = repeater.querySelector('[data-add-top]');
+
+        const wireRow = (row: HTMLElement) => {
+          const addSubBtn = row.querySelector('[data-add-sub]');
+          const subRows = row.querySelector('[data-sub-rows]');
+          addSubBtn?.addEventListener('click', () => {
+            if (!subTemplate || !subRows) return;
+            const parentId = row.dataset.rowId ?? '';
+            const frag = subTemplate.content.cloneNode(true) as DocumentFragment;
+            frag.querySelectorAll<HTMLInputElement>('[data-parent-field]').forEach((el) => (el.value = parentId));
+            subRows.appendChild(frag);
+          });
+        };
+
+        repeater.querySelectorAll<HTMLElement>('[data-top-row]').forEach(wireRow);
+
+        addTopBtn?.addEventListener('click', () => {
+          if (!topTemplate || !topRows) return;
+          const newId = uid(idPrefix);
+          const frag = topTemplate.content.cloneNode(true) as DocumentFragment;
+          const row = frag.querySelector<HTMLElement>('[data-top-row]');
+          if (!row) return;
+          row.dataset.rowId = newId;
+          frag.querySelectorAll<HTMLInputElement>('[data-id-field]').forEach((el) => (el.value = newId));
+          topRows.appendChild(frag);
+          wireRow(row);
+        });
+      });
+
+      // Remove: delegated so it works on both server-rendered and cloned rows.
+      this.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const btn = target.closest<HTMLElement>('[data-remove-row]');
+        if (btn) {
+          e.preventDefault();
+          btn.closest<HTMLElement>('[data-row]')?.remove();
+        }
+      });
+    }
+  }
+  if (!customElements.get('aw-menu-editor')) customElements.define('aw-menu-editor', AwMenuEditor);
+</script>

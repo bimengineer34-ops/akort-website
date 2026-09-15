@@ -1,0 +1,29 @@
+Replace the raw-JSON menu editor with a visual form (WordPress-style)
+
+/admin/menu was a single <textarea> holding the whole navigation JSON
+blob - any typo (missing comma/quote) broke the whole menu, and there
+was no visual sense of the header/footer structure at all.
+
+Rebuilt it as a proper visual editor:
+- Header Menu: each top-level item has its own text+link row, plus a
+  nested "Alt Menü Öğeleri" mini-list for dropdown items (Kurumsal,
+  Hizmetler, Bilgi Merkezi) - add/remove at both levels.
+- Header Button, Footer Columns (with their own nested links),
+  Alt Yasal Bağlantılar, Sosyal Medya, Footer Not Metni - one card per
+  section instead of one undifferentiated blob.
+
+No raw JSON is shown to the user anywhere. Add/remove rows are handled
+by a small custom element (aw-menu-editor) using a parallel-arrays +
+parent-id convention on submit (hl_id/hs_parent, fc_id/fl_parent) -
+the same "parallel FormData arrays" pattern already used elsewhere in
+the admin (feature/approach item rows), extended with a stable id per
+row so one level of nesting (dropdown items, footer column links)
+reconstructs correctly regardless of add/remove order.
+
+Verified end-to-end: added a top-level item with a nested sub-item
+through the UI, saved, confirmed the exact same JSON shape
+(navigation.ts/Header.astro/Footer.astro all read) round-tripped
+correctly with the rest of the menu untouched, then removed it the
+same way and confirmed it's gone. Public header/footer unaffected.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
