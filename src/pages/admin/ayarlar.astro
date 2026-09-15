@@ -2,6 +2,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { settings } from '~/db/schema';
+import { resolveImage } from '~/lib/upload';
 import AdminLayout from '~/layouts/AdminLayout.astro';
 
 export const prerender = false;
@@ -45,11 +46,29 @@ if (Astro.request.method === 'POST') {
   }
 
   if (section === 'homepage') {
+    const existingHomepage = db.select().from(settings).where(eq(settings.key, 'homepage')).get()?.value as
+      Record<string, unknown> | undefined;
+
     const proofValues = form.getAll('proof_value') as string[];
     const proofLabels = form.getAll('proof_label') as string[];
     const proofIcons = form.getAll('proof_icon') as string[];
     const countTitles = form.getAll('count_title') as string[];
     const countAmounts = form.getAll('count_amount') as string[];
+
+    const heroImage = await resolveImage(form, 'heroImageFile', 'heroImage', existingHomepage?.heroImage as string);
+    const approachImage = await resolveImage(
+      form,
+      'approachImageFile',
+      'approachImage',
+      existingHomepage?.approachImage as string
+    );
+    const bimImage = await resolveImage(form, 'bimImageFile', 'bimImage', existingHomepage?.bimImage as string);
+    const processImage = await resolveImage(
+      form,
+      'processImageFile',
+      'processImage',
+      existingHomepage?.processImage as string
+    );
 
     db.update(settings)
       .set({
@@ -57,6 +76,15 @@ if (Astro.request.method === 'POST') {
           heroTagline: String(form.get('heroTagline') ?? ''),
           heroTitle: String(form.get('heroTitle') ?? ''),
           heroSubtitle: String(form.get('heroSubtitle') ?? ''),
+          heroImage,
+          heroImageAlt: String(form.get('heroImageAlt') ?? ''),
+          approachTitle: String(form.get('approachTitle') ?? ''),
+          approachImage,
+          approachImageAlt: String(form.get('approachImageAlt') ?? ''),
+          bimImage,
+          bimImageAlt: String(form.get('bimImageAlt') ?? ''),
+          processImage,
+          processImageAlt: String(form.get('processImageAlt') ?? ''),
           proofStats: proofValues.map((value, i) => ({
             value,
             label: proofLabels[i] ?? '',
@@ -78,6 +106,15 @@ const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).
   heroTagline: string;
   heroTitle: string;
   heroSubtitle: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+  approachTitle?: string;
+  approachImage?: string;
+  approachImageAlt?: string;
+  bimImage?: string;
+  bimImageAlt?: string;
+  processImage?: string;
+  processImageAlt?: string;
   proofStats: Array<{ value: string; label: string; icon: string }>;
   countStats: Array<{ title: string; amount: string }>;
 };
@@ -177,7 +214,7 @@ const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).
   <div class="card">
     <div class="card-header"><h3 class="card-title">Ana Sayfa — Hero & İstatistikler</h3></div>
     <div class="card-body">
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_section" value="homepage" />
         <div class="mb-3">
           <label class="form-label">Üst Etiket (Hero)</label>
@@ -191,8 +228,78 @@ const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).
           <label class="form-label">Hero Alt Başlığı</label>
           <textarea name="heroSubtitle" class="form-control" rows="2">{homepage?.heroSubtitle}</textarea>
         </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Hero Görsel URL</label>
+            <input type="text" name="heroImage" class="form-control" value={homepage?.heroImage} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="heroImageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Hero Görsel Alt Metni</label>
+          <input type="text" name="heroImageAlt" class="form-control" value={homepage?.heroImageAlt} />
+        </div>
 
-        <h4 class="mt-4">Öne Çıkan Şerit (3 Öğe)</h4>
+        <hr />
+        <h4>"Farklı Disiplinler. Tek Hedef." Bölümü</h4>
+        <div class="mb-3">
+          <label class="form-label">Alt Başlık (bölüm içi)</label>
+          <input type="text" name="approachTitle" class="form-control" value={homepage?.approachTitle} />
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Görsel URL</label>
+            <input type="text" name="approachImage" class="form-control" value={homepage?.approachImage} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="approachImageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Görsel Alt Metni</label>
+          <input type="text" name="approachImageAlt" class="form-control" value={homepage?.approachImageAlt} />
+        </div>
+
+        <hr />
+        <h4>"BIM & Dijital Mühendislik" Bölümü</h4>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Görsel URL</label>
+            <input type="text" name="bimImage" class="form-control" value={homepage?.bimImage} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="bimImageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Görsel Alt Metni</label>
+          <input type="text" name="bimImageAlt" class="form-control" value={homepage?.bimImageAlt} />
+        </div>
+
+        <hr />
+        <h4>"Mühendislik Süreci" Bölümü</h4>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Görsel URL</label>
+            <input type="text" name="processImage" class="form-control" value={homepage?.processImage} />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">veya Görsel Yükle</label>
+            <input type="file" name="processImageFile" class="form-control" accept="image/*" />
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Görsel Alt Metni</label>
+          <input type="text" name="processImageAlt" class="form-control" value={homepage?.processImageAlt} />
+        </div>
+
+        <hr />
+        <h4>Öne Çıkan Şerit (3 Öğe)</h4>
         <div class="row g-2 mb-2 fw-bold text-muted small">
           <div class="col-3">Değer</div>
           <div class="col-6">Etiket</div>

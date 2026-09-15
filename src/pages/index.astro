@@ -29,6 +29,15 @@ interface HomepageSettings {
   heroTagline: string;
   heroTitle: string;
   heroSubtitle: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+  approachTitle?: string;
+  approachImage?: string;
+  approachImageAlt?: string;
+  bimImage?: string;
+  bimImageAlt?: string;
+  processImage?: string;
+  processImageAlt?: string;
   proofStats: Array<{ value: string; label: string; icon: string }>;
   countStats: Array<{ title: string; amount: string }>;
 }
@@ -101,8 +110,10 @@ const structuredData = [
       },
     ]}
     image={{
-      src: heroSliderImage,
-      alt: 'AKORT Mühendislik — BIM, enerji verimliliği ve sürdürülebilir bina teknolojileriyle mühendislik vizyonu',
+      src: homepage?.heroImage || heroSliderImage,
+      alt:
+        homepage?.heroImageAlt ||
+        'AKORT Mühendislik — BIM, enerji verimliliği ve sürdürülebilir bina teknolojileriyle mühendislik vizyonu',
     }}
   />
 
@@ -204,13 +215,15 @@ const structuredData = [
       },
     ]}
     image={{
-      src: akortYaklasimiImage,
-      alt: 'AKORT saha ekibi, BIM model katmanlarını gerçek bir inşaat sahasında koordine ediyor',
+      src: homepage?.approachImage || akortYaklasimiImage,
+      alt:
+        homepage?.approachImageAlt ||
+        'AKORT saha ekibi, BIM model katmanlarını gerçek bir inşaat sahasında koordine ediyor',
     }}
   >
     <Fragment slot="content">
       <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Koordinasyon, şansa bırakılmaz.
+        {homepage?.approachTitle || 'Koordinasyon, şansa bırakılmaz.'}
       </h3>
 
       Bir yapının başarısı, disiplinlerin ayrı ayrı doğru çalışmasından çok, birlikte doğru çalışmasına bağlıdır.
@@ -251,8 +264,8 @@ const structuredData = [
       },
     ]}
     image={{
-      src: akortBimDijitalImage,
-      alt: 'İnşaat hâlindeki bir binanın üzerine bindirilmiş BIM model görselleştirmesi',
+      src: homepage?.bimImage || akortBimDijitalImage,
+      alt: homepage?.bimImageAlt || 'İnşaat hâlindeki bir binanın üzerine bindirilmiş BIM model görselleştirmesi',
     }}
   >
     <Fragment slot="content"> Projeyi sahaya gelmeden önce görüyor, koordine ediyor ve optimize ediyoruz. </Fragment>
@@ -306,8 +319,10 @@ const structuredData = [
       },
     ]}
     image={{
-      src: akortSurecImage,
-      alt: 'Analiz, tasarım, koordinasyon ve optimizasyon adımlarını saha görüntüleriyle birleştiren süreç görselleştirmesi',
+      src: homepage?.processImage || akortSurecImage,
+      alt:
+        homepage?.processImageAlt ||
+        'Analiz, tasarım, koordinasyon ve optimizasyon adımlarını saha görüntüleriyle birleştiren süreç görselleştirmesi',
     }}
   />
 
