@@ -10,6 +10,7 @@ export interface SiteSettings {
   seoTitleTemplate: string;
   seoDescription: string;
   googleAnalyticsId: string;
+  yandexMetricaId: string;
 }
 
 /** Reads the admin-editable subset of site settings — called per request, never cached at module scope. */

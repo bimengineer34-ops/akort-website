@@ -120,3 +120,13 @@ export const settings = sqliteTable('settings', {
   key: text('key').primaryKey(),
   value: text('value', { mode: 'json' }).notNull(),
 });
+
+/** One row per public page request, logged by middleware.ts — powers the
+ * Dashboard's own visit counts, independent of Google/Yandex. Never records
+ * anything about who the visitor is (no IP, no user agent, no cookie/ID) —
+ * just which path was hit and when. */
+export const pageViews = sqliteTable('page_views', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  path: text('path').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});

@@ -24,6 +24,7 @@ if (Astro.request.method === 'POST') {
           seoTitleTemplate: String(form.get('seoTitleTemplate') ?? ''),
           seoDescription: String(form.get('seoDescription') ?? ''),
           googleAnalyticsId: String(form.get('googleAnalyticsId') ?? ''),
+          yandexMetricaId: String(form.get('yandexMetricaId') ?? ''),
         },
       })
       .where(eq(settings.key, 'site'))
@@ -171,6 +172,23 @@ const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).
               value={site?.googleSiteVerificationId}
             />
           </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Yandex Metrica Sayaç Numarası</label>
+          <input
+            type="text"
+            name="yandexMetricaId"
+            class="form-control"
+            value={site?.yandexMetricaId}
+            placeholder="12345678"
+          />
+          <small class="text-muted"
+            >metrika.yandex.com üzerinden yeni bir sayaç oluşturunca verilen numara. Not: <a
+              href="/admin"
+              target="_blank">Dashboard</a
+            >'daki "Ziyaret İstatistikleri" bu alandan bağımsız, sitenin kendi sayacıdır — Google/Yandex hesabına
+            girmeden buradan da temel ziyaret sayılarını görebilirsiniz.</small
+          >
         </div>
         <button type="submit" class="btn btn-primary">Kaydet</button>
       </form>

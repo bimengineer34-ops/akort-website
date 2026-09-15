@@ -1,7 +1,7 @@
 ---
-import { count, eq, desc } from 'drizzle-orm';
+import { count, eq, desc, gte } from 'drizzle-orm';
 import { db } from '~/db/client';
-import { messages, posts, projects, galleryItems, pages, users } from '~/db/schema';
+import { messages, posts, projects, galleryItems, pages, users, pageViews } from '~/db/schema';
 import AdminLayout from '~/layouts/AdminLayout.astro';
 import { Icon } from 'astro-icon/components';
 
@@ -16,6 +16,35 @@ const userCount = c(db.select({ n: count() }).from(users).get()?.n ?? 0);
 const unreadCount = c(db.select({ n: count() }).from(messages).where(eq(messages.status, 'yeni')).get()?.n ?? 0);
 
 const recentMessages = db.select().from(messages).orderBy(desc(messages.createdAt)).limit(5).all();
+
+// Site's own visit counts (src/lib/analytics.ts, logged per request in
+// middleware.ts) — no external account or API key needed to see them here.
+const startOfDay = new Date();
+startOfDay.setHours(0, 0, 0, 0);
+const startOfWeek = new Date(startOfDay);
+startOfWeek.setDate(startOfWeek.getDate() - 6);
+const startOfMonth = new Date(startOfDay);
+startOfMonth.setDate(startOfMonth.getDate() - 29);
+
+const viewsToday = c(
+  db.select({ n: count() }).from(pageViews).where(gte(pageViews.createdAt, startOfDay)).get()?.n ?? 0
+);
+const viewsThisWeek = c(
+  db.select({ n: count() }).from(pageViews).where(gte(pageViews.createdAt, startOfWeek)).get()?.n ?? 0
+);
+const viewsThisMonth = c(
+  db.select({ n: count() }).from(pageViews).where(gte(pageViews.createdAt, startOfMonth)).get()?.n ?? 0
+);
+
+const viewCount = count();
+const topPages = db
+  .select({ path: pageViews.path, n: viewCount })
+  .from(pageViews)
+  .where(gte(pageViews.createdAt, startOfMonth))
+  .groupBy(pageViews.path)
+  .orderBy(desc(viewCount))
+  .limit(6)
+  .all();
 
 const cards = [
   { label: 'İletişim Mesajları', value: unreadCount, sub: 'okunmamış', icon: 'tabler:mail', color: 'bg-red-lt' },
@@ -52,6 +81,52 @@ const cards = [
         </div>
       ))
     }
+  </div>
+
+  <div class="card mb-3">
+    <div class="card-header">
+      <h3 class="card-title">Ziyaret İstatistikleri</h3>
+      <div class="card-subtitle">Sitenin kendi ziyaret sayacı — kimlik/IP kaydetmez, sadece sayfa ve zaman.</div>
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-4 text-center">
+          <div class="h1 mb-0">{viewsToday}</div>
+          <div class="text-muted">Bugün</div>
+        </div>
+        <div class="col-4 text-center">
+          <div class="h1 mb-0">{viewsThisWeek}</div>
+          <div class="text-muted">Son 7 Gün</div>
+        </div>
+        <div class="col-4 text-center">
+          <div class="h1 mb-0">{viewsThisMonth}</div>
+          <div class="text-muted">Son 30 Gün</div>
+        </div>
+      </div>
+      {
+        topPages.length > 0 ? (
+          <>
+            <h4 class="mb-2">En Çok Görüntülenen Sayfalar (son 30 gün)</h4>
+            <table class="table table-sm card-table table-vcenter">
+              <tbody>
+                {topPages.map((p) => (
+                  <tr>
+                    <td>
+                      <a href={p.path} target="_blank" rel="noopener noreferrer">
+                        {p.path}
+                      </a>
+                    </td>
+                    <td class="text-end fw-bold">{p.n}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        ) : (
+          <p class="text-muted mb-0">Henüz ziyaret verisi yok.</p>
+        )
+      }
+    </div>
   </div>
 
   <div class="card">
