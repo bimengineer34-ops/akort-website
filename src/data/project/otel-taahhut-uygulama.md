@@ -1,6 +1,7 @@
 ---
 title: 'Otel Projesi — Taahhüt ve Uygulama Yönetimi'
 excerpt: 'Mekanik ve elektrik sistemlerinin saha uygulamasının uçtan uca yönetildiği bir otel projesi.'
+seoDescription: 'Antalya''da bir otel projesinde mekanik ve elektrik sistemlerinin taahhüt ve saha uygulama yönetimi — AKORT Mühendislik proje örneği.'
 image: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Otel projesi taahhüt ve saha uygulama yönetimi'
 tags: ['Taahhüt', 'Mekanik', 'Elektrik']

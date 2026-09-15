@@ -1,6 +1,7 @@
 ---
 title: 'Fabrika Çatısı — GES Uygulaması'
 excerpt: 'Endüstriyel tesis çatısında fizibiliteden devreye almaya uçtan uca güneş enerjisi sistemi mühendisliği.'
+seoDescription: 'Kocaeli''de fabrika çatısına kurulu güneş enerjisi sistemi (GES) projesi — fizibiliteden şebeke bağlantısına uçtan uca GES mühendisliği.'
 image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Fabrika çatısında güneş enerjisi sistemi uygulaması'
 tags: ['GES', 'Enerji']

@@ -35,6 +35,10 @@ export const posts = sqliteTable('posts', {
   slug: text('slug').notNull().unique(),
   title: text('title').notNull(),
   excerpt: text('excerpt'),
+  /** Meta description override — falls back to `excerpt` when empty. Kept
+   * separate because a good on-page excerpt and a good ~155-char SEO
+   * description are usually not the same sentence. */
+  seoDescription: text('seo_description'),
   image: text('image'),
   imageAlt: text('image_alt'),
   category: text('category'),
@@ -51,6 +55,8 @@ export const projects = sqliteTable('projects', {
   slug: text('slug').notNull().unique(),
   title: text('title').notNull(),
   excerpt: text('excerpt'),
+  /** Meta description override — falls back to `excerpt` when empty. */
+  seoDescription: text('seo_description'),
   image: text('image'),
   imageAlt: text('image_alt'),
   tags: text('tags', { mode: 'json' }).$type<string[]>().default([]),

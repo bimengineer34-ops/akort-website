@@ -30,6 +30,7 @@ if (Astro.request.method === 'POST') {
       slug,
       title,
       excerpt: String(form.get('excerpt') ?? '') || null,
+      seoDescription: String(form.get('seoDescription') ?? '') || null,
       image,
       imageAlt: String(form.get('imageAlt') ?? '') || null,
       category: String(form.get('category') ?? '') || null,
@@ -74,6 +75,15 @@ const toDateInput = (d: Date) => new Date(d).toISOString().slice(0, 10);
         <div class="mb-3">
           <label class="form-label">Özet</label>
           <textarea name="excerpt" class="form-control" rows="2">{post?.excerpt}</textarea>
+          <small class="text-muted">Sayfada kart/özet olarak görünür.</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">SEO Açıklaması</label>
+          <textarea name="seoDescription" class="form-control" rows="2">{post?.seoDescription}</textarea>
+          <small class="text-muted"
+            >Google'da görünen açıklama. Boş bırakılırsa yukarıdaki özet kullanılır — ~155 karakter, anahtar kelime
+            içeren ayrı bir cümle genelde daha iyi sonuç verir.</small
+          >
         </div>
         <div class="row">
           <div class="col-md-6 mb-3">

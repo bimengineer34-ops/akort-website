@@ -30,14 +30,14 @@ const bodyHtml = renderMarkdown(row.body);
 
 const metadata = {
   title: post.title,
-  description: truncateAtWord(post.excerpt ?? '', 155),
+  description: row.seoDescription || truncateAtWord(post.excerpt ?? '', 155),
 };
 
 const articleSchema = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: post.title,
-  description: post.excerpt,
+  description: row.seoDescription || post.excerpt,
   datePublished: post.publishDate.toISOString(),
   ...(post.author ? { author: { '@type': 'Person', name: post.author } } : {}),
   publisher: { '@type': 'Organization', name: SITE?.name },

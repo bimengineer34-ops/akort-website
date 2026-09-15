@@ -38,6 +38,7 @@ if (Astro.request.method === 'POST') {
       slug,
       title,
       excerpt: String(form.get('excerpt') ?? '') || null,
+      seoDescription: String(form.get('seoDescription') ?? '') || null,
       image,
       imageAlt: String(form.get('imageAlt') ?? '') || null,
       tags: form.getAll('tags') as string[],
@@ -84,6 +85,12 @@ const project = !isNew ? db.select().from(projects).where(eq(projects.id, id!)).
         <div class="mb-3">
           <label class="form-label">Kısa Özet</label>
           <textarea name="excerpt" class="form-control" rows="2">{project?.excerpt}</textarea>
+          <small class="text-muted">Sayfada kart/özet olarak görünür.</small>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">SEO Açıklaması</label>
+          <textarea name="seoDescription" class="form-control" rows="2">{project?.seoDescription}</textarea>
+          <small class="text-muted">Google'da görünen açıklama. Boş bırakılırsa yukarıdaki özet kullanılır.</small>
         </div>
         <div class="row">
           <div class="col-md-6 mb-3">

@@ -1,6 +1,7 @@
 ---
 title: 'Hastane Kompleksi — Mekanik Altyapı ve BIM Koordinasyonu'
 excerpt: 'Kritik MEP sistemlerinin BIM üzerinden koordine edildiği büyük ölçekli bir sağlık yapısı projesi.'
+seoDescription: 'İstanbul''da bir hastane kompleksinde kritik MEP sistemlerinin BIM üzerinden koordinasyonu — sağlık yapılarında mühendislik proje örneği.'
 image: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Hastane mekanik altyapı ve BIM koordinasyon çalışması'
 tags: ['Mekanik', 'BIM']

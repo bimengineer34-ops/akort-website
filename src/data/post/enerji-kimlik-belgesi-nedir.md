@@ -3,6 +3,7 @@ publishDate: 2026-07-22T00:00:00Z
 author: AKORT Mühendislik
 title: 'Enerji Kimlik Belgesi (EKB) Nedir, Neden Gereklidir?'
 excerpt: 'Enerji Kimlik Belgesi bir binanın enerji performansını nasıl sınıflandırır ve mühendislik kararlarını nasıl etkiler?'
+seoDescription: 'Enerji Kimlik Belgesi (EKB) nedir, hangi binalar için zorunludur ve enerji verimliliği kararlarını nasıl şekillendirir? Mühendislik rehberi.'
 image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=85'
 imageAlt: 'Modern bina cephesi ve enerji performansı'
 category: Enerji

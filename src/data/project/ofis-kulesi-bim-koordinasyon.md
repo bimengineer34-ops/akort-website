@@ -1,6 +1,7 @@
 ---
 title: 'Ofis Kulesi — Çok Disiplinli BIM Koordinasyonu'
 excerpt: 'Mimari, mekanik ve elektrik disiplinlerinin tek model üzerinde koordine edildiği yüksek katlı ofis projesi.'
+seoDescription: 'İstanbul''da yüksek katlı bir ofis kulesinde mimari, mekanik ve elektrik disiplinlerinin tek BIM modelinde koordinasyonu proje örneği.'
 image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Ofis kulesi BIM koordinasyon çalışması'
 tags: ['BIM', 'Mekanik', 'Elektrik']

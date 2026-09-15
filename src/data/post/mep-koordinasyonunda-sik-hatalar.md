@@ -3,6 +3,7 @@ publishDate: 2026-06-15T00:00:00Z
 author: AKORT Mühendislik
 title: 'MEP Koordinasyonunda Sık Karşılaşılan 5 Hata'
 excerpt: 'Mekanik, elektrik ve sıhhi tesisat disiplinlerinin koordinasyonunda tekrar eden hatalar ve bunların önüne nasıl geçilir?'
+seoDescription: 'MEP koordinasyonunda sık yapılan 5 hata ve önlenme yöntemleri — mekanik, elektrik ve sıhhi tesisat disiplinleri arası koordinasyon rehberi.'
 image: 'https://images.unsplash.com/photo-1542621334-a254cf47733d?auto=format&fit=crop&w=1600&q=85'
 imageAlt: 'Mekanik, elektrik ve sıhhi tesisat koordinasyonu'
 category: MEP

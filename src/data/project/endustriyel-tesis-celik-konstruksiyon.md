@@ -1,6 +1,7 @@
 ---
 title: 'Endüstriyel Tesis — Çelik Konstrüksiyon'
 excerpt: 'Büyük açıklıklı bir üretim tesisinde çelik taşıyıcı sistem tasarımı ve imalat koordinasyonu.'
+seoDescription: 'Gaziantep''te büyük açıklıklı bir üretim tesisi için çelik taşıyıcı sistem tasarımı ve imalat koordinasyonu proje örneği — AKORT Mühendislik.'
 image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Endüstriyel tesis çelik konstrüksiyon tasarımı'
 tags: ['Çelik', 'Yapı']

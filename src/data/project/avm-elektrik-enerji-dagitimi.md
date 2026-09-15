@@ -1,6 +1,7 @@
 ---
 title: 'Alışveriş Merkezi — Elektrik Altyapısı ve Enerji Dağıtımı'
 excerpt: 'Yoğun kullanım yükü altında güvenilir enerji dağıtımı için uçtan uca elektrik mühendisliği çözümü.'
+seoDescription: 'Bursa''da bir alışveriş merkezinde elektrik altyapısı ve enerji dağıtımı projesi — yoğun yük altında kapasite planlaması ve aydınlatma tasarımı.'
 image: 'https://images.unsplash.com/photo-1544724569-5f546fd6f2b5?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Alışveriş merkezi elektrik altyapı ve enerji dağıtım sistemleri'
 tags: ['Elektrik']

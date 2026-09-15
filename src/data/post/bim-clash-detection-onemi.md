@@ -3,6 +3,7 @@ publishDate: 2026-08-10T00:00:00Z
 author: AKORT Mühendislik
 title: 'BIM Koordinasyonunda Clash Detection Neden Önemlidir?'
 excerpt: 'Disiplin çakışmalarını sahada değil, dijital modelde tespit etmek; zaman, maliyet ve mühendislik kalitesi açısından neden kritik bir adımdır?'
+seoDescription: 'BIM koordinasyonunda clash detection nedir, neden önemlidir? Disiplin çakışmalarını dijital modelde erken tespit etmenin maliyete ve sürece etkisi.'
 image: 'https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=1600&q=85'
 imageAlt: 'BIM modeli üzerinde disiplin koordinasyonu çalışması'
 category: BIM

@@ -1,6 +1,7 @@
 ---
 title: 'Konut Projesi — Statik Tasarım'
 excerpt: 'Karma kullanımlı bir konut projesinde zemin koşullarına uygun taşıyıcı sistem tasarımı.'
+seoDescription: 'İzmir''de karma kullanımlı bir konut projesinde zemin etüdüne uygun taşıyıcı sistem statik tasarımı — AKORT Mühendislik yapı mühendisliği.'
 image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Konut projesi statik tasarım ve yapı mühendisliği'
 tags: ['Yapı']

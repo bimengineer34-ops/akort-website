@@ -1,6 +1,7 @@
 ---
 title: 'Üniversite Kampüsü — Enerji Verimliliği Analizi'
 excerpt: 'Kampüs genelinde enerji tüketim profilinin çıkarıldığı ve verimlilik önerilerinin geliştirildiği kapsamlı çalışma.'
+seoDescription: 'Ankara''da bir üniversite kampüsünde enerji tüketim profili analizi ve enerji verimliliği iyileştirme önerileri — AKORT Mühendislik.'
 image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85'
 imageAlt: 'Üniversite kampüsü enerji verimliliği çalışması'
 tags: ['Enerji']
