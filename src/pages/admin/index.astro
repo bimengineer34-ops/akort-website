@@ -1,5 +1,5 @@
 ---
-import { count, eq, desc, gte } from 'drizzle-orm';
+import { count, eq, desc, gte, sql } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { messages, posts, projects, galleryItems, pages, users, pageViews } from '~/db/schema';
 import AdminLayout from '~/layouts/AdminLayout.astro';
@@ -45,6 +45,29 @@ const topPages = db
   .orderBy(desc(viewCount))
   .limit(6)
   .all();
+
+// Daily counts for the last 14 days, as a chart. SQLite's own date() reads
+// the integer column as a unix-epoch-seconds timestamp (how Drizzle's
+// `mode: 'timestamp'` stores it) and buckets by calendar day.
+const dayBucket = sql<string>`date(${pageViews.createdAt}, 'unixepoch')`;
+const startOfChart = new Date(startOfDay);
+startOfChart.setDate(startOfChart.getDate() - 13);
+const dailyRows = db
+  .select({ day: dayBucket, n: count() })
+  .from(pageViews)
+  .where(gte(pageViews.createdAt, startOfChart))
+  .groupBy(dayBucket)
+  .all();
+const dailyByDay = new Map(dailyRows.map((r) => [r.day, r.n]));
+const chartDays: string[] = [];
+const chartCounts: number[] = [];
+for (let i = 13; i >= 0; i--) {
+  const d = new Date(startOfDay);
+  d.setDate(d.getDate() - i);
+  const key = d.toISOString().slice(0, 10);
+  chartDays.push(d.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' }));
+  chartCounts.push(dailyByDay.get(key) ?? 0);
+}
 
 const cards = [
   { label: 'İletişim Mesajları', value: unreadCount, sub: 'okunmamış', icon: 'tabler:mail', color: 'bg-red-lt' },
@@ -103,31 +126,128 @@ const cards = [
           <div class="text-muted">Son 30 Gün</div>
         </div>
       </div>
+
       {
         topPages.length > 0 ? (
-          <>
-            <h4 class="mb-2">En Çok Görüntülenen Sayfalar (son 30 gün)</h4>
-            <table class="table table-sm card-table table-vcenter">
-              <tbody>
-                {topPages.map((p) => (
-                  <tr>
-                    <td>
-                      <a href={p.path} target="_blank" rel="noopener noreferrer">
-                        {p.path}
-                      </a>
-                    </td>
-                    <td class="text-end fw-bold">{p.n}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </>
+          <div class="row">
+            <div class="col-lg-7 mb-4 mb-lg-0">
+              <h4 class="mb-2">Son 14 Gün</h4>
+              <div style="height: 220px; position: relative">
+                <canvas id="dailyViewsChart" />
+              </div>
+            </div>
+            <div class="col-lg-5">
+              <h4 class="mb-2">En Çok Görüntülenen Sayfalar</h4>
+              <div style="height: 220px; position: relative">
+                <canvas id="topPagesChart" />
+              </div>
+            </div>
+          </div>
         ) : (
           <p class="text-muted mb-0">Henüz ziyaret verisi yok.</p>
         )
       }
+
+      {
+        topPages.length > 0 && (
+          <table class="table table-sm card-table table-vcenter mt-4">
+            <tbody>
+              {topPages.map((p) => (
+                <tr>
+                  <td>
+                    <a href={p.path} target="_blank" rel="noopener noreferrer">
+                      {p.path}
+                    </a>
+                  </td>
+                  <td class="text-end fw-bold">{p.n}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
+      }
     </div>
   </div>
+
+  {
+    topPages.length > 0 && (
+      <script
+        type="application/json"
+        id="dashboard-chart-data"
+        set:html={JSON.stringify({
+          days: chartDays,
+          counts: chartCounts,
+          topLabels: topPages.map((p) => p.path),
+          topCounts: topPages.map((p) => p.n),
+        })}
+      />
+    )
+  }
+  <script>
+    function initDashboardCharts() {
+      const dataEl = document.getElementById('dashboard-chart-data');
+      // @ts-expect-error Chart.js is loaded globally from the CDN script in AdminLayout.
+      if (!dataEl || typeof Chart === 'undefined') return;
+      const data = JSON.parse(dataEl.textContent || '{}');
+      const accent = getComputedStyle(document.documentElement).getPropertyValue('--tblr-primary').trim() || '#206bc4';
+
+      const lineCanvas = document.getElementById('dailyViewsChart');
+      if (lineCanvas) {
+        // @ts-expect-error see above
+        new Chart(lineCanvas, {
+          type: 'line',
+          data: {
+            labels: data.days,
+            datasets: [
+              {
+                label: 'Ziyaret',
+                data: data.counts,
+                borderColor: accent,
+                backgroundColor: accent + '22',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 2,
+              },
+            ],
+          },
+          options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+          },
+        });
+      }
+
+      const donutCanvas = document.getElementById('topPagesChart');
+      if (donutCanvas) {
+        // @ts-expect-error see above
+        new Chart(donutCanvas, {
+          type: 'doughnut',
+          data: {
+            labels: data.topLabels,
+            datasets: [
+              {
+                data: data.topCounts,
+                backgroundColor: ['#206bc4', '#4299e1', '#79a6dc', '#2fb344', '#f76707', '#ae3ec9'],
+              },
+            ],
+          },
+          options: {
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } },
+          },
+        });
+      }
+    }
+    // Chart.js loads via its own <script> at the end of AdminLayout's body;
+    // as ES modules, scripts execute in document order, so it may not have
+    // run yet at this point. Wait for the window load event to be sure.
+    if (document.readyState === 'complete') {
+      initDashboardCharts();
+    } else {
+      window.addEventListener('load', initDashboardCharts);
+    }
+  </script>
 
   <div class="card">
     <div class="card-header d-flex align-items-center justify-content-between">
