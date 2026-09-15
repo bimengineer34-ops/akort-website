@@ -30,6 +30,11 @@ export interface Props {
   showToggleTheme?: boolean;
   showRssFeed?: boolean;
   position?: string;
+  /** Always shows the solid/blurred background band, instead of only after
+   * scrolling past the threshold — for pages whose hero sits directly under
+   * the header (a full-bleed photo, say), where a transparent header would
+   * leave the logo's fixed-color icon low-contrast against it. */
+  solid?: boolean;
 }
 
 const {
@@ -42,6 +47,7 @@ const {
   showToggleTheme = false,
   showRssFeed = false,
   position = 'center',
+  solid = false,
 } = Astro.props;
 
 const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
@@ -57,7 +63,7 @@ const isActive = (href?: string) => typeof href === 'string' && `/${trimSlash(hr
 // with its own menu (the demo homes, the landing pages) would keep showing the
 // header of the page the visitor came from. Hash the props that shape the markup.
 const persistKey = `header-${Array.from(
-  JSON.stringify({ links, actions, isSticky, isDark, isFullWidth, showToggleTheme, showRssFeed, position })
+  JSON.stringify({ links, actions, isSticky, isDark, isFullWidth, showToggleTheme, showRssFeed, position, solid })
 )
   .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7)
   .toString(36)}`;
@@ -72,7 +78,15 @@ const persistKey = `header-${Array.from(
     {...isSticky ? { 'data-aw-sticky-header': true } : {}}
     {...id ? { id } : {}}
   >
-    <div class="absolute inset-0"></div>
+    <div
+      class:list={[
+        'absolute inset-0',
+        solid && 'bg-page lg:backdrop-blur-md',
+        solid &&
+          'shadow-[0_0.375rem_1.5rem_0_rgb(140_152_164_/_13%)] dark:shadow-none dark:border-b dark:border-gray-500/20',
+      ]}
+    >
+    </div>
     <div
       class:list={[
         'relative text-default py-3 px-3 lg:px-6 mx-auto w-full',

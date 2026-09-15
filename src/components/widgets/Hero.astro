@@ -18,13 +18,36 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-// `image.aspect: 'auto'` shows the picture whole (transparent illustrations);
-// the default crops it to the hero frame.
-const { aspect: imageAspect, ...imageProps } = typeof image === 'object' && image ? image : { src: '', alt: '' };
-const imageWhole = imageAspect === 'auto';
+const imageProps = typeof image === 'object' && image ? image : { src: '', alt: '' };
 ---
 
-<section class="relative md:-mt-[76px] not-prose" {...id ? { id } : {}}>
+<section class="relative md:-mt-[76px] not-prose overflow-hidden" {...id ? { id } : {}}>
+  {
+    // Full-bleed background photo with a dark gradient for text contrast —
+    // the pattern used by most large engineering-firm homepages (Arup, WSP,
+    // AECOM, ...) — instead of stacking the hero image as a separate block
+    // below the text.
+    image && (
+      <div class="absolute inset-0" aria-hidden="true">
+        {typeof image === 'string' ? (
+          <Fragment set:html={image} />
+        ) : (
+          <Image
+            class="h-full w-full object-cover"
+            widths={[768, 1024, 1600, 2040]}
+            sizes="100vw"
+            loading="eager"
+            fetchpriority="high"
+            width={2040}
+            height={1360}
+            format="webp"
+            {...imageProps}
+          />
+        )}
+        <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/55 to-black/40" />
+      </div>
+    )
+  }
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
@@ -32,11 +55,11 @@ const imageWhole = imageAspect === 'auto';
   </div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
     <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
-    <div class="py-12 md:py-20">
-      <div class="text-center pb-10 md:pb-16 max-w-5xl mx-auto">
+    <div class="flex min-h-[34rem] flex-col justify-center py-16 md:min-h-[40rem] md:py-24">
+      <div class="text-center max-w-5xl mx-auto">
         {
           badge && (
-            <span class="inline-block mb-4 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary dark:bg-primary/25 dark:text-blue-200 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+            <span class="inline-block mb-4 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white backdrop-blur-sm intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
               {badge}
             </span>
           )
@@ -44,7 +67,7 @@ const imageWhole = imageAspect === 'auto';
         {
           tagline && (
             <p
-              class="text-xl md:text-2xl text-secondary dark:text-blue-200 font-extrabold tracking-wide uppercase mb-2 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+              class="text-xl md:text-2xl text-blue-200 font-extrabold tracking-wide uppercase mb-2 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
               set:html={tagline}
             />
           )
@@ -52,7 +75,7 @@ const imageWhole = imageAspect === 'auto';
         {
           title && (
             <h1
-              class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading text-heading intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+              class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading text-white intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
               set:html={title}
             />
           )
@@ -61,7 +84,7 @@ const imageWhole = imageAspect === 'auto';
           {
             subtitle && (
               <p
-                class="text-xl text-muted mb-6 dark:text-slate-300 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
+                class="text-xl text-slate-200 mb-6 intersect-once intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
                 set:html={subtitle}
               />
             )
@@ -72,7 +95,14 @@ const imageWhole = imageAspect === 'auto';
                 {Array.isArray(actions) ? (
                   actions.map((action) => (
                     <div class="flex w-full sm:w-auto">
-                      <Button {...(action || {})} class="w-full sm:mb-0" />
+                      <Button
+                        {...(action || {})}
+                        class:list={[
+                          'w-full sm:mb-0',
+                          action?.variant !== 'primary' &&
+                            '!border-white/70 !text-white hover:!bg-white/10 hover:!border-white',
+                        ]}
+                      />
                     </div>
                   ))
                 ) : (
@@ -83,33 +113,6 @@ const imageWhole = imageAspect === 'auto';
           }
         </div>
         {content && <Fragment set:html={content} />}
-      </div>
-      <div
-        class="intersect-once intersect-no-queue intersect-quarter motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade"
-      >
-        {
-          image && (
-            <div class="relative m-auto max-w-5xl">
-              {typeof image === 'string' ? (
-                <Fragment set:html={image} />
-              ) : (
-                <Image
-                  class:list={[
-                    'mx-auto',
-                    imageWhole ? 'w-auto max-h-[32rem] object-contain md:max-h-[44rem]' : 'rounded-md w-full',
-                  ]}
-                  widths={[400, 768, 1024, 2040]}
-                  sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
-                  loading="eager"
-                  fetchpriority="high"
-                  {...(imageWhole ? { inferSize: true, layout: 'none' } : { width: 1024, height: 576 })}
-                  format="webp"
-                  {...imageProps}
-                />
-              )}
-            </div>
-          )
-        }
       </div>
     </div>
   </div>

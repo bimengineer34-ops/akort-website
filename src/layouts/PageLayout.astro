@@ -10,9 +10,12 @@ import type { MetaData } from '~/types';
 
 export interface Props {
   metadata?: MetaData;
+  /** Passed straight through to the default Header when the page doesn't
+   * override the `header` slot — see Header's `solid` prop doc. */
+  solidHeader?: boolean;
 }
 
-const { metadata } = Astro.props;
+const { metadata, solidHeader = false } = Astro.props;
 const headerData = getHeaderData();
 const footerData = getFooterData();
 ---
@@ -29,7 +32,13 @@ const footerData = getFooterData();
   */
   }
   {Astro.slots.has('announcement') ? <slot name="announcement" /> : <Announcement />}
-  {Astro.slots.has('header') ? <slot name="header" /> : <Header {...headerData} isSticky showRssFeed showToggleTheme />}
+  {
+    Astro.slots.has('header') ? (
+      <slot name="header" />
+    ) : (
+      <Header {...headerData} isSticky showRssFeed showToggleTheme solid={solidHeader} />
+    )
+  }
   <main id="main-content" class="flex-1">
     <slot />
   </main>

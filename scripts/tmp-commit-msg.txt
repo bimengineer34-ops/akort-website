@@ -1,0 +1,29 @@
+Redesign homepage hero as full-bleed photo with overlaid text/CTAs
+
+Matches the pattern used by most large engineering-firm homepages
+(Arup, WSP, AECOM, ...): a full-bleed background photo with a dark
+gradient for legibility, headline/subtitle/buttons layered on top -
+instead of the previous template default of a centered text block
+followed by a separate image stacked underneath it.
+
+- Hero.astro: image now renders as an absolutely-positioned
+  background covering the section (object-cover) with a
+  bottom-to-top black gradient overlay; text/tagline/subtitle switch
+  to white/light colors (fixed, not theme-dependent, since they now
+  sit on a photo rather than the page background); non-primary action
+  buttons get a white-outline override so they read against the photo.
+- New hero photo: a wide aerial shot of a site team on a completed
+  foundation slab (clean PPE, no legible logos) - replaces the
+  blueprint/pencil macro shot, which doesn't crop well as a wide
+  full-bleed background.
+- Header contrast fix: the header is transparent until scrolled 60px,
+  which left the (fixed-color, non-recolorable) logo icon low-contrast
+  against the new dark photo. Added a `solid` prop to Header.astro
+  (and a `solidHeader` passthrough on PageLayout) that always shows
+  the existing solid/blurred background band instead of only after
+  scrolling - enabled only for the homepage, every other page's header
+  is unchanged.
+
+Verified in light/dark mode and on mobile.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
