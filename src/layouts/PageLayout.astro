@@ -36,7 +36,7 @@ const footerData = getFooterData();
     Astro.slots.has('header') ? (
       <slot name="header" />
     ) : (
-      <Header {...headerData} isSticky showRssFeed showToggleTheme showSearch solid={solidHeader} />
+      <Header {...headerData} isSticky showRssFeed showToggleTheme solid={solidHeader} />
     )
   }
   <main id="main-content" class="flex-1">

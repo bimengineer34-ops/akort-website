@@ -1,5 +1,5 @@
 ---
-import { desc, eq, count } from 'drizzle-orm';
+import { desc, eq, and, or, like, count } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { posts } from '~/db/schema';
 import { toPost } from '~/lib/toPost';
@@ -8,18 +8,27 @@ import BlogList from '~/components/blog/List.astro';
 import Headline from '~/components/blog/Headline.astro';
 import Pagination from '~/components/blog/Pagination.astro';
 import Breadcrumbs from '~/components/common/Breadcrumbs.astro';
+import { Icon } from 'astro-icon/components';
 import { getPermalink } from '~/utils/permalinks';
 
 export const prerender = false;
 
 const PAGE_SIZE = 9;
 const currentPage = Math.max(1, Number(Astro.url.searchParams.get('page') ?? '1') || 1);
+const q = (Astro.url.searchParams.get('q') ?? '').trim();
 
-const total = db.select({ c: count() }).from(posts).where(eq(posts.draft, false)).get()?.c ?? 0;
+const whereClause = q
+  ? and(
+      eq(posts.draft, false),
+      or(like(posts.title, `%${q}%`), like(posts.excerpt, `%${q}%`), like(posts.body, `%${q}%`))
+    )
+  : eq(posts.draft, false);
+
+const total = db.select({ c: count() }).from(posts).where(whereClause).get()?.c ?? 0;
 const rows = db
   .select()
   .from(posts)
-  .where(eq(posts.draft, false))
+  .where(whereClause)
   .orderBy(desc(posts.publishDate))
   .limit(PAGE_SIZE)
   .offset((currentPage - 1) * PAGE_SIZE)
@@ -27,6 +36,8 @@ const rows = db
 
 const postList = rows.map(toPost);
 const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+const pageUrl = (page: number) => `/bilgi-merkezi?${new URLSearchParams({ ...(q && { q }), page: String(page) })}`;
 
 const breadcrumbs = [
   { text: 'Ana Sayfa', href: getPermalink('/') },
@@ -50,10 +61,44 @@ const metadata = {
     >
       Bilgi Merkezi
     </Headline>
+
+    <form method="GET" action="/bilgi-merkezi" class="mx-auto mb-10 max-w-xl">
+      <div class="relative">
+        <Icon
+          name="tabler:search"
+          class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted"
+        />
+        <input
+          type="text"
+          name="q"
+          value={q}
+          placeholder="Tüm yazılarda ara..."
+          class="w-full rounded-full border border-gray-300 bg-white py-3 pl-12 pr-24 text-default placeholder:text-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
+        />
+        <button
+          type="submit"
+          class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-white hover:opacity-90"
+        >
+          Ara
+        </button>
+      </div>
+    </form>
+
+    {
+      q && (
+        <p class="mb-8 text-center text-muted">
+          {total > 0 ? `"${q}" için ${total} sonuç bulundu.` : `"${q}" için sonuç bulunamadı.`}{' '}
+          <a href="/bilgi-merkezi" class="font-medium text-primary hover:underline">
+            Aramayı temizle
+          </a>
+        </p>
+      )
+    }
+
     <BlogList posts={postList} />
     <Pagination
-      prevUrl={currentPage > 1 ? `/bilgi-merkezi?page=${currentPage - 1}` : undefined}
-      nextUrl={currentPage < totalPages ? `/bilgi-merkezi?page=${currentPage + 1}` : undefined}
+      prevUrl={currentPage > 1 ? pageUrl(currentPage - 1) : undefined}
+      nextUrl={currentPage < totalPages ? pageUrl(currentPage + 1) : undefined}
     />
   </section>
 </Layout>
