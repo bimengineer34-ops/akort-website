@@ -6,6 +6,7 @@ import { resolveImage } from '~/lib/upload';
 import { cleanSlug } from '~/utils/permalinks';
 import AdminLayout from '~/layouts/AdminLayout.astro';
 import MarkdownEditor from '~/components/admin/MarkdownEditor.astro';
+import AiSeoButton from '~/components/admin/AiSeoButton.astro';
 
 export const prerender = false;
 
@@ -120,6 +121,7 @@ const approachRows = Array.from(
         <div class="mb-3">
           <label class="form-label">SEO Açıklaması</label>
           <textarea name="seoDescription" class="form-control" rows="2">{page?.seoDescription}</textarea>
+          <AiSeoButton excerptField="heroSubtitle" />
         </div>
 
         <hr />

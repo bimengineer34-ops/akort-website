@@ -1,0 +1,91 @@
+---
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  titleField?: string;
+  excerptField?: string;
+  bodyField?: string;
+  targetField?: string;
+}
+
+const {
+  titleField = 'title',
+  excerptField = 'excerpt',
+  bodyField = 'body',
+  targetField = 'seoDescription',
+} = Astro.props;
+---
+
+<aw-ai-seo
+  data-title-field={titleField}
+  data-excerpt-field={excerptField}
+  data-body-field={bodyField}
+  data-target-field={targetField}
+>
+  <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-ai-generate>
+    <Icon name="tabler:sparkles" class="w-4 h-4" />
+    <span data-ai-label>AI ile Oluştur</span>
+  </button>
+  <div class="text-danger small mt-1 d-none" data-ai-error></div>
+</aw-ai-seo>
+
+<script>
+  class AwAiSeo extends HTMLElement {
+    connectedCallback() {
+      const btn = this.querySelector<HTMLButtonElement>('[data-ai-generate]');
+      const label = this.querySelector<HTMLElement>('[data-ai-label]');
+      const errorEl = this.querySelector<HTMLElement>('[data-ai-error]');
+      const form = this.closest('form');
+      if (!btn || !label || !errorEl || !form) return;
+
+      const getFieldValue = (name: string): string => {
+        const el = form.elements.namedItem(name);
+        if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) return el.value;
+        return '';
+      };
+
+      btn.addEventListener('click', async () => {
+        errorEl.classList.add('d-none');
+
+        const titleField = this.dataset.titleField ?? 'title';
+        const targetField = this.dataset.targetField ?? 'seoDescription';
+        const title = getFieldValue(titleField);
+
+        if (!title.trim()) {
+          errorEl.textContent = 'Önce başlığı doldurun.';
+          errorEl.classList.remove('d-none');
+          return;
+        }
+
+        const target = form.elements.namedItem(targetField);
+        if (!(target instanceof HTMLTextAreaElement || target instanceof HTMLInputElement)) return;
+
+        btn.disabled = true;
+        label.textContent = 'Oluşturuluyor...';
+
+        try {
+          const res = await fetch('/admin/api/ai-seo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title,
+              excerpt: getFieldValue(this.dataset.excerptField ?? 'excerpt'),
+              body: getFieldValue(this.dataset.bodyField ?? 'body'),
+            }),
+          });
+          const data = await res.json();
+          if (!res.ok || data.error) throw new Error(data.error || 'İstek başarısız oldu.');
+          target.value = data.text;
+          target.dispatchEvent(new Event('input', { bubbles: true }));
+        } catch (err) {
+          errorEl.textContent = err instanceof Error ? err.message : 'Bilinmeyen hata.';
+          errorEl.classList.remove('d-none');
+        } finally {
+          btn.disabled = false;
+          label.textContent = 'AI ile Oluştur';
+        }
+      });
+    }
+  }
+  if (!customElements.get('aw-ai-seo')) customElements.define('aw-ai-seo', AwAiSeo);
+</script>

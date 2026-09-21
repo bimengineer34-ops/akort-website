@@ -6,6 +6,7 @@ import { resolveImage } from '~/lib/upload';
 import { cleanSlug } from '~/utils/permalinks';
 import AdminLayout from '~/layouts/AdminLayout.astro';
 import MarkdownEditor from '~/components/admin/MarkdownEditor.astro';
+import AiSeoButton from '~/components/admin/AiSeoButton.astro';
 
 export const prerender = false;
 
@@ -85,6 +86,7 @@ const toDateInput = (d: Date) => new Date(d).toISOString().slice(0, 10);
             >Google'da görünen açıklama. Boş bırakılırsa yukarıdaki özet kullanılır — ~155 karakter, anahtar kelime
             içeren ayrı bir cümle genelde daha iyi sonuç verir.</small
           >
+          <AiSeoButton />
         </div>
         <div class="row">
           <div class="col-md-6 mb-3">

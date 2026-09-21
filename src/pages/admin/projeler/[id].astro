@@ -6,6 +6,7 @@ import { resolveImage } from '~/lib/upload';
 import { cleanSlug } from '~/utils/permalinks';
 import AdminLayout from '~/layouts/AdminLayout.astro';
 import MarkdownEditor from '~/components/admin/MarkdownEditor.astro';
+import AiSeoButton from '~/components/admin/AiSeoButton.astro';
 
 export const prerender = false;
 
@@ -92,6 +93,7 @@ const project = !isNew ? db.select().from(projects).where(eq(projects.id, id!)).
           <label class="form-label">SEO Açıklaması</label>
           <textarea name="seoDescription" class="form-control" rows="2">{project?.seoDescription}</textarea>
           <small class="text-muted">Google'da görünen açıklama. Boş bırakılırsa yukarıdaki özet kullanılır.</small>
+          <AiSeoButton />
         </div>
         <div class="row">
           <div class="col-md-6 mb-3">

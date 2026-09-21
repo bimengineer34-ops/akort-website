@@ -17,6 +17,7 @@ const buttons: Array<{ cmd: string; title: string; icon?: string; label?: string
   { cmd: 'bold', title: 'Kalın', label: 'K' },
   { cmd: 'italic', title: 'İtalik', label: 'İ' },
   { cmd: 'link', title: 'Bağlantı Ekle', icon: 'tabler:link' },
+  { cmd: 'image', title: 'Görsel Ekle', icon: 'tabler:photo' },
   { cmd: 'ul', title: 'Madde Listesi', icon: 'tabler:list' },
   { cmd: 'ol', title: 'Numaralı Liste', icon: 'tabler:list-numbers' },
   { cmd: 'quote', title: 'Alıntı', icon: 'tabler:blockquote' },
@@ -46,6 +47,8 @@ const buttons: Array<{ cmd: string; title: string; icon?: string; label?: string
     >{value}</textarea
   >
   <div class="form-control md-preview-pane d-none" data-md-preview></div>
+  <input type="file" accept="image/*" class="d-none" data-md-image-input />
+  <div class="text-danger small mt-1 d-none" data-md-image-error></div>
 </aw-md-editor>
 
 <style>
@@ -88,13 +91,62 @@ const buttons: Array<{ cmd: string; title: string; icon?: string; label?: string
       const textarea = this.querySelector('[data-md-textarea]');
       const preview = this.querySelector('[data-md-preview]');
       const toolbar = this.querySelector<HTMLElement>('[data-md-toolbar]');
-      if (!(textarea instanceof HTMLTextAreaElement) || !(preview instanceof HTMLElement)) return;
+      const imageInput = this.querySelector('[data-md-image-input]');
+      const imageError = this.querySelector<HTMLElement>('[data-md-image-error]');
+      if (
+        !(textarea instanceof HTMLTextAreaElement) ||
+        !(preview instanceof HTMLElement) ||
+        !(imageInput instanceof HTMLInputElement)
+      )
+        return;
+
+      // File pickers steal focus/selection from the textarea while open, so
+      // the cursor position has to be captured before opening it and reused
+      // once the upload finishes.
+      let savedSelection = { start: 0, end: 0 };
 
       this.querySelectorAll<HTMLButtonElement>('[data-md-cmd]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const cmd = btn.dataset.mdCmd;
-          if (cmd) this.applyCommand(textarea, cmd);
+          if (!cmd) return;
+          if (cmd === 'image') {
+            savedSelection = { start: textarea.selectionStart, end: textarea.selectionEnd };
+            imageInput.click();
+            return;
+          }
+          this.applyCommand(textarea, cmd);
         });
+      });
+
+      imageInput.addEventListener('change', async () => {
+        const file = imageInput.files?.[0];
+        imageInput.value = '';
+        if (!file) return;
+
+        imageError?.classList.add('d-none');
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+          const res = await fetch('/admin/api/upload-image', { method: 'POST', body: formData });
+          const data = await res.json();
+          if (!res.ok || data.error) throw new Error(data.error || 'Yükleme başarısız oldu.');
+
+          const alt = window.prompt('Görsel açıklaması (alt metin):', '') ?? '';
+          const { start, end } = savedSelection;
+          const value = textarea.value;
+          const inserted = `![${alt}](${data.url})`;
+          textarea.value = `${value.slice(0, start)}${inserted}${value.slice(end)}`;
+          const cursor = start + inserted.length;
+          textarea.setSelectionRange(cursor, cursor);
+          textarea.focus();
+          textarea.dispatchEvent(new Event('input', { bubbles: true }));
+        } catch (err) {
+          if (imageError) {
+            imageError.textContent = err instanceof Error ? err.message : 'Bilinmeyen hata.';
+            imageError.classList.remove('d-none');
+          }
+        }
       });
 
       this.querySelectorAll<HTMLButtonElement>('[data-md-view]').forEach((btn) => {
