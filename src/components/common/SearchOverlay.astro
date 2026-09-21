@@ -1,0 +1,163 @@
+---
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  class?: string;
+  iconClass?: string;
+}
+
+const {
+  class:
+    className = 'text-muted dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 inline-flex items-center',
+  iconClass = 'w-5 h-5',
+} = Astro.props;
+---
+
+<aw-search>
+  <button type="button" class={className} aria-label="Sitede ara" data-aw-search-open>
+    <Icon name="tabler:search" class={iconClass} />
+  </button>
+
+  <div
+    class="fixed inset-0 z-[60] hidden items-start justify-center bg-slate-900/60 p-4 pt-[10vh] backdrop-blur-sm"
+    data-aw-search-overlay
+  >
+    <div class="w-full max-w-xl rounded-2xl bg-white shadow-2xl dark:bg-slate-800" data-aw-search-panel>
+      <div class="flex items-center gap-3 border-b border-gray-100 px-5 py-4 dark:border-slate-700">
+        <Icon name="tabler:search" class="h-5 w-5 shrink-0 text-muted" />
+        <input
+          type="text"
+          placeholder="Sayfa, hizmet, blog veya proje ara..."
+          class="w-full border-0 bg-transparent text-base text-default placeholder:text-muted focus:outline-none focus:ring-0"
+          data-aw-search-input
+          autocomplete="off"
+        />
+        <button
+          type="button"
+          class="shrink-0 rounded-lg p-1.5 text-muted hover:bg-gray-100 dark:hover:bg-slate-700"
+          aria-label="Kapat"
+          data-aw-search-close
+        >
+          <Icon name="tabler:x" class="h-5 w-5" />
+        </button>
+      </div>
+      <ul class="max-h-[60vh] overflow-y-auto p-2" data-aw-search-results></ul>
+      <p class="hidden px-5 py-8 text-center text-sm text-muted" data-aw-search-empty>Sonuç bulunamadı.</p>
+      <p class="px-5 py-8 text-center text-sm text-muted" data-aw-search-hint>Aramak için en az 2 karakter yazın.</p>
+    </div>
+  </div>
+</aw-search>
+
+<style>
+  aw-search {
+    display: contents;
+  }
+  [data-aw-search-overlay].is-open {
+    display: flex;
+  }
+</style>
+
+<script>
+  interface SearchResult {
+    title: string;
+    url: string;
+    excerpt: string;
+    type: string;
+  }
+
+  class AwSearch extends HTMLElement {
+    connectedCallback() {
+      const openBtn = this.querySelector<HTMLButtonElement>('[data-aw-search-open]');
+      const closeBtn = this.querySelector<HTMLButtonElement>('[data-aw-search-close]');
+      const overlay = this.querySelector<HTMLElement>('[data-aw-search-overlay]');
+      const panel = this.querySelector<HTMLElement>('[data-aw-search-panel]');
+      const input = this.querySelector<HTMLInputElement>('[data-aw-search-input]');
+      const resultsEl = this.querySelector<HTMLElement>('[data-aw-search-results]');
+      const emptyEl = this.querySelector<HTMLElement>('[data-aw-search-empty]');
+      const hintEl = this.querySelector<HTMLElement>('[data-aw-search-hint]');
+      if (!openBtn || !overlay || !panel || !input || !resultsEl || !emptyEl || !hintEl) return;
+
+      let debounceId: ReturnType<typeof setTimeout> | undefined;
+      let requestId = 0;
+
+      const open = () => {
+        overlay.classList.add('is-open');
+        document.body.classList.add('overflow-hidden');
+        input.focus();
+      };
+      const close = () => {
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('overflow-hidden');
+      };
+
+      openBtn.addEventListener('click', open);
+      closeBtn?.addEventListener('click', close);
+      overlay.addEventListener('click', (e) => {
+        if (!panel.contains(e.target as Node)) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('is-open')) close();
+      });
+
+      const render = (results: SearchResult[]) => {
+        resultsEl.innerHTML = results
+          .map(
+            (r) => `
+              <li>
+                <a href="${r.url}" class="block rounded-xl px-3 py-3 hover:bg-gray-50 dark:hover:bg-slate-700">
+                  <div class="flex items-center gap-2">
+                    <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-muted dark:bg-slate-700">${r.type}</span>
+                    <span class="font-semibold text-heading">${r.title}</span>
+                  </div>
+                  ${r.excerpt ? `<p class="mt-1 line-clamp-2 text-sm text-muted">${r.excerpt}</p>` : ''}
+                </a>
+              </li>
+            `
+          )
+          .join('');
+      };
+
+      const escapeHtml = (s: string) =>
+        s.replace(
+          /[&<>"']/g,
+          (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string
+        );
+
+      input.addEventListener('input', () => {
+        const q = input.value.trim();
+        clearTimeout(debounceId);
+
+        if (q.length < 2) {
+          resultsEl.innerHTML = '';
+          emptyEl.classList.add('hidden');
+          hintEl.classList.remove('hidden');
+          return;
+        }
+        hintEl.classList.add('hidden');
+
+        debounceId = setTimeout(async () => {
+          const thisRequest = ++requestId;
+          try {
+            const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
+            const data = await res.json();
+            if (thisRequest !== requestId) return; // a newer keystroke superseded this response
+            const results: SearchResult[] = (data.results ?? []).map((r: SearchResult) => ({
+              ...r,
+              title: escapeHtml(r.title),
+              excerpt: escapeHtml(r.excerpt),
+            }));
+            render(results);
+            emptyEl.classList.toggle('hidden', results.length > 0);
+          } catch {
+            resultsEl.innerHTML = '';
+            emptyEl.classList.remove('hidden');
+          }
+        }, 250);
+      });
+    }
+  }
+
+  if (!customElements.get('aw-search')) {
+    customElements.define('aw-search', AwSearch);
+  }
+</script>

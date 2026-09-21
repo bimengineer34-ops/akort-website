@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import Logo from '~/components/Logo.astro';
 import ToggleTheme from '~/components/common/ToggleTheme.astro';
 import ToggleMenu from '~/components/common/ToggleMenu.astro';
+import SearchOverlay from '~/components/common/SearchOverlay.astro';
 import Button from '~/components/ui/Button.astro';
 
 import { getHomePermalink } from '~/utils/permalinks';
@@ -29,6 +30,7 @@ export interface Props {
   isFullWidth?: boolean;
   showToggleTheme?: boolean;
   showRssFeed?: boolean;
+  showSearch?: boolean;
   position?: string;
   /** Always shows the solid/blurred background band, instead of only after
    * scrolling past the threshold — for pages whose hero sits directly under
@@ -46,6 +48,7 @@ const {
   isFullWidth = false,
   showToggleTheme = false,
   showRssFeed = false,
+  showSearch = false,
   position = 'center',
   solid = false,
 } = Astro.props;
@@ -63,7 +66,18 @@ const isActive = (href?: string) => typeof href === 'string' && `/${trimSlash(hr
 // with its own menu (the demo homes, the landing pages) would keep showing the
 // header of the page the visitor came from. Hash the props that shape the markup.
 const persistKey = `header-${Array.from(
-  JSON.stringify({ links, actions, isSticky, isDark, isFullWidth, showToggleTheme, showRssFeed, position, solid })
+  JSON.stringify({
+    links,
+    actions,
+    isSticky,
+    isDark,
+    isFullWidth,
+    showToggleTheme,
+    showRssFeed,
+    showSearch,
+    position,
+    solid,
+  })
 )
   .reduce((hash, char) => (hash * 31 + char.charCodeAt(0)) >>> 0, 7)
   .toString(36)}`;
@@ -171,6 +185,7 @@ const persistKey = `header-${Array.from(
       >
         <div class="items-center flex justify-between w-full lg:w-auto">
           <div class="flex">
+            {showSearch && <SearchOverlay iconClass="w-6 h-6 lg:w-5 lg:h-5" />}
             {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 lg:w-5 lg:h-5 lg:inline-block" />}
             {
               showRssFeed && (

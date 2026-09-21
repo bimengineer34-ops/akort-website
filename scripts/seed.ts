@@ -403,6 +403,87 @@ Bir projede değişiklik kaçınılmazdır; önemli olan bu değişikliklerin na
     ctaSubtitle: 'İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.',
   },
   {
+    slug: 'surdurulebilirlik',
+    group: 'kurumsal',
+    title: 'Sürdürülebilirlik Yaklaşımımız',
+    seoDescription:
+      "AKORT Mühendislik'in enerji verimliliği, yenilenebilir enerji entegrasyonu ve yaşam döngüsü maliyeti odaklı sürdürülebilirlik yaklaşımı.",
+    tagline: 'Sürdürülebilirlik',
+    heroTitle: 'Sürdürülebilirliği ayrı bir hizmet değil, bir tasarım kriteri olarak görürüz.',
+    heroSubtitle:
+      'Enerji verimliliği, yenilenebilir kaynak entegrasyonu ve yaşam döngüsü maliyeti; her mühendislik kararımızın bir parçası.',
+    features: [
+      {
+        icon: 'tabler:bulb',
+        title: 'Enerji Verimliliği Odaklı Tasarım',
+        description:
+          'Mekanik, elektrik ve yapı kabuğu kararlarını, yaşam döngüsü boyunca enerji tüketimini azaltacak şekilde birlikte değerlendiriyoruz.',
+      },
+      {
+        icon: 'tabler:solar-panel-2',
+        title: 'Yenilenebilir Enerji Entegrasyonu',
+        description:
+          'Uygun projelerde güneş enerjisi sistemlerini (GES), tüketim profiliyle uyumlu ve şebekeyle sorunsuz entegre olacak şekilde tasarlıyoruz.',
+      },
+      {
+        icon: 'tabler:calculator',
+        title: 'Yaşam Döngüsü Maliyeti Analizi',
+        description:
+          'Sistem seçimlerinde yalnızca ilk yatırımı değil, uzun vadeli işletme ve bakım maliyetlerini birlikte değerlendiriyoruz.',
+      },
+      {
+        icon: 'tabler:file-check',
+        title: 'Enerji Kimlik Belgesi Danışmanlığı',
+        description: 'Mevzuat kapsamındaki enerji performansı değerlendirme süreçlerine teknik destek sağlıyoruz.',
+      },
+      {
+        icon: 'tabler:tools',
+        title: 'Uygulanabilir ve Dayanıklı Tasarım',
+        description:
+          'Projeleri yalnızca çizim olarak değil; saha koşulları, işletme ve bakım süreçleriyle birlikte değerlendiriyoruz.',
+      },
+      {
+        icon: 'tabler:affiliate',
+        title: 'Disiplinler Arası Koordinasyon',
+        description:
+          'Mimari, mekanik, elektrik ve enerji kararlarını tek bir koordinasyon yaklaşımı altında bir araya getiriyoruz.',
+      },
+    ],
+    approachTagline: 'Yaklaşımımız',
+    approachTitle: 'Sürdürülebilirlik, sona eklenen bir özellik değildir.',
+    approachItems: [
+      {
+        title: 'Veriye Dayalı Karar',
+        description: 'Öneri geliştirmeden önce mevcut veya planlanan tüketim verisini analiz ederiz.',
+      },
+      {
+        title: 'Bütüncül Değerlendirme',
+        description:
+          'Mekanik, elektrik, yapı kabuğu ve enerji kaynağını birlikte ele alarak gerçekçi kazanımlar hedefleriz.',
+      },
+      {
+        title: 'Uzun Vadeli Bakış',
+        description:
+          'İlk yatırım maliyetini değil, yaşam döngüsü boyunca toplam etkiyi ölçütlerimizin merkezine alırız.',
+      },
+    ],
+    image: IMG.f,
+    imageAlt: 'Güneş enerjisi panelleri ve sürdürülebilir mühendislik yaklaşımı',
+    body: `## Sürdürülebilirlik, sona eklenen bir özellik değildir
+
+Bir projenin çevresel ve ekonomik sürdürülebilirliği; malzeme seçiminden sistem tasarımına, enerji kaynağından işletme stratejisine kadar tasarım sürecinin başından itibaren alınan kararlarla şekillenir. Bu nedenle sürdürülebilirliği, projenin sonunda eklenen bir onay kutusu değil, mühendislik sürecinin her adımında değerlendirdiğimiz bir kriter olarak ele alıyoruz.
+
+### Enerji verimliliği ve yenilenebilir kaynaklar
+
+Mekanik ve elektrik sistem tasarımlarımızda enerji tüketimini azaltmayı önceliklendiriyoruz; uygun projelerde güneş enerjisi sistemlerini (GES) tüketim profiliyle uyumlu şekilde entegre ediyoruz. Enerji Kimlik Belgesi süreçlerinde kullanılan ulusal hesaplama metodolojisini referans alarak, hangi müdahalelerin somut olarak ne kazandıracağını ortaya koyuyoruz.
+
+### Uzun vadeli düşünen mühendislik
+
+Her sistem seçimini yalnızca ilk yatırım maliyetiyle değil, yaşam döngüsü boyunca beklenen işletme ve bakım maliyetleriyle birlikte değerlendiriyoruz. Uygulanabilir, bakımı kolay ve sahada doğru çalışan tasarımlar; hem işletme dönemi maliyetlerini hem de kaynak israfını azaltır.`,
+    ctaTitle: 'Sürdürülebilir bir proje mi planlıyorsunuz?',
+    ctaSubtitle: 'İhtiyacınızı birlikte değerlendirelim ve doğru mühendislik çözümünü oluşturalım.',
+  },
+  {
     slug: 'mekanik-muhendislik',
     group: 'hizmet',
     title: 'Mekanik Mühendislik',
