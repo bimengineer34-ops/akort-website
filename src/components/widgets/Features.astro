@@ -3,6 +3,7 @@ import { Icon } from 'astro-icon/components';
 import Button from '~/components/ui/Button.astro';
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Image from '~/components/common/Image.astro';
 import { getColumnsClass } from '~/utils/utils';
 import type { Features as Props } from '~/types';
 
@@ -13,6 +14,8 @@ const {
   items = [],
   columns = 2,
   defaultIcon,
+  /** Shows a "01", "02"… badge on each item — for a numbered list of items rather than a plain feature grid. */
+  numbered = false,
 
   id,
   isDark = false,
@@ -29,20 +32,35 @@ const columnsClass = getColumnsClass(columns);
   {
     items.length > 0 && (
       <div class:list={['grid mx-auto gap-8 md:gap-y-12', columnsClass]}>
-        {items.map(({ title: itemTitle, description, icon, callToAction }) => (
-          <div class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
-            <div class="flex flex-row max-w-md">
-              {(icon || defaultIcon) && (
-                <div class="flex justify-center">
-                  <Icon
-                    name={icon || defaultIcon}
-                    class="w-7 h-7 mr-2 rtl:mr-0 rtl:ml-2 text-white bg-primary rounded-full md:w-12 md:h-12 md:p-3 p-2 mr-4 rtl:ml-4 rtl:mr-0"
-                  />
+        {items.map(({ title: itemTitle, description, icon, callToAction, image }, index) =>
+          image ? (
+            <div class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade group overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg dark:border-slate-700 dark:bg-slate-900">
+              <div class="aspect-[16/10] overflow-hidden">
+                <Image
+                  src={image.src}
+                  alt={image.alt ?? itemTitle ?? ''}
+                  class="h-full w-full object-cover transition group-hover:scale-[1.03]"
+                  widths={[400, 640]}
+                  sizes="(max-width: 767px) 100vw, 400px"
+                  width={400}
+                  height={250}
+                  layout="cover"
+                  format="webp"
+                />
+              </div>
+              <div class="p-5 md:p-6">
+                <div class="mb-3 flex items-center gap-2">
+                  {numbered && (
+                    <span class="font-heading text-sm font-bold text-primary/60 dark:text-blue-400/60">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  )}
+                  {(icon || defaultIcon) && (
+                    <Icon name={icon || defaultIcon} class="h-5 w-5 text-primary dark:text-blue-400" />
+                  )}
                 </div>
-              )}
-              <div class="mt-0.5">
-                {itemTitle && <h3 class="text-xl md:text-[1.3rem] font-bold">{itemTitle}</h3>}
-                {description && <p class:list={[{ 'mt-3': itemTitle }, 'text-muted']} set:html={description} />}
+                {itemTitle && <h3 class="text-xl md:text-[1.15rem] font-bold">{itemTitle}</h3>}
+                {description && <p class:list={[{ 'mt-2': itemTitle }, 'text-muted']} set:html={description} />}
                 {callToAction && (
                   <div class:list={[{ 'mt-3': itemTitle || description }]}>
                     <Button variant="link" {...callToAction} />
@@ -50,8 +68,35 @@ const columnsClass = getColumnsClass(columns);
                 )}
               </div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div class="intersect-once motion-safe:md:opacity-0 motion-safe:md:intersect:animate-fade">
+              <div class="flex flex-row max-w-md">
+                {(icon || defaultIcon) && (
+                  <div class="flex justify-center">
+                    <Icon
+                      name={icon || defaultIcon}
+                      class="w-7 h-7 mr-2 rtl:mr-0 rtl:ml-2 text-white bg-primary rounded-full md:w-12 md:h-12 md:p-3 p-2 mr-4 rtl:ml-4 rtl:mr-0"
+                    />
+                  </div>
+                )}
+                <div class="mt-0.5">
+                  {numbered && (
+                    <span class="mb-1 block font-heading text-sm font-bold text-primary/60 dark:text-blue-400/60">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                  )}
+                  {itemTitle && <h3 class="text-xl md:text-[1.3rem] font-bold">{itemTitle}</h3>}
+                  {description && <p class:list={[{ 'mt-3': itemTitle }, 'text-muted']} set:html={description} />}
+                  {callToAction && (
+                    <div class:list={[{ 'mt-3': itemTitle || description }]}>
+                      <Button variant="link" {...callToAction} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        )}
       </div>
     )
   }

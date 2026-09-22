@@ -86,6 +86,8 @@ export interface PageFeatureItem {
   icon?: string;
   title: string;
   description: string;
+  image?: string;
+  imageAlt?: string;
 }
 
 export interface PageApproachItem {

@@ -257,6 +257,8 @@ export interface Features extends Omit<Headline, 'classes'>, Widget {
   defaultIcon?: string;
   isBeforeContent?: boolean;
   isAfterContent?: boolean;
+  /** Shows a "01", "02"… badge on each item. */
+  numbered?: boolean;
 }
 
 export interface Faqs extends Omit<Headline, 'classes'>, Widget {

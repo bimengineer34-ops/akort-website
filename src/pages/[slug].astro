@@ -74,7 +74,18 @@ const serviceSchema =
 
   {
     page.features && page.features.length > 0 && (
-      <Features tagline="Hizmet Kapsamı" title="Neleri Kapsar?" columns={2} items={page.features} />
+      <Features
+        tagline="Hizmet Kapsamı"
+        title="Neleri Kapsar?"
+        columns={page.features.some((f) => f.image) ? 3 : 2}
+        numbered
+        items={page.features.map((f) => ({
+          title: f.title,
+          description: f.description,
+          icon: f.icon,
+          image: f.image ? { src: f.image, alt: f.imageAlt || f.title } : undefined,
+        }))}
+      />
     )
   }
 

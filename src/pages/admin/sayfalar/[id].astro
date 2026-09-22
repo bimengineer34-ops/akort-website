@@ -2,7 +2,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '~/db/client';
 import { pages, type PageFeatureItem, type PageApproachItem } from '~/db/schema';
-import { resolveImage } from '~/lib/upload';
+import { resolveImage, saveUploadedFile } from '~/lib/upload';
 import { cleanSlug } from '~/utils/permalinks';
 import AdminLayout from '~/layouts/AdminLayout.astro';
 import MarkdownEditor from '~/components/admin/MarkdownEditor.astro';
@@ -35,13 +35,29 @@ if (Astro.request.method === 'POST') {
     const featureIcons = form.getAll('feature_icon') as string[];
     const featureTitles = form.getAll('feature_title') as string[];
     const featureDescs = form.getAll('feature_description') as string[];
-    const features: PageFeatureItem[] = featureTitles
-      .map((t, i) => ({
+    const featureImageUrls = form.getAll('feature_image') as string[];
+    const featureImageFiles = form.getAll('feature_image_file');
+    const featureImageAlts = form.getAll('feature_image_alt') as string[];
+
+    const features: PageFeatureItem[] = [];
+    for (let i = 0; i < featureTitles.length; i++) {
+      const t = featureTitles[i].trim();
+      if (!t) continue;
+
+      const file = featureImageFiles[i];
+      const image =
+        file instanceof File && file.size > 0
+          ? await saveUploadedFile(file)
+          : (featureImageUrls[i] || '').trim() || existing?.features?.[i]?.image || undefined;
+
+      features.push({
         icon: featureIcons[i] || undefined,
-        title: t.trim(),
+        title: t,
         description: (featureDescs[i] ?? '').trim(),
-      }))
-      .filter((f) => f.title);
+        image,
+        imageAlt: (featureImageAlts[i] || '').trim() || undefined,
+      });
+    }
 
     const approachTitles = form.getAll('approach_title') as string[];
     const approachDescs = form.getAll('approach_description') as string[];
@@ -84,7 +100,7 @@ if (Astro.request.method === 'POST') {
 const page = !isNew ? db.select().from(pages).where(eq(pages.id, id!)).get() : null;
 const featureRows = Array.from(
   { length: FEATURE_ROWS },
-  (_, i) => page?.features?.[i] ?? { icon: '', title: '', description: '' }
+  (_, i) => page?.features?.[i] ?? { icon: '', title: '', description: '', image: '', imageAlt: '' }
 );
 const approachRows = Array.from(
   { length: APPROACH_ROWS },
@@ -154,24 +170,45 @@ const approachRows = Array.from(
         <p class="text-muted small">
           Boş bıraktığınız satırlar kaydedilmez. İkon adı için <a href="https://tabler.io/icons" target="_blank"
             >tabler.io/icons</a
-          > kullanın (örn. tabler:wind).
+          > kullanın (örn. tabler:wind). Görsel eklerseniz, bu öğe kartlı/fotoğraflı olarak gösterilir (BIM sayfasındaki gibi);
+          eklemezseniz sade ikon+metin olarak kalır.
         </p>
-        <div class="row g-2 mb-1 fw-bold text-muted small">
-          <div class="col-2">İkon</div>
-          <div class="col-3">Başlık</div>
-          <div class="col-7">Açıklama</div>
-        </div>
         {
           featureRows.map((f) => (
-            <div class="row g-2 mb-2">
-              <div class="col-2">
-                <input type="text" name="feature_icon" class="form-control" value={f.icon} placeholder="tabler:wind" />
+            <div class="border rounded p-3 mb-2">
+              <div class="row g-2 mb-2">
+                <div class="col-md-2">
+                  <label class="form-label small text-muted">İkon</label>
+                  <input
+                    type="text"
+                    name="feature_icon"
+                    class="form-control"
+                    value={f.icon}
+                    placeholder="tabler:wind"
+                  />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small text-muted">Başlık</label>
+                  <input type="text" name="feature_title" class="form-control" value={f.title} />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label small text-muted">Açıklama</label>
+                  <input type="text" name="feature_description" class="form-control" value={f.description} />
+                </div>
               </div>
-              <div class="col-3">
-                <input type="text" name="feature_title" class="form-control" value={f.title} />
-              </div>
-              <div class="col-7">
-                <input type="text" name="feature_description" class="form-control" value={f.description} />
+              <div class="row g-2">
+                <div class="col-md-5">
+                  <label class="form-label small text-muted">Görsel URL (opsiyonel)</label>
+                  <input type="text" name="feature_image" class="form-control form-control-sm" value={f.image} />
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label small text-muted">veya Görsel Yükle</label>
+                  <input type="file" name="feature_image_file" accept="image/*" class="form-control form-control-sm" />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label small text-muted">Görsel Alt Metni</label>
+                  <input type="text" name="feature_image_alt" class="form-control form-control-sm" value={f.imageAlt} />
+                </div>
               </div>
             </div>
           ))
