@@ -543,8 +543,8 @@ Her sistem seçimini yalnızca ilk yatırım maliyetiyle değil, yaşam döngüs
           'Mekanik tesisatı, elektrik ve mimari ile aynı model üzerinde koordine ederek çakışmaları önceden gideririz.',
       },
     ],
-    image: IMG.c,
-    imageAlt: 'Mekanik tesisat ve HVAC sistem koordinasyonu',
+    image: '/images/hizmet/mekanik-muhendislik.png',
+    imageAlt: 'Mühendisin hava santralini (AHU) yerinde kontrol etmesi',
     body: `## Mekanik tasarımda izlediğimiz yöntem
 
 Bir binanın ısıtma, soğutma ve havalandırma ihtiyacı; kullanım tipi, iç kazanımlar, cephe performansı ve iklim verileri birlikte değerlendirilerek hesaplanır. Bu hesaplar olmadan yapılan bir ekipman seçimi, ya gereğinden büyük ve verimsiz ya da yetersiz kalan bir sistemle sonuçlanır. Mekanik tasarımlarımızı, bu tür varsayımlara değil, projeye özgü yük hesaplarına dayandırırız.
@@ -616,8 +616,8 @@ Mekanik sistem tasarımı, ekipmanın sahaya konulmasıyla bitmez. Seçilen ekip
           'Elektrik altyapısını mekanik ve BIM modeliyle senkronize ederek çakışmaları önceden tespit ederiz.',
       },
     ],
-    image: IMG.e,
-    imageAlt: 'Elektrik altyapı ve enerji dağıtım sistemleri tasarımı',
+    image: '/images/hizmet/elektrik-muhendisligi.png',
+    imageAlt: 'Mühendisin orta gerilim pano üzerinde kontrol yapması',
     body: `## Elektrik tasarımında önceliklerimiz
 
 Bir elektrik altyapısının başarısı; güvenli, doğru boyutlandırılmış ve gelecekteki ihtiyaçlara uyum sağlayabilecek şekilde tasarlanmış olmasına bağlıdır. Yük analizini, yalnızca mevcut ihtiyacı değil; olası kapasite artışlarını da hesaba katarak yaparız. Pano ve dağıtım hattı seçimlerinde bu yaklaşım, sonradan yapılacak maliyetli tadilatların önüne geçer.
@@ -731,8 +731,8 @@ Kritik yükler için yedekli güç sistemleri (jeneratör, UPS) tasarımını, o
         description: 'Tüm disiplinler aynı güncel modele erişerek tutarsızlıkların önüne geçer.',
       },
     ],
-    image: IMG.c,
-    imageAlt: 'BIM modelleme ve dijital mühendislik çalışma ortamı',
+    image: '/images/hizmet/bim.png',
+    imageAlt: 'Üç monitörlü BIM koordinasyon iş istasyonu',
     body: `## BIM, bizim için bir çizim aracı değil; bir koordinasyon disiplinidir
 
 Yapı Bilgi Modellemesi (BIM), mimari, mekanik, elektrik ve yapısal sistemlerin üç boyutlu, veri zengini bir model içinde bir araya getirilmesidir. Ancak asıl değeri, güzel bir 3B görsel üretmekten değil; farklı disiplinlerin kararlarını ortak ve güncel bir referans üzerinde eşzamanlı olarak doğrulayabilmesinden gelir. AKORT Mühendislik'te BIM süreçlerimizi, bilgi yönetimi ilkelerini uluslararası kabul görmüş ISO 19650 çerçevesindeki yaklaşımla uyumlu biçimde, açık veri formatlarını (IFC) destekleyecek şekilde kurguluyoruz.
@@ -833,8 +833,8 @@ Model, yalnızca geometrik bir temsil olarak kalmaz. İş programını modele ba
         description: 'Önerdiğimiz her iyileştirmeyi somut, izlenebilir performans göstergeleriyle ilişkilendiririz.',
       },
     ],
-    image: IMG.b,
-    imageAlt: 'Enerji verimliliği ve sürdürülebilir mühendislik sistemleri',
+    image: '/images/hizmet/enerji-verimliligi.png',
+    imageAlt: 'Bir binanın normal görüntüsü ile termal kamera görüntüsünün karşılaştırılması',
     body: `## Enerji verimliliğine bütüncül bakış
 
 Bir yapının enerji performansı; yalıtım kalitesi, cephe oranı, mekanik sistemlerin verimliliği ve aydınlatma tasarımının bir bileşkesidir. Bu bileşenlerden yalnızca birini iyileştirmek, sınırlı bir kazanım sağlar. Bu nedenle enerji analizlerimize, yapı kabuğu ile mekanik ve elektrik sistemlerini birlikte değerlendirerek başlarız.
@@ -902,8 +902,8 @@ Her enerji verimliliği önerisini, ilk yatırım maliyeti ile beklenen tasarruf
       },
       { title: 'Uygulama Takibi', description: 'Kurulumun tasarım kriterlerine uygun ilerlediğini sahada denetleriz.' },
     ],
-    image: IMG.f,
-    imageAlt: 'Güneş enerjisi sistemleri mühendislik ve uygulama süreci',
+    image: '/images/hizmet/ges.png',
+    imageAlt: 'Fabrika çatısına kurulmuş geniş güneş enerjisi paneli dizisi, gün batımında havadan görünüm',
     body: `## Fizibiliteden şebeke bağlantısına
 
 Bir GES yatırımının başarısı, kurulumdan önceki mühendislik çalışmasında belirlenir. Saha etüdünde güneşlenme verileri, gölgelenme analizi (çevredeki yapılar, ağaçlar, çatı üstü ekipmanlar) ve zemin ya da çatı taşıyıcı kapasitesi birlikte değerlendirilir. Bu veriler, gerçekçi bir üretim tahmini ve yatırım geri dönüş süresi hesaplamasının temelini oluşturur.
@@ -1113,8 +1113,8 @@ Mevcut bir yapıda güçlendirme, tadilat veya kat ilavesi söz konusu olduğund
         description: 'Montaj sırasını ve geçici stabiliteyi proje aşamasında planlarız.',
       },
     ],
-    image: IMG.d,
-    imageAlt: 'Çelik konstrüksiyon tasarım ve montaj süreci',
+    image: '/images/hizmet/celik-yapilar.png',
+    imageAlt: 'Cıvatalı çelik kolon-kiriş birleşim detayının yakın çekimi',
     body: `## Tasarımdan atölyeye, atölyeden sahaya
 
 Çelik yapı tasarımı, betonarmeden farklı bir hassasiyet gerektirir: her bağlantı detayı, hem statik hesapla hem de imalat/montaj gerçekliğiyle uyumlu olmalıdır. Statik ve dinamik analizlerimizde rüzgar, deprem ve işletme yüklerini birlikte değerlendirir; bağlantı detaylarını (kaynaklı veya bulonlu) atölyenin üretim kapasitesine uygun olarak tasarlarız.
@@ -1186,8 +1186,8 @@ Büyük açıklıklı çelik yapılarda montaj sırası ve geçici stabilite, ta
         description: 'Her bulguyu, hayata geçirilebilir bir aksiyon önerisiyle birlikte sunarız.',
       },
     ],
-    image: IMG.g,
-    imageAlt: 'Teknik danışmanlık ve proje inceleme süreci',
+    image: '/images/hizmet/teknik-danismanlik.png',
+    imageAlt: 'Danışmanlık toplantısında teknik çözüm önerisinin ekranda sunulması',
     body: `## Bağımsız gözün değeri
 
 Bir projeyi tasarlayan ekip, kendi kararlarını nesnel biçimde sorgulamakta zorlanabilir — bu, yetkinlik eksikliğinden değil, sürecin doğasından kaynaklanır. İkinci göz denetimi (peer review), tam da bu noktada devreye girer: projeyi üreten ekipten bağımsız bir mühendislik ekibi, tasarımı yalnızca teknik doğruluk ve uygulanabilirlik kriterleriyle değerlendirir.
@@ -1252,8 +1252,8 @@ Teknik danışmanlık hizmetimiz; yeni bir projeye başlamadan önce fizibilite 
       { title: 'Net İletişim', description: 'Bulguları, sorumlu taraflarla doğrudan ve zaman kaybetmeden paylaşırız.' },
       { title: 'İzlenebilir Kayıt', description: 'Her kontrol adımını belgeleyerek proje geçmişini şeffaf tutarız.' },
     ],
-    image: IMG.c,
-    imageAlt: 'Proje kontrol ve saha denetim süreci',
+    image: '/images/hizmet/proje-kontrol.png',
+    imageAlt: 'Sahada lazer mesafe ölçer ile teknik çizim karşılaştırması yapılması',
     body: `## Kontrol, projenin hafızasıdır
 
 Bir projede tasarım kararlarının sahada da aynı bütünlükle korunması, sürekli ve sistematik bir kontrol gerektirir. Proje kontrol hizmetimiz; onaylı proje ile saha uygulaması arasındaki tutarlılığı düzenli aralıklarla denetler, ortaya çıkan her sapmayı erken aşamada tespit edip ilgili taraflara bildirir.
@@ -1323,8 +1323,8 @@ Revizyon yönetiminde her değişikliği, gerekçesi ve etkilediği disiplinlerl
         description: 'Her teslim, test kayıtları ve as-built dokümantasyonuyla birlikte tamamlanır.',
       },
     ],
-    image: IMG.d,
-    imageAlt: 'Taahhüt ve saha uygulama süreçleri',
+    image: '/images/hizmet/taahhut.png',
+    imageAlt: 'Saha ekibinin aktif MEP montaj çalışması sırasında koordinasyonu',
     body: `## Tasarımı sahaya taşımak, ayrı bir mühendislik disiplinidir
 
 İyi tasarlanmış bir proje, ancak doğru yönetilen bir saha uygulamasıyla değerini bulur. Taahhüt ve uygulama hizmetimizde; iş programını, kaynak planlamasını ve alt yüklenici koordinasyonunu, tasarım ekibiyle sürekli iletişim halinde yürütürüz. Saha kararlarını da mühendislik hesap ve standartlarına dayandırırız — "sahada öyle çözülür" yaklaşımını benimsemeyiz.
