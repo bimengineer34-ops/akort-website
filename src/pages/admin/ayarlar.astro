@@ -55,6 +55,10 @@ if (Astro.request.method === 'POST') {
     const proofIcons = form.getAll('proof_icon') as string[];
     const countTitles = form.getAll('count_title') as string[];
     const countAmounts = form.getAll('count_amount') as string[];
+    const testimonialNames = form.getAll('testimonial_name') as string[];
+    const testimonialJobs = form.getAll('testimonial_job') as string[];
+    const testimonialTexts = form.getAll('testimonial_text') as string[];
+    const testimonialRatings = form.getAll('testimonial_rating') as string[];
 
     const heroImage = await resolveImage(form, 'heroImageFile', 'heroImage', existingHomepage?.heroImage as string);
     const approachImage = await resolveImage(
@@ -92,6 +96,14 @@ if (Astro.request.method === 'POST') {
             icon: proofIcons[i] ?? '',
           })),
           countStats: countTitles.map((title, i) => ({ title, amount: countAmounts[i] ?? '' })),
+          testimonials: testimonialNames
+            .map((name, i) => ({
+              name: name.trim(),
+              job: (testimonialJobs[i] ?? '').trim(),
+              testimonial: (testimonialTexts[i] ?? '').trim(),
+              rating: Number(testimonialRatings[i]) || undefined,
+            }))
+            .filter((t) => t.name && t.testimonial),
         },
       })
       .where(eq(settings.key, 'homepage'))
@@ -118,6 +130,7 @@ const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).
   processImageAlt?: string;
   proofStats: Array<{ value: string; label: string; icon: string }>;
   countStats: Array<{ title: string; amount: string }>;
+  testimonials?: Array<{ name: string; job: string; testimonial: string; rating?: number }>;
 };
 ---
 
@@ -352,6 +365,39 @@ const homepage = db.select().from(settings).where(eq(settings.key, 'homepage')).
               </div>
               <div class="col-6">
                 <input type="text" name="count_amount" class="form-control" value={s.amount} />
+              </div>
+            </div>
+          ))
+        }
+
+        <h4 class="mt-4">Müşteri Referansları (3 Öğe)</h4>
+        <p class="text-muted small">
+          Boş bıraktığınız satırlar kaydedilmez. <strong>Örnek/yer tutucu içerik yayında bırakmayın</strong> — gerçek bir
+          müşteri onayı olmadan yayınlamayın.
+        </p>
+        <div class="row g-2 mb-1 fw-bold text-muted small">
+          <div class="col-3">Ad Soyad</div>
+          <div class="col-3">Ünvan / Firma</div>
+          <div class="col-4">Referans Metni</div>
+          <div class="col-2">Puan (1-5)</div>
+        </div>
+        {
+          Array.from(
+            { length: Math.max(3, homepage?.testimonials?.length ?? 0) },
+            (_, i) => homepage?.testimonials?.[i] ?? { name: '', job: '', testimonial: '', rating: undefined }
+          ).map((t) => (
+            <div class="row g-2 mb-2">
+              <div class="col-3">
+                <input type="text" name="testimonial_name" class="form-control" value={t.name} />
+              </div>
+              <div class="col-3">
+                <input type="text" name="testimonial_job" class="form-control" value={t.job} />
+              </div>
+              <div class="col-4">
+                <input type="text" name="testimonial_text" class="form-control" value={t.testimonial} />
+              </div>
+              <div class="col-2">
+                <input type="number" name="testimonial_rating" min="1" max="5" class="form-control" value={t.rating} />
               </div>
             </div>
           ))

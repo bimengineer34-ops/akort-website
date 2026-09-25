@@ -1511,10 +1511,21 @@ function seedSettings() {
             { value: 'MEP', label: 'Mekanik ve elektrik sistem entegrasyonu', icon: 'tabler:adjustments' },
           ],
           countStats: [
+            { title: 'Yıl Deneyim', amount: '10+' },
             { title: 'Mühendislik Disiplini', amount: '8+' },
             { title: 'Proje Yaklaşımı', amount: '360°' },
             { title: 'Dijital Koordinasyon', amount: 'BIM' },
-            { title: 'Odak', amount: 'Tek Hedef' },
+          ],
+          // Placeholder — replace from /admin/ayarlar with a real, approved client
+          // quote before relying on this in production.
+          testimonials: [
+            {
+              name: 'Ad Soyad (örnek)',
+              job: 'Ünvan / Firma (örnek)',
+              testimonial:
+                'Bu alanı /admin/ayarlar üzerinden gerçek bir müşteri referansıyla güncelleyin — örnek metindir.',
+              rating: 5,
+            },
           ],
         },
       })

@@ -8,6 +8,7 @@ import Steps from '~/components/widgets/Steps.astro';
 import Content from '~/components/widgets/Content.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import Stats from '~/components/widgets/Stats.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import SocialProof from '~/components/widgets/SocialProof.astro';
 import StructuredData from '~/components/common/StructuredData.astro';
@@ -40,6 +41,7 @@ interface HomepageSettings {
   processImageAlt?: string;
   proofStats: Array<{ value: string; label: string; icon: string }>;
   countStats: Array<{ title: string; amount: string }>;
+  testimonials?: Array<{ name: string; job: string; testimonial: string; rating?: number }>;
 }
 
 const homepage = db.select().from(settingsTable).where(eq(settingsTable.key, 'homepage')).get()?.value as
@@ -435,12 +437,33 @@ const structuredData = [
     id="stats"
     countUp
     stats={homepage?.countStats ?? [
+      { title: 'Yıl Deneyim', amount: '10+' },
       { title: 'Mühendislik Disiplini', amount: '8+' },
       { title: 'Proje Yaklaşımı', amount: '360°' },
       { title: 'Dijital Koordinasyon', amount: 'BIM' },
-      { title: 'Odak', amount: 'Tek Hedef' },
     ]}
   />
+
+  <!-- ===================================================== -->
+  <!-- REFERANSLAR -->
+  <!-- ===================================================== -->
+
+  {
+    homepage?.testimonials && homepage.testimonials.length > 0 && (
+      <Testimonials
+        id="referanslar"
+        tagline="Referanslar"
+        title="Müşterilerimiz Ne Diyor?"
+        columns={homepage.testimonials.length === 1 ? 1 : homepage.testimonials.length === 2 ? 2 : 3}
+        testimonials={homepage.testimonials.map((t) => ({
+          testimonial: t.testimonial,
+          name: t.name,
+          job: t.job,
+          rating: t.rating,
+        }))}
+      />
+    )
+  }
 
   <!-- ===================================================== -->
   <!-- SSS -->
