@@ -615,6 +615,11 @@ Mekanik sistem tasarımı, ekipmanın sahaya konulmasıyla bitmez. Seçilen ekip
         description:
           'Elektrik altyapısını mekanik ve BIM modeliyle senkronize ederek çakışmaları önceden tespit ederiz.',
       },
+      {
+        title: 'Dağıtım Şirketi Koordinasyonu',
+        description:
+          'Bağlantı anlaşması ve elektrik altyapı onay süreçlerini ilgili dağıtım şirketiyle koordineli şekilde yürütürüz.',
+      },
     ],
     image: '/images/hizmet/elektrik-muhendisligi.png',
     imageAlt: 'Mühendisin orta gerilim pano üzerinde kontrol yapması',
@@ -901,6 +906,11 @@ Her enerji verimliliği önerisini, ilk yatırım maliyeti ile beklenen tasarruf
         description: 'GES sistemini mevcut veya planlanan elektrik altyapısıyla sorunsuz entegre ederiz.',
       },
       { title: 'Uygulama Takibi', description: 'Kurulumun tasarım kriterlerine uygun ilerlediğini sahada denetleriz.' },
+      {
+        title: 'Mevzuat ve Bağlantı Süreçleri',
+        description:
+          "EPDK'nın lisanssız elektrik üretimi mevzuatı kapsamında, dağıtım şirketiyle bağlantı anlaşması sürecini sizin adınıza takip ederiz.",
+      },
     ],
     image: '/images/hizmet/ges.png',
     imageAlt: 'Fabrika çatısına kurulmuş geniş güneş enerjisi paneli dizisi, gün batımında havadan görünüm',
@@ -1251,6 +1261,11 @@ Teknik danışmanlık hizmetimiz; yeni bir projeye başlamadan önce fizibilite 
       },
       { title: 'Net İletişim', description: 'Bulguları, sorumlu taraflarla doğrudan ve zaman kaybetmeden paylaşırız.' },
       { title: 'İzlenebilir Kayıt', description: 'Her kontrol adımını belgeleyerek proje geçmişini şeffaf tutarız.' },
+      {
+        title: 'Yapı Denetim Koordinasyonu',
+        description:
+          'Yapı Denetim Kuruluşu ve ilgili belediye teknik birimleriyle sürecin mevzuata uygun ilerlemesini sağlarız.',
+      },
     ],
     image: '/images/hizmet/proje-kontrol.png',
     imageAlt: 'Sahada lazer mesafe ölçer ile teknik çizim karşılaştırması yapılması',
@@ -1321,6 +1336,11 @@ Revizyon yönetiminde her değişikliği, gerekçesi ve etkilediği disiplinlerl
       {
         title: 'Belgeli Teslim',
         description: 'Her teslim, test kayıtları ve as-built dokümantasyonuyla birlikte tamamlanır.',
+      },
+      {
+        title: 'İSG ve Mevzuat Uyumu',
+        description:
+          'Saha uygulamalarını 6331 sayılı İş Sağlığı ve Güvenliği Kanunu ve ilgili teknik şartnamelere uygun şekilde yürütürüz.',
       },
     ],
     image: '/images/hizmet/taahhut.png',
